@@ -7,9 +7,10 @@ metadata. A game contains ten varied questions, with object photographs as the
 main attraction, a retro arcade interface, explanations after each answer, and a
 high-score table stored on the player's device.
 
-This is a proposal, not an implementation. Initial defaults: Dutch interface and
-questions, ten rounds, four answer choices, no mandatory timer. Language remains
-subject to the user's preference. Support four to six photos in the question
+This is a proposal, not an app implementation. Confirmed language: Dutch first,
+retaining Dutch and English vocabulary labels and descriptions for later language
+support. Initial defaults: ten rounds, four answer choices, no mandatory timer.
+Support four to six photos in the question
 model, with four as the first release's default.
 
 ## Evidence from the repositories
@@ -34,7 +35,9 @@ The current cached upstream snapshot contains:
 | Objects with linked object-type identifiers | 339 |
 
 Image references have not yet been checked for availability or visual quality.
-Definitions and their language coverage have not yet been retrieved. The linked
+Vocabulary enrichment is now available through `pnpm fetch:vocabularies`: the first
+run cached 207 of 208 external records, with 135 Dutch and 140 English descriptions.
+One Wikidata identifier returns 404; see README.md. The linked
 sources include Getty AAT, Cultureelerfgoed's thesaurus, Wikidata, and GeoNames.
 The main type/material/creator/place fields contain 207 distinct source URLs:
 126 Getty, 13 Cultureelerfgoed, 14 Wikidata, and 54 GeoNames.

@@ -8,11 +8,15 @@
   },
   "scripts": {
     "fetch:iiif": "node scripts/fetch-iiif.ts",
+    "fetch:vocabularies": "node scripts/fetch-vocabularies.ts",
     "typecheck": "tsc --noEmit",
     "test": "node --test scripts/*.test.ts"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "typescript": "^5.9.0"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.11.1"
   }
 }

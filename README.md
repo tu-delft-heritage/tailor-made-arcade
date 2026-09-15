@@ -38,6 +38,96 @@ Custom cache directories should be dedicated to this script and added to your
 Git ignore rules. If a process is forcibly terminated, remove its `.lock` directory
 after checking that no fetch is still running.
 
+## Fetch vocabulary labels and descriptions
+
+After fetching the schemas:
+
+```sh
+pnpm fetch:vocabularies
+```
+
+This recursively discovers **every `sameAs` property**, including nested creators
+and arrays. It deduplicates known vocabulary identifiers across HTTP/HTTPS URL
+variants, preserving the original URLs and the JSON Pointer for each occurrence.
+Collection-object links are recorded in the inventory, but not downloaded as
+vocabulary terms. Unknown providers are reported explicitly.
+
+Supported sources:
+
+| Provider | Representation | Extracted fields |
+| --- | --- | --- |
+| Getty AAT (also supports TGN/ULAN URLs) | `.jsonld` | Preferred labels, aliases, referenced scope notes |
+| Cultureelerfgoed CHT | `.jsonld` | Preferred labels, aliases, scope notes and definitions |
+| Wikidata | `Special:EntityData/<QID>.json` | Labels, aliases, descriptions |
+| GeoNames | Public `sws.geonames.org/<ID>/about.rdf` | Names and language-tagged names; normally no prose descriptions |
+
+Both **Dutch (`nl`) and English (`en`)** are retained where the source provides
+them. Untagged text is kept separately as `und`; it is never assumed to be Dutch
+or English. No translations or definitions are invented. GeoNames RDF is parsed
+with `fast-xml-parser`, without requiring a GeoNames account or API key.
+
+```text
+data/
+  vocabulary-urls.json   # All unique URLs, providers, original URLs, schema references
+  vocabularies.json      # Normalized labels, aliases, descriptions, fetch provenance
+.cache/vocabularies/
+  responses/<hash>.json  # Original JSON-LD/JSON/XML body and response metadata
+  report.json            # Counts, missing description languages, failed URLs
+```
+
+The `data/` files are intended to be checked into the repository for later static
+builds. Raw response caches and reports are ignored by Git. Each term has this
+shape (text below is illustrative):
+
+```json
+{
+  "url": "http://vocab.getty.edu/aat/300010900",
+  "provider": "getty",
+  "labels": { "nl": ["metaal"], "en": ["metal"] },
+  "aliases": { "en": ["metals"] },
+  "descriptions": { "nl": ["…"], "en": ["…"] },
+  "source": {
+    "requestUrl": "https://vocab.getty.edu/aat/300010900.jsonld",
+    "responseUrl": "https://vocab.getty.edu/aat/300010900.jsonld",
+    "fetchedAt": "2026-09-15T00:00:00.000Z"
+  }
+}
+```
+
+Rerunning reuses successful cached responses and retries previously failed URLs.
+Use `--refresh` to update all responses, or `--offline` to regenerate the normalized
+files from the raw cache without network requests:
+
+```sh
+pnpm fetch:vocabularies --refresh
+pnpm fetch:vocabularies --offline
+pnpm fetch:vocabularies --schemas-dir .cache/iiif/schemas --cache-dir .cache/vocabularies --output-dir data --concurrency 3
+```
+
+Requests have a 30-second timeout, three attempts for temporary failures, and at
+most three concurrent downloads by default. HTTP 429/5xx responses are retried;
+long `Retry-After` periods are reported for a later run. Invalid responses never
+replace a valid cached copy. Missing descriptions are normal data gaps; failed
+requests or unsupported providers are listed in the report and cause exit code 1
+after all URLs have been processed. Available results are still exported. Two
+`.vocabularies.lock` directories protect the cache and output from concurrent
+writes; remove a stale lock only after confirming no fetch is running.
+
+### Initial fetch results
+
+The current snapshot has **208 external URLs**, plus **152 collection-object
+links**. The initial run cached **207 vocabulary records**, including **135 with
+Dutch descriptions** and **140 with English descriptions**. Getty accounts for
+126 records, of which 120 have descriptions in both languages. All 54 GeoNames
+records were retrieved, but none provides Dutch or English prose descriptions.
+
+One upstream identifier returned HTTP 404:
+[Wikidata Q138148494](https://www.wikidata.org/entity/Q138148494), referenced as
+`exampleOfWork.sameAs` for “polarisatie prisma” in object
+`86092889-a03d-459a-a076-577fdf18f2de`. Its original reference remains in the URL
+inventory. The command will report this failure until the source is corrected
+or the entity becomes available; it does not substitute a guessed identifier.
+
 ## Checks
 
 ```sh
