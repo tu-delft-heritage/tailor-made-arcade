@@ -1,5 +1,109 @@
 # Daphne's Arcade
 
+## Play the prototype
+
+```sh
+pnpm install
+pnpm dev
+```
+
+Open the local URL printed by Vite. A game contains eight identification
+questions, an always-visible progress row, a 20-second question timer, a
+four-minute game timer, answer explanations, results, optional arcade sounds,
+and a device-local best score. Running out of question or game time ends the
+session.
+
+Dutch and English can be selected on the title screen with the mouse or the
+joystick. Dutch uses all ten curated records. English sessions are assembled
+only from the nine records that have an English linked-data label, English
+description, and reviewed English image description. The language choice and
+separate high scores are stored locally.
+
+The game supports the mouse and the cabinet's external joystick and four
+physical buttons, using the key mapping from Allmaps Arcade's
+`src/lib/shared/environments/cabinet.ts`:
+
+| Physical control | Key mapping | Action |
+| --- | --- | --- |
+| Joystick | Arrow keys | Select an answer in the 2×2 grid; turn description pages |
+| Green button | V or Enter | Start, confirm, continue, play again |
+| Yellow button | X or − | Zoom photograph out |
+| Yellow button | C or + | Zoom photograph in |
+| White button | Z | Toggle sound |
+
+Answers only unlock once the photograph has loaded. Holding the green button
+does not skip screens. Selection is shown with an arrow and a yellow highlight.
+Mouse controls use the NES.css pointer and every visible answer and action button
+is clickable.
+
+Every screen fills the viewport without scrolling. Fullscreen and pointer hiding
+are disabled by default. Set `PUBLIC_CABINET=true` to request fullscreen when a
+game starts and hide the pointer for the physical cabinet. Longer descriptions
+are split into pages controlled with the joystick.
+
+This is still the first question module. Odd-one-out and definition questions,
+difficulty balancing, and a named leaderboard remain planned. The current score
+has a versioned storage key and will not mix with earlier one-question scores.
+
+The game uses Svelte 5, SvelteKit, Tailwind 4, XState 5, and NES.css. Its arcade
+cabinet adapts the Academic Heritage site's indigo and bright card palette,
+eight-point cut corners, custom pixel bevels, and a subtle scanline overlay. Shared components,
+question generation, and the state machine are separate under `src/lib/`. Fonts
+and compiled metadata are bundled. Vocabulary providers are never contacted at
+runtime. Photographs use their remote thumbnail URLs unless a local cache is
+configured. Source provenance remains in the data snapshots; the game screens
+contain no external navigation.
+
+### Data and static builds
+
+`data/objects.json` contains a normalized snapshot of all 720 objects.
+`data/game-selection.json` selects ten prototype objects and reviewed Dutch and,
+where supported, English image descriptions. Choices are built from actual type
+labels in the collection and linked vocabularies. `data/data-quality.json`
+records coverage, source commit, selected image references, and the temporarily
+excluded Wikidata identifier. The selected photos were inspected for usable
+object views; difficulty still needs feedback from players.
+
+```sh
+pnpm build       # Compile local snapshots and export the static site to build/
+pnpm preview     # Serve that build locally
+```
+
+Normal builds use checked-in metadata without fetching data. `pnpm data:prepare`
+refreshes normalized metadata from the IIIF and vocabulary caches, while
+`pnpm build:data` regenerates the ignored application JSON using local files
+only. Run builds with `BASE_PATH=/daphnes-arcade` when deploying under that path;
+the default is the domain root.
+
+### Local image cache
+
+Photographs are intentionally excluded from Git. By default the app uses the
+remote thumbnail URL stored in `data/objects.json`. Cache the selected images and
+serve or bundle them locally with:
+
+```sh
+pnpm cache:images
+GAME_IMAGE_DIR=.cache/game-assets PUBLIC_OBJECT_IMAGE_BASE=/objects pnpm dev
+```
+
+Use the same environment variables with `pnpm build` to copy the cached images
+into the static output. `GAME_IMAGE_DIR` is the filesystem directory SvelteKit
+serves as static assets; `PUBLIC_OBJECT_IMAGE_BASE` is the browser URL for its
+`objects/` subdirectory. Both can point elsewhere:
+
+```sh
+pnpm cache:images -- --output-dir /path/to/arcade-assets
+GAME_IMAGE_DIR=/path/to/arcade-assets PUBLIC_OBJECT_IMAGE_BASE=/objects pnpm build
+```
+
+Reruns reuse existing files; add `--refresh` to download them again. See
+`.env.example` for the complete local and cabinet configuration.
+
+The page also feature-detects optional WebMCP tools for reading, starting,
+answering, and finishing a round. These use the same game actions as the UI;
+unsupported browsers use the ordinary interface. Live WebMCP integration has not
+been validated in a supporting browser.
+
 ## Fetch IIIF schemas
 
 Requires **Node.js 22.18+**, **pnpm**, and **Git**.
@@ -131,6 +235,7 @@ or the entity becomes available; it does not substitute a guessed identifier.
 ## Checks
 
 ```sh
+pnpm check
 pnpm typecheck
 pnpm test
 ```

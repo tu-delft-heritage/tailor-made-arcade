@@ -2,3 +2,7 @@ node_modules/
 .pnpm-store/
 .cache/
 .vocabularies.lock/
+.svelte-kit/
+build/
+src/lib/data/game-data.json
+static/objects/

@@ -1,5 +1,23 @@
 # Daphne's Arcade — implementation plan
 
+## First milestone status
+
+The first playable slice now has eight-question identification sessions drawn
+from ten selected objects, Dutch and linked-data-backed English modes, sourced
+answer reveals, progress indicators, question and overall timers, results,
+optional sound, and a device-local score per language.
+The application uses SvelteKit, Tailwind, XState, and NES.css. The cabinet UI uses
+beveled panels, fixed viewport screens, mouse controls, and external
+keyboard-mapped controls. Photos remain outside Git and can be cached locally;
+remote thumbnails are the default fallback. The known unavailable Wikidata term
+is excluded from the prototype.
+
+`data/data-quality.json` records data coverage and checked images. Automated
+checks cover bilingual session eligibility, question uniqueness, seeded
+generation, image-readiness gating, answer locking, progress, timeouts, scores,
+replay, spatial joystick selection, confirmation, and description pagination.
+The next milestone adds varied question modules and a named local leaderboard.
+
 ## Goal
 
 A static, replayable heritage quiz celebrating Daphne's work on the collection
@@ -7,9 +25,10 @@ metadata. A game contains ten varied questions, with object photographs as the
 main attraction, a retro arcade interface, explanations after each answer, and a
 high-score table stored on the player's device.
 
-This is a proposal, not an app implementation. Confirmed language: Dutch first,
-retaining Dutch and English vocabulary labels and descriptions for later language
-support. Initial defaults: ten rounds, four answer choices, no mandatory timer.
+The sections below describe the full game beyond the implemented first slice.
+Confirmed language: Dutch first, with an English mode restricted to eligible
+translated content. Current defaults: eight rounds, four answer choices, 20
+seconds per question, and four minutes overall.
 Support four to six photos in the question
 model, with four as the first release's default.
 
@@ -34,7 +53,8 @@ The current cached upstream snapshot contains:
 | Objects with multiple image records | 180 |
 | Objects with linked object-type identifiers | 339 |
 
-Image references have not yet been checked for availability or visual quality.
+The ten prototype images have been checked for availability and visual quality;
+the remaining collection images still need review.
 Vocabulary enrichment is now available through `pnpm fetch:vocabularies`: the first
 run cached 207 of 208 external records, with 135 Dutch and 140 English descriptions.
 One Wikidata identifier returns 404; see README.md. The linked
@@ -44,13 +64,13 @@ The main type/material/creator/place fields contain 207 distinct source URLs:
 
 ## 1. Player experience
 
-1. **Title:** Daphne's Arcade, a short dedication, Start, How to play, High scores,
-   and sound controls. A possible dedication: “A celebration of Daphne and the
-   stories she helped connect.” Final wording should be personal and agreed.
+1. **Title:** Daphne's Arcade, a short dedication, high score, and a green-button
+   start prompt. Keep screen text minimal.
 2. **Game:** ten questions, a visible round counter and score, consistent answer
-   cards, and support for mouse, touch, and keyboard.
+   cards selected with the external joystick and confirmed with the green button.
 3. **Reveal:** show the correct answer, a brief explanation, the actual metadata
-   behind the question, and a source link. Advance when the player is ready.
+   behind the question. Paginate long text with the joystick. Advance with the
+   green button when the player is ready; retain source links in the data.
 4. **Results:** score, correct answers, a gallery of encountered objects, and an
    invitation to enter initials for the local leaderboard.
 5. **Play again:** a new randomized selection with repeated objects and terms
@@ -158,10 +178,9 @@ terms, excluded records, and available questions per module. Set minimum pool si
 for the intended ten-round mix. Begin with an approximately 250 KB compressed
 metadata budget, then measure and adjust after the first compiler pass.
 
-The browser uses bundled metadata only. The initial version loads remote image
-thumbnails, preloads the next round, and replaces failed-image questions without
-penalizing the player. Static hosting does not imply offline images. An optional
-event build can package optimized images locally if offline play is needed.
+The browser uses bundled metadata and local optimized photographs. Preload the
+next round and replace failed-image questions without penalizing the player.
+Expand the locally packaged photo selection as more question types are added.
 
 ## 3. Application architecture
 
@@ -217,12 +236,15 @@ Use a dark arcade-cabinet palette with bright cyan, magenta, amber, and cream;
 pixel-style headings; chunky borders and buttons; and restrained score animations.
 Keep heritage photos sharp and uncropped where possible. Use a readable font for
 definitions and explanations. Make sound optional and respect reduced motion.
-Support visible focus, numbered keyboard choices, and a responsive 2-by-2 photo
-grid, extending to 3-by-2 when six options are appropriate.
+Use a prominent selected-answer highlight and a spatial 2-by-2 grid. Follow the
+reference cabinet mapping: arrow keys select, V confirms, X/C zoom, Z toggles
+sound. All screens fit the viewport without scrolling or touch controls. Extend
+spatial navigation to a 3-by-2 grid when six options are appropriate.
 
-Initial scoring: 100 points per correct answer, ten rounds, 1,000 maximum. No speed
-bonus in the first release. A timed arcade mode can be added later with a separate
-leaderboard so modes remain comparable.
+Current scoring is 100 points per correct answer, eight rounds, and an 800-point
+maximum. The first release uses a 20-second question timer and four-minute overall
+timer, with no speed bonus. Future modes should use separate leaderboard categories
+so scores remain comparable.
 
 Store the top local scores with initials, points, correct answers, date, mode,
 question count, seed, and data/rules versions. Label the table “High scores on this
@@ -239,7 +261,7 @@ play. Prevent repeated submissions from scoring or saving a result twice.
 3. **Complete game:** add odd-one-out and definition modules, seeded ten-round
    sessions, question balancing, scoring, and the local leaderboard.
 4. **Celebration and polish:** dedication, source-rich reveals, object gallery,
-   sound and motion preferences, image fallbacks, mobile and keyboard refinement.
+   sound and motion preferences, image fallbacks, cabinet controls and fullscreen refinement.
 5. **Verification and release preparation:** test generators and state transitions,
    review representative questions, check a full game in the browser, and verify
    a clean static build, including hosting under a subpath. Deployment destination
@@ -253,11 +275,12 @@ play. Prevent repeated submissions from scoring or saving a result twice.
 - Many seeded sessions finish with ten valid questions and respect repetition
   rules; generator exhaustion yields a controlled fallback rather than a loop.
 - Answer locking, round advancement, restart, and image failures behave correctly.
-- A complete game works with touch and keyboard, and local scores survive reload.
+- A complete game works using only the cabinet joystick and mapped buttons,
+  with no scrolling; local scores survive reload.
 - Corrupt or unavailable storage does not prevent play.
 - Content review confirms fair distractors, usable photos, and clues that do not
   reveal their answers. Language and difficulty are checked with likely players.
 
-Recommended first milestone: a working identification round using real photographs,
-alongside an enrichment and question-quality report. This tests both the interface
-and the data assumptions before expanding to the full game.
+The first milestone is complete: eight-round identification sessions use real
+photographs, bilingual linked data, enrichment records, and a question-quality
+report. The next milestone expands the module registry and local leaderboard.
