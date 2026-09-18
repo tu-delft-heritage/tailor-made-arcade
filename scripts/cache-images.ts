@@ -10,7 +10,8 @@ const option = (name: string) => {
 const outputDir = resolve(root, option('--output-dir') ?? process.env.GAME_IMAGE_DIR ?? '.cache/game-assets')
 const refresh = process.argv.includes('--refresh')
 const records = JSON.parse(await readFile(join(root, 'data/objects.json'), 'utf8'))
-const selection: { id: string }[] = JSON.parse(await readFile(join(root, 'data/game-selection.json'), 'utf8'))
+const selection: { id: string }[] = process.argv.includes('--prototype')
+  ? JSON.parse(await readFile(join(root, 'data/game-selection.json'), 'utf8')) : records
 const objectsDir = join(outputDir, 'objects')
 await mkdir(objectsDir, { recursive: true })
 

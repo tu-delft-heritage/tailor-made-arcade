@@ -1,10 +1,11 @@
 import { assign, setup } from 'xstate'
-import type { GameOverReason, IdentificationQuestion, RoundResult } from './types.ts'
+import { characterIds, type CharacterId, type GameOverReason, type Question, type RoundResult } from './types.ts'
 import { moveSelection } from './cabinet.ts'
 import type { Direction } from './cabinet.ts'
 
 type GameContext = {
-  questions: IdentificationQuestion[]
+  characterId: CharacterId
+  questions: Question[]
   questionIndex: number
   selected: string | null
   score: number
@@ -16,12 +17,13 @@ type GameContext = {
 export const gameMachine = setup({
   types: {
     context: {} as GameContext,
-    events: {} as { type: 'START'; questions: IdentificationQuestion[] } | { type: 'IMAGE_READY' } |
-      { type: 'IMAGE_ERROR' } | { type: 'ANSWER'; answer: string } | { type: 'MOVE'; direction: Direction } |
+    events: {} as { type: 'START'; questions: Question[] } | { type: 'IMAGE_READY' } |
+      { type: 'IMAGE_ERROR' } | { type: 'REPLACE_QUESTION'; question: Question } | { type: 'ANSWER'; answer: string } | { type: 'MOVE'; direction: Direction } |
       { type: 'CONFIRM' } | { type: 'FINISH' } | { type: 'TIMEOUT'; reason: 'question-time' | 'game-time' } |
-      { type: 'HOME' }
+      { type: 'HOME' } | { type: 'SELECT_TEAM' } | { type: 'CHOOSE_CHARACTER'; characterId: CharacterId } | { type: 'INTRO_DONE' }
   },
   actions: {
+    chooseCharacter: assign(({ event }) => event.type === 'CHOOSE_CHARACTER' ? { characterId: event.characterId } : {}),
     start: assign(({ event }) => event.type === 'START' ? {
       questions: event.questions, questionIndex: 0, selected: null, score: 0, activeChoice: 0,
       results: [], gameOverReason: null
@@ -45,11 +47,16 @@ export const gameMachine = setup({
       results: context.selected === null ? [...context.results, 'timeout' as const] : context.results,
       gameOverReason: event.reason
     } : {}),
+    replaceQuestion: assign(({ context, event }) => event.type === 'REPLACE_QUESTION' ? {
+      questions: context.questions.map((question, index) => index === context.questionIndex ? event.question : question),
+      selected: null, activeChoice: 0
+    } : {}),
     imageError: assign({ gameOverReason: 'image' as const }),
     home: assign({ questions: [], questionIndex: 0, selected: null, score: 0, activeChoice: 0,
       results: [], gameOverReason: null })
   },
   guards: {
+    validCharacter: ({ event }) => event.type === 'CHOOSE_CHARACTER' && characterIds.includes(event.characterId),
     validAnswer: ({ context, event }) => event.type === 'ANSWER' &&
       Boolean(context.questions[context.questionIndex]?.choices.includes(event.answer)),
     lastQuestion: ({ context }) => context.questionIndex >= context.questions.length - 1
@@ -57,12 +64,18 @@ export const gameMachine = setup({
 }).createMachine({
   id: 'arcade',
   initial: 'title',
-  context: { questions: [], questionIndex: 0, selected: null, score: 0, activeChoice: 0,
+  context: { characterId: 'daphne', questions: [], questionIndex: 0, selected: null, score: 0, activeChoice: 0,
     results: [], gameOverReason: null },
   on: { HOME: { target: '.title', actions: 'home' } },
   states: {
-    title: { on: { START: { target: 'loading', actions: 'start' } } },
+    title: { on: { SELECT_TEAM: 'choosing' } },
+    choosing: { on: {
+      CHOOSE_CHARACTER: { guard: 'validCharacter', actions: 'chooseCharacter' },
+      START: { target: 'intro', actions: 'start' }
+    } },
+    intro: { on: { INTRO_DONE: 'loading' } },
     loading: { on: {
+      REPLACE_QUESTION: { target: 'loading', reenter: true, actions: 'replaceQuestion' },
       IMAGE_READY: 'playing',
       IMAGE_ERROR: { target: 'gameOver', actions: 'imageError' },
       TIMEOUT: { target: 'gameOver', actions: 'timeout' }
@@ -81,7 +94,7 @@ export const gameMachine = setup({
       ],
       TIMEOUT: { target: 'gameOver', actions: 'timeout' }
     } },
-    gameOver: { on: { START: { target: 'loading', actions: 'start' } } },
-    results: { on: { START: { target: 'loading', actions: 'start' } } }
+    gameOver: { on: { SELECT_TEAM: 'choosing' } },
+    results: { on: { SELECT_TEAM: 'choosing' } }
   }
 })

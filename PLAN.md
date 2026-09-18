@@ -1,22 +1,28 @@
 # Daphne's Arcade — implementation plan
 
-## First milestone status
+## Implemented status — September 18, 2026
 
-The first playable slice now has eight-question identification sessions drawn
-from ten selected objects, Dutch and linked-data-backed English modes, sourced
-answer reveals, progress indicators, question and overall timers, results,
-optional sound, and a device-local score per language.
-The application uses SvelteKit, Tailwind, XState, and NES.css. The cabinet UI uses
-beveled panels, fixed viewport screens, mouse controls, and external
-keyboard-mapped controls. Photos remain outside Git and can be cached locally;
-remote thumbnails are the default fallback. The known unavailable Wikidata term
-is excluded from the prototype.
+Ten-round missions now draw from the full 720-object snapshot. Sixteen modules
+cover object type, material, maker, designer, manufacturer, creation place,
+depicted person, professor involved in creation, date, three dimensions, previous
+owner, related object, definition and four-photo date comparison. Every round
+shows an explicit question and a source-based reveal. All objects are eligible
+in Dutch and English; English has fifteen modules because linked-object titles
+are not translated. No missing metadata is interpreted as absence.
 
-`data/data-quality.json` records data coverage and checked images. Automated
-checks cover bilingual session eligibility, question uniqueness, seeded
-generation, image-readiness gating, answer locking, progress, timeouts, scores,
-replay, spatial joystick selection, confirmation, and description pagination.
-The next milestone adds varied question modules and a named local leaderboard.
+The NES-only interface retains seven selectable teammates, their quotes, three
+spatial depot scenes, loose answer tags and persistent fallen labels. Ten varied
+modules per mission avoid repeated object IDs and image URLs. Failed photographs
+are replaced without consuming a round; loading time is excluded from the timer.
+Definitions/comparisons get 30 seconds; other rounds get 20; total play time is
+four minutes. Best scores use a new 1,000-point scale and storage version.
+
+`data/question-coverage.json` contains coverage, exclusions, previews and evidence.
+`docs/question-types.md` documents field rules and remaining review limits.
+Automated checks cover all generated answers, 100 seeds per language, source
+facts, role separation, aliases, date overlap, readiness, replacement, scoring
+and replay. The named leaderboard, complete image/content review, and difficulty
+calibration remain future work.
 
 ## Goal
 
@@ -25,10 +31,10 @@ metadata. A game contains ten varied questions, with object photographs as the
 main attraction, a retro arcade interface, explanations after each answer, and a
 high-score table stored on the player's device.
 
-The sections below describe the full game beyond the implemented first slice.
+The sections below retain the broader roadmap; the status above records what is implemented.
 Confirmed language: Dutch first, with an English mode restricted to eligible
-translated content. Current defaults: eight rounds, four answer choices, 20
-seconds per question, and four minutes overall.
+translated content. Current defaults: ten rounds, four answer choices, 20 seconds for metadata and
+30 seconds for definitions/comparisons, with four minutes overall.
 Support four to six photos in the question
 model, with four as the first release's default.
 
@@ -82,18 +88,15 @@ give away the answer beforehand; apply the same rule to accessible descriptions.
 Use reviewed, non-answer-revealing image descriptions, with a text-friendly mode
 for question formats whose essential information is visual.
 
-### Initial question mix
+### Current question mix
 
-| Module | Interaction | Initial allocation |
-| --- | --- | ---: |
-| Odd one out | Four photos; choose the object outside a named category | 4 |
-| Identify the object | One photo; choose its object type from four labels | 4 |
-| Definition detective | A sourced definition; choose its term from four labels | 2 |
-
-Keep the allocation configurable. Substitute a supported question type when a
-definition pool is too small, and report the limitation during data preparation.
-Later variants can include definition-to-photo, matching makers or places, and
-ordering objects by date. Enable these only when the relevant data is adequate.
+Each mission includes object type, material, place, depicted person, professor,
+date, a linked definition, a four-photo dating comparison, one of
+maker/designer/manufacturer/owner/related object, and one dimension. Ordering,
+objects and answer placement are seeded. The extra role and dimension vary
+between missions. If a module lacks eligible records, another supported module
+fills the slot. The original 4/4/2 mix has been superseded by the requested
+metadata expansion.
 
 ### Fair questions
 
@@ -241,8 +244,8 @@ reference cabinet mapping: arrow keys select, V confirms, X/C zoom, Z toggles
 sound. All screens fit the viewport without scrolling or touch controls. Extend
 spatial navigation to a 3-by-2 grid when six options are appropriate.
 
-Current scoring is 100 points per correct answer, eight rounds, and an 800-point
-maximum. The first release uses a 20-second question timer and four-minute overall
+Current scoring is 100 points per correct answer, ten rounds, and a 1,000-point
+maximum. Metadata uses 20 seconds, definitions/comparisons 30, and a four-minute overall
 timer, with no speed bonus. Future modes should use separate leaderboard categories
 so scores remain comparable.
 
@@ -281,6 +284,5 @@ play. Prevent repeated submissions from scoring or saving a result twice.
 - Content review confirms fair distractors, usable photos, and clues that do not
   reveal their answers. Language and difficulty are checked with likely players.
 
-The first milestone is complete: eight-round identification sessions use real
-photographs, bilingual linked data, enrichment records, and a question-quality
-report. The next milestone expands the module registry and local leaderboard.
+The collection-wide question milestone is implemented. The next work is full
+photo/content review, player-informed difficulty, and the named local leaderboard.

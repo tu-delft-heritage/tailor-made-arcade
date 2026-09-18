@@ -6,3 +6,6 @@ node_modules/
 build/
 src/lib/data/game-data.json
 static/objects/
+
+# Private local notes for assistant context; never bundled or committed.
+/.local-context/

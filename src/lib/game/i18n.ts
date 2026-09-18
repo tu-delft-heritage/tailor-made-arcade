@@ -2,21 +2,27 @@ import type { Language } from './types.ts'
 
 export const copy = {
   nl: {
-    start: 'DRUK OP GROEN', dedication: 'VOOR DAPHNE', language: 'TAAL', question: 'WAT IS DIT OBJECT?',
-    choose: 'KIES', confirm: 'BEVESTIG', loading: 'FOTO LADEN…', correct: 'GOED!', wrong: 'HELAAS!',
-    yourChoice: 'JOUW KEUZE', correctAnswer: 'HET JUISTE ANTWOORD', next: 'VOLGENDE', results: 'UITSLAG',
-    yourScore: 'JOUW SCORE', highScore: 'HI-SCORE', playAgain: 'NOG EEN KEER', thanks: 'DANK JE, DAPHNE',
-    total: 'TOTAAL', round: 'VRAAG', progress: 'Voortgang per vraag', answerLabel: 'Antwoord — kies met de joystick of muis', soundOn: 'GELUID AAN', soundOff: 'GELUID UIT',
-    gameOver: 'GAME OVER', questionTime: 'TE LANG GEWACHT', gameTime: 'TOTALE TIJD OP', imageError: 'FOTO NIET BESCHIKBAAR',
-    correctCount: 'GOED', retry: 'OPNIEUW'
+    mission: 'DE VERDWENEN LABELS', selectTeam: 'KIES JE TEAMGENOOT', back: 'TERUG',
+    introTitle: 'OEPS!', introHint: 'Help Daphne de labels terug te vinden.', go: 'AAN DE SLAG',
+    missionComplete: 'KLAAR!', recovered: 'LABELS TERUG',
+    start: 'START', language: 'TAAL', question: 'WELK LABEL HOORT HIER?',
+    loading: 'LADEN…', wrong: 'HELAAS!', next: 'VOLGENDE', results: 'UITSLAG',
+    highScore: 'HI', playAgain: 'NOG EEN KEER',
+    total: 'Totale tijd', round: 'Vraag', progress: 'Voortgang',
+    answerLabel: 'Kies een label met de joystick of muis', soundOn: 'GELUID AAN', soundOff: 'GELUID UIT',
+    gameOver: 'GAME OVER', questionTime: 'TE LAAT', gameTime: 'TIJD OP', imageError: 'FOTO NIET BESCHIKBAAR',
+    retry: 'OPNIEUW', previousPage: 'Vorige pagina', nextPage: 'Volgende pagina'
   },
   en: {
-    start: 'PRESS GREEN', dedication: 'FOR DAPHNE', language: 'LANGUAGE', question: 'WHAT IS THIS OBJECT?',
-    choose: 'CHOOSE', confirm: 'CONFIRM', loading: 'LOADING PHOTO…', correct: 'CORRECT!', wrong: 'WRONG!',
-    yourChoice: 'YOUR CHOICE', correctAnswer: 'THE CORRECT ANSWER', next: 'NEXT', results: 'RESULTS',
-    yourScore: 'YOUR SCORE', highScore: 'HI-SCORE', playAgain: 'PLAY AGAIN', thanks: 'THANK YOU, DAPHNE',
-    total: 'TOTAL', round: 'QUESTION', progress: 'Progress for each question', answerLabel: 'Answer — choose with the joystick or mouse', soundOn: 'SOUND ON', soundOff: 'SOUND OFF',
-    gameOver: 'GAME OVER', questionTime: 'TOO SLOW', gameTime: 'TOTAL TIME UP', imageError: 'PHOTO NOT AVAILABLE',
-    correctCount: 'CORRECT', retry: 'TRY AGAIN'
+    mission: 'THE LOST LABELS', selectTeam: 'CHOOSE YOUR TEAMMATE', back: 'BACK',
+    introTitle: 'OOPS!', introHint: 'Help Daphne put the labels back.', go: 'LET’S GO',
+    missionComplete: 'ALL DONE!', recovered: 'LABELS BACK',
+    start: 'START', language: 'LANGUAGE', question: 'WHICH LABEL BELONGS HERE?',
+    loading: 'LOADING…', wrong: 'OOPS!', next: 'NEXT', results: 'RESULTS',
+    highScore: 'HI', playAgain: 'PLAY AGAIN',
+    total: 'Total time', round: 'Question', progress: 'Progress',
+    answerLabel: 'Choose a label with the joystick or mouse', soundOn: 'SOUND ON', soundOff: 'SOUND OFF',
+    gameOver: 'GAME OVER', questionTime: 'TOO LATE', gameTime: 'TIME UP', imageError: 'PHOTO NOT AVAILABLE',
+    retry: 'TRY AGAIN', previousPage: 'Previous page', nextPage: 'Next page'
   }
 } satisfies Record<Language, Record<string, string>>

@@ -4,10 +4,10 @@ import { test } from 'node:test'
 import { createActor } from 'xstate'
 import { cabinetKeys, descriptionPages, joystickDirection, moveSelection } from '../src/lib/game/cabinet.ts'
 import { gameMachine } from '../src/lib/game/machine.ts'
-import { createIdentificationSession } from '../src/lib/game/questions/identify-object.ts'
-import type { GameObject } from '../src/lib/game/types.ts'
+import { createQuestionBank, createSession } from '../src/lib/game/questions/index.ts'
+import type { GameData } from '../src/lib/game/types.ts'
 
-const { objects }: { objects: GameObject[] } = JSON.parse(await readFile(new URL('../src/lib/data/game-data.json', import.meta.url), 'utf8'))
+const data: GameData = JSON.parse(await readFile(new URL('../src/lib/data/game-data.json', import.meta.url), 'utf8'))
 
 test('cabinet keys match the reference cabinet and joystick movement follows the 2×2 layout', () => {
   assert.deepEqual(cabinetKeys, { toggle: 'KeyZ', zoomOut: 'KeyX', zoomIn: 'KeyC', submit: 'KeyV' })
@@ -20,9 +20,11 @@ test('cabinet keys match the reference cabinet and joystick movement follows the
 
 test('joystick confirmation requires a ready image, submits the highlighted answer, and locks the result', () => {
   const actor = createActor(gameMachine).start()
-  const questions = createIdentificationSession(objects, 42, 'nl')
+  const questions = createSession(createQuestionBank(data, 'nl'), 42)
   const question = questions[0]
+  actor.send({ type: 'SELECT_TEAM' })
   actor.send({ type: 'START', questions })
+  actor.send({ type: 'INTRO_DONE' })
   actor.send({ type: 'MOVE', direction: 'down' })
   actor.send({ type: 'CONFIRM' })
   assert.equal(actor.getSnapshot().value, 'loading')
@@ -40,14 +42,16 @@ test('joystick confirmation requires a ready image, submits the highlighted answ
   assert.equal(actor.getSnapshot().context.selected, question.choices[3])
   actor.send({ type: 'FINISH' })
   actor.send({ type: 'HOME' })
+  actor.send({ type: 'SELECT_TEAM' })
   actor.send({ type: 'START', questions })
+  actor.send({ type: 'INTRO_DONE' })
   assert.equal(actor.getSnapshot().context.activeChoice, 0)
   assert.equal(actor.getSnapshot().context.selected, null)
   actor.stop()
 })
 
 test('description pages retain all collection text while fitting the cabinet text budget', () => {
-  for (const object of objects) {
+  for (const object of data.objects) {
     for (const description of Object.values(object.description)) {
       if (!description) continue
       const pages = descriptionPages(description)

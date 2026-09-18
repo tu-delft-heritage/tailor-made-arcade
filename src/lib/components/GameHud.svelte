@@ -1,7 +1,11 @@
 <script lang="ts">
   import type { RoundResult } from '$lib/game/types'
+  import type { Teammate } from '$lib/game/team'
+  import TeamAvatar from './TeamAvatar.svelte'
 
-  let { results, questionIndex, total, totalSeconds, question, totalLabel, questionLabel, progressLabel }: {
+  let { character, score, results, questionIndex, total, totalSeconds, question, totalLabel, questionLabel, progressLabel }: {
+    character: Teammate
+    score: number
     results: RoundResult[]
     questionIndex: number
     total: number
@@ -16,6 +20,7 @@
 </script>
 
 <div class="game-hud">
+  <div class="player-badge"><span class="player-portrait" title={character.name}><TeamAvatar {character} /></span><span>{String(score).padStart(4, '0')}</span></div>
   <ol class="round-progress" aria-label={progressLabel}>
     {#each Array(total) as _, index}
       {@const result = results[index]}
@@ -27,7 +32,7 @@
     {/each}
   </ol>
   <div class="timers" aria-live="off">
-    <span><small>{totalLabel}</small>{time(totalSeconds)}</span>
-    <span class:urgent={question <= 5}><small>{questionLabel}</small>{time(question)}</span>
+    <span title={totalLabel} aria-label={`${totalLabel}: ${time(totalSeconds)}`}>{time(totalSeconds)}</span>
+    <span class="question-clock" class:urgent={question <= 5} title={questionLabel} aria-label={`${questionLabel}: ${question}`}><span aria-hidden="true">◷</span> {question}s</span>
   </div>
 </div>

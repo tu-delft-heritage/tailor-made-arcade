@@ -21,6 +21,17 @@ for (const file of files) {
     materials: values(schema.material).map((item: any) => ({ label: item.name, url: item.sameAs ?? null })),
     images: values(schema.image).map((item: any) => ({ thumbnail: item.thumbnailUrl,
       service: item.contentUrl?.['@id'] ?? null })),
+    creators: values(schema.creator).flatMap((role: any) => values(role.creator).map((item: any) => ({
+      role: role.roleName, kind: item['@type'], label: item.name, url: item.sameAs ?? null
+    }))),
+    places: values(schema.locationCreated).map((item: any) => ({ label: item.address, url: item.sameAs ?? null })),
+    depicted: values(schema.about).map((item: any) => ({ kind: item['@type'], label: item.name, url: item.sameAs ?? null })),
+    contributors: values(schema.contributor).flatMap((role: any) => values(role.contributor).map((item: any) => ({
+      role: role.roleName, kind: item['@type'], label: item.name, url: item.sameAs ?? null
+    }))),
+    dimensions: Object.fromEntries(['height', 'width', 'depth'].map(key => [key, schema[key]])),
+    related: values(schema.isRelatedTo).map((item: any) => ({ id: item.sameAs?.split('/').at(-2), label: item.name, identifier: item.identifier })),
+    citations: values(schema.citation),
     source: schema['@id']
   })
 }

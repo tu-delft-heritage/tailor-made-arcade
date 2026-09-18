@@ -7,17 +7,44 @@ pnpm install
 pnpm dev
 ```
 
-Open the local URL printed by Vite. A game contains eight identification
-questions, an always-visible progress row, a 20-second question timer, a
-four-minute game timer, answer explanations, results, optional arcade sounds,
-and a device-local best score. Running out of question or game time ends the
-session.
+Open the local URL printed by Vite. **The Lost Labels** starts with Daphne
+accidentally dropping the collection's labels. Choose Charlotte, Daphne, Anna,
+Liselotte, Isabel, Cormac, or Catherine to help link them back to the objects.
+Each teammate has a NES-style portrait based on the supplied team photo and
+bilingual character quotes. The selected
+portrait remains in the HUD, and replay returns to teammate selection.
 
-Dutch and English can be selected on the title screen with the mouse or the
-joystick. Dutch uses all ten curated records. English sessions are assembled
-only from the nine records that have an English linked-data label, English
-description, and reviewed English image description. The language choice and
-separate high scores are stored locally.
+A short, skippable opening spills paper labels over a pixel depot inspired by
+the reference photographs. It uses CSS animation, respects reduced motion, and
+adds no animation dependency. Labels have two clipped corners at one end and
+form the buttons and loose, slightly rotated answer cards. The fallen labels
+remain on the floor throughout the mission. Three full-screen pixel-art rooms
+rotate between questions: blue shelving, compact stacks, and the machinery hall.
+Object photographs sit on display shelves in each room. Every interface element
+uses the bundled Press Start 2P NES typeface. Both timers start only
+when the first object photo is ready. Public art notes and depot prompts are in
+[docs/art-direction.md](docs/art-direction.md) and
+[docs/depot-scenes.md](docs/depot-scenes.md); portraits are bundled from
+`src/lib/assets/avatars/`, including when using a custom image cache. Private
+character context and avatar prompts belong in the Git-ignored `.local-context/`
+directory, outside application imports and build assets.
+
+A game contains **ten varied questions drawn from all 720 objects**, with an
+explicit question above every scene. Sixteen formats cover object types,
+materials, makers, designers, manufacturers, production places, depicted people,
+professors involved in creation, dating, height/width/depth, previous owners,
+linked objects, vocabulary definitions, and four-photo date comparisons.
+Every reveal explains the exact source fact. Metadata rounds allow 20 seconds;
+definitions and four-photo comparisons allow 30. The overall timer is four
+minutes, with loading time excluded. Unavailable photographs are replaced
+without scoring or using up a round (up to twelve replacements per mission).
+
+Dutch and English are selectable on the title screen. Every object has at least
+one eligible question in each language; not every field is translated.
+English omits linked-object title questions and untranslated terms. Proper names,
+numbers and source city names work in both modes. No definitions are translated
+or invented. Language and separate best scores are stored locally; v3 scores
+have a 1,000-point maximum.
 
 The game supports the mouse and the cabinet's external joystick and four
 physical buttons, using the key mapping from Allmaps Arcade's
@@ -25,8 +52,8 @@ physical buttons, using the key mapping from Allmaps Arcade's
 
 | Physical control | Key mapping | Action |
 | --- | --- | --- |
-| Joystick | Arrow keys | Select an answer in the 2×2 grid; turn description pages |
-| Green button | V or Enter | Start, confirm, continue, play again |
+| Joystick | Arrow keys | Choose a teammate; select an answer in the 2×2 grid; turn description pages |
+| Green button | V or Enter | Open team selection, start with the selected teammate, skip the opening, confirm, continue, play again |
 | Yellow button | X or − | Zoom photograph out |
 | Yellow button | C or + | Zoom photograph in |
 | White button | Z | Toggle sound |
@@ -41,13 +68,12 @@ are disabled by default. Set `PUBLIC_CABINET=true` to request fullscreen when a
 game starts and hide the pointer for the physical cabinet. Longer descriptions
 are split into pages controlled with the joystick.
 
-This is still the first question module. Odd-one-out and definition questions,
-difficulty balancing, and a named leaderboard remain planned. The current score
-has a versioned storage key and will not mix with earlier one-question scores.
+Difficulty balancing from player feedback and a named leaderboard remain planned.
+The versioned score key keeps ten-round scores separate from earlier versions.
 
-The game uses Svelte 5, SvelteKit, Tailwind 4, XState 5, and NES.css. Its arcade
-cabinet adapts the Academic Heritage site's indigo and bright card palette,
-eight-point cut corners, custom pixel bevels, and a subtle scanline overlay. Shared components,
+The game uses Svelte 5, SvelteKit, Tailwind 4, XState 5, and NES.css. Its full-screen
+pixel-art depot uses blue steel, cream paper labels, mustard accents,
+clipped tag corners, and a subtle scanline overlay. Shared components,
 question generation, and the state machine are separate under `src/lib/`. Fonts
 and compiled metadata are bundled. Vocabulary providers are never contacted at
 runtime. Photographs use their remote thumbnail URLs unless a local cache is
@@ -56,13 +82,18 @@ contain no external navigation.
 
 ### Data and static builds
 
-`data/objects.json` contains a normalized snapshot of all 720 objects.
-`data/game-selection.json` selects ten prototype objects and reviewed Dutch and,
-where supported, English image descriptions. Choices are built from actual type
-labels in the collection and linked vocabularies. `data/data-quality.json`
-records coverage, source commit, selected image references, and the temporarily
-excluded Wikidata identifier. The selected photos were inspected for usable
-object views; difficulty still needs feedback from players.
+`data/objects.json` preserves the full normalized snapshot, including creator
+roles, places, depicted people, dimensions with units, related records and
+citations. `data/game-selection.json` retains the original ten-photo review;
+it no longer limits the game. `data/professors.json` contains reviewed source
+passages supporting professorship, combined with each object's actual creator
+roles. A depicted professor is never automatically treated as a creator.
+
+`data/question-coverage.json` is rebuilt offline with eligible counts, explicit
+exclusions, sample questions/choices/answers, image URLs and source evidence for
+every module and language. See [docs/question-types.md](docs/question-types.md)
+for field policy and content-review limits. The runtime snapshot measures about
+261 KiB gzip, just above the plan's approximate 250 KB starting budget.
 
 ```sh
 pnpm build       # Compile local snapshots and export the static site to build/
@@ -78,7 +109,7 @@ the default is the domain root.
 ### Local image cache
 
 Photographs are intentionally excluded from Git. By default the app uses the
-remote thumbnail URL stored in `data/objects.json`. Cache the selected images and
+remote thumbnail URL stored in `data/objects.json`. Cache all 720 images and
 serve or bundle them locally with:
 
 ```sh
@@ -96,11 +127,13 @@ pnpm cache:images -- --output-dir /path/to/arcade-assets
 GAME_IMAGE_DIR=/path/to/arcade-assets PUBLIC_OBJECT_IMAGE_BASE=/objects pnpm build
 ```
 
-Reruns reuse existing files; add `--refresh` to download them again. See
+Reruns reuse existing files; add `--refresh` to download them again. Use
+`--prototype` only to cache the original ten reviewed photographs. See
 `.env.example` for the complete local and cabinet configuration.
 
-The page also feature-detects optional WebMCP tools for reading, starting,
-answering, and finishing a round. These use the same game actions as the UI;
+The page also feature-detects optional WebMCP tools for reading the round,
+opening team selection, choosing a teammate, skipping the opening, answering,
+and finishing a round. These use the same game actions as the UI;
 unsupported browsers use the ordinary interface. Live WebMCP integration has not
 been validated in a supporting browser.
 
