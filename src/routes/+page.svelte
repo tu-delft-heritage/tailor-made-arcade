@@ -13,6 +13,7 @@
   import StoryArtwork from '$lib/components/StoryArtwork.svelte'
   import ScoreTable from '$lib/components/ScoreTable.svelte'
   import ObjectQr from '$lib/components/ObjectQr.svelte'
+  import SiteMeta from '$lib/components/SiteMeta.svelte'
   import { team } from '$lib/game/team'
   import { cabinetKeys, joystickDirection, descriptionPages, moveTeammate } from '$lib/game/cabinet'
   import type { Direction } from '$lib/game/cabinet'
@@ -468,10 +469,7 @@
   }
 </script>
 
-<svelte:head>
-  <title>Tailor-Made Arcade</title>
-  <meta name="description" content="Tailor-Made Arcade: The Lost Labels. Kies je avatar en koppel de verdwenen labels weer aan de erfgoedcollectie van TU Delft." />
-</svelte:head>
+<SiteMeta />
 <svelte:window onkeydown={handleKeydown} />
 
 <main class="cabinet" class:cabinet-mode={cabinetMode}>

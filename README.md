@@ -175,6 +175,15 @@ before the first run ([GitHub setup guide](https://docs.github.com/en/pages/gett
 Only `main` is deployed. The workflow reads the site's base path from GitHub Pages,
 so repository paths and custom domains use the correct asset URLs.
 
+The workflow also sets `PUBLIC_SITE_URL` to the public Pages URL. The prerendered
+homepage includes a descriptive title, Dutch description, canonical URL, Open
+Graph metadata and a large X/Twitter card. Both social cards reuse
+`src/lib/assets/story/idle-observatory.png`, with image alt text and absolute URLs.
+For other hosts, set `PUBLIC_SITE_URL` to the full homepage URL (including any
+base path) at build time. Local builds without it omit the canonical URL. Social
+metadata follows the default Dutch page; the game still offers English in its
+language selector.
+
 CI caches the pnpm store and the generated collection JSON/coverage report.
 The collection cache key includes the checked-in object, vocabulary and professor
 snapshots, the data generator and question helpers, the lockfile and Node version.

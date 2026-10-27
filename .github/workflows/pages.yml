@@ -63,6 +63,7 @@ jobs:
         run: pnpm exec vite build
         env:
           BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
           GAME_IMAGE_DIR: static
           PUBLIC_OBJECT_IMAGE_BASE: ''
           PUBLIC_CABINET: 'false'
