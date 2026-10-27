@@ -1,5 +1,5 @@
 export type Language = 'nl' | 'en'
-export const characterIds = ['charlotte', 'daphne', 'anna', 'liselotte', 'isabel', 'cormac', 'catherine'] as const
+export const characterIds = ['charlotte', 'daphne', 'anna', 'liselotte', 'isabel', 'cormac', 'catherine', 'elin', 'karin', 'jill'] as const
 export type CharacterId = typeof characterIds[number]
 export type LocalizedText = Partial<Record<Language, string>>
 export const factFields = ['type', 'material', 'maker', 'designer', 'manufacturer', 'place', 'depicted', 'professor', 'date', 'height', 'width', 'depth', 'owner', 'related'] as const
