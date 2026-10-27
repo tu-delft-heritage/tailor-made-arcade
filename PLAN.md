@@ -1,6 +1,6 @@
-# Daphne's Arcade — implementation plan
+# Tailor-Made Arcade — implementation plan
 
-## Implemented status — September 18, 2026
+## Implemented status — October 27, 2026
 
 Ten-round missions now draw from the full 720-object snapshot. Sixteen modules
 cover object type, material, maker, designer, manufacturer, creation place,
@@ -10,19 +10,25 @@ shows an explicit question and a source-based reveal. All objects are eligible
 in Dutch and English; English has fifteen modules because linked-object titles
 are not translated. No missing metadata is interpreted as absence.
 
-The NES-only interface retains seven selectable teammates, their quotes, three
+The NES-only interface retains ten selectable teammates, their quotes, three
 spatial depot scenes, loose answer tags and persistent fallen labels. Ten varied
 modules per mission avoid repeated object IDs and image URLs. Failed photographs
-are replaced without consuming a round; loading time is excluded from the timer.
+are replaced without consuming a round; loading and answer reveals are excluded
+from both timers. Submitting an answer immediately stops the countdown.
 Definitions/comparisons get 30 seconds; other rounds get 20; total play time is
-four minutes. Best scores use a new 1,000-point scale and storage version.
+four minutes in round one. Speed bonuses and repeat-round multipliers reward
+fast play; successful continuations retain the avatar and shorten both clocks.
+Answer pages warn before the 60-second idle reset and preserve inventory-number
+line breaks. Complete date periods use readable century/decade labels.
 
 `data/question-coverage.json` contains coverage, exclusions, previews and evidence.
 `docs/question-types.md` documents field rules and remaining review limits.
 Automated checks cover all generated answers, 100 seeds per language, source
 facts, role separation, aliases, date overlap, readiness, replacement, scoring
-and replay. The named leaderboard, complete image/content review, and difficulty
-calibration remain future work.
+and replay. The persistent avatar scoreboard includes portraits, score bars and
+gold/silver/bronze cups for the top three. Successful games continue into harder
+rounds, and object-answer labels include catalogue titles and scannable permalinks.
+Complete image/content review and difficulty calibration remain future work.
 
 ## Goal
 
@@ -70,17 +76,20 @@ The main type/material/creator/place fields contain 207 distinct source URLs:
 
 ## 1. Player experience
 
-1. **Title:** Daphne's Arcade, a short dedication, high score, and a green-button
-   start prompt. Keep screen text minimal.
+1. **Title and avatar:** Tailor-Made Arcade, high score, and a green-button start
+   prompt. No team portraits on the title. Choose one of ten avatars; their shocked
+   portrait appears as they drop the labels. Keep screen text minimal.
 2. **Game:** ten questions, a visible round counter and score, consistent answer
    cards selected with the external joystick and confirmed with the green button.
 3. **Reveal:** show the correct answer, a brief explanation, the actual metadata
    behind the question. Paginate long text with the joystick. Advance with the
    green button when the player is ready; retain source links in the data.
-4. **Results:** score, correct answers, a gallery of encountered objects, and an
-   invitation to enter initials for the local leaderboard.
+4. **Endings:** Cormac celebrates a completed mission on a gently animated motorcycle.
+   Liselotte delivers a playful scolding on game over. Show score and a replay action.
 5. **Play again:** a new randomized selection with repeated objects and terms
    avoided within a session where the available pool permits it.
+6. **Idle:** after one minute without input, show the sparkling team scene in the depot.
+   Input returns to the title and the next player starts with a fresh mission.
 
 Keep the tone curious and celebratory. Wrong answers should reveal something
 interesting about the objects. Show object titles after answering when they would
@@ -244,15 +253,24 @@ reference cabinet mapping: arrow keys select, V confirms, X/C zoom, Z toggles
 sound. All screens fit the viewport without scrolling or touch controls. Extend
 spatial navigation to a 3-by-2 grid when six options are appropriate.
 
-Current scoring is 100 points per correct answer, ten rounds, and a 1,000-point
-maximum. Metadata uses 20 seconds, definitions/comparisons 30, and a four-minute overall
-timer, with no speed bonus. Future modes should use separate leaderboard categories
-so scores remain comparable.
+Correct answers earn 100 base points plus up to 100 for the fraction of
+question time remaining; wrong answers earn zero. Round one allows 20 seconds
+for metadata, 30 for definitions/comparisons, and 240 overall. Next Round keeps
+the avatar after success, reduces both clocks by 15% and adds 0.25× to points.
+Time limits have a 40% floor (8/12 seconds and 96 overall). Scores reset each
+mission; home, idle and game over end the continuation. Reveal/loading time
+never affects speed bonuses. A 15-second warning precedes idle on answer pages.
 
-Store the top local scores with initials, points, correct answers, date, mode,
-question count, seed, and data/rules versions. Label the table “High scores on this
-device.” Handle missing, corrupt, or unavailable localStorage without blocking
-play. Prevent repeated submissions from scoring or saving a result twice.
+The current scoreboard stores each avatar's best score across languages in
+`tailor-made-arcade:scoreboard:v1`. Home and ending screens link to the table;
+all ten portraits and names share a bar scale of at least 2,000 points, expanding
+to the highest stored score. Existing records remain available. New avatar
+records are announced only after a completed game, with their rows highlighted
+on the following scoreboard. The win screen automatically
+opens the table after eight seconds. Missing, corrupt or
+unavailable localStorage does not block play. Lower scores cannot replace records,
+and saving merges records from other tabs. A future run history can add initials,
+dates, seeds and data/rules versions separately.
 
 ## 5. Delivery sequence
 
