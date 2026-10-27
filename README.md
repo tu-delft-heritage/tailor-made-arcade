@@ -178,7 +178,7 @@ so repository paths and custom domains use the correct asset URLs.
 The workflow also sets `PUBLIC_SITE_URL` to the public Pages URL. The prerendered
 homepage includes a descriptive title, Dutch description, canonical URL, Open
 Graph metadata and a large X/Twitter card. Both social cards reuse
-`src/lib/assets/story/idle-observatory.png`, with image alt text and absolute URLs.
+`src/lib/assets/story/idle-team.png`, with image alt text and absolute URLs.
 For other hosts, set `PUBLIC_SITE_URL` to the full homepage URL (including any
 base path) at build time. Local builds without it omit the canonical URL. Social
 metadata follows the default Dutch page; the game still offers English in its
