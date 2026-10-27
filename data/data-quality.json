@@ -1,0 +1,61 @@
+{
+  "upstreamCommit": "8c0458606e214a0e094d8044f3203e638fadeaf1",
+  "objects": 720,
+  "withType": 720,
+  "withImageReference": 720,
+  "uniqueTypeLabels": 217,
+  "vocabularyDefinitions": {
+    "nl": 135,
+    "en": 140
+  },
+  "prototypeObjects": 10,
+  "selectedImageReferences": [
+    {
+      "id": "014ed4d8-7f80-4779-a8b0-23228e6a8151",
+      "url": "https://dlc.services/thumbs/7/18/82fa7c92-c299-4091-898e-052211e69564/full/full/0/default.jpg"
+    },
+    {
+      "id": "03daee88-a7b3-4b2c-b1b1-c05d61716ed1",
+      "url": "https://dlc.services/thumbs/7/18/313fb6cb-640c-40a6-bb79-40e662da08b5/full/full/0/default.jpg"
+    },
+    {
+      "id": "044b5593-7efe-4de9-95bc-ee64447123b0",
+      "url": "https://dlc.services/thumbs/7/18/819cd0a1-0316-47bf-a4a2-cdecdbc517cb/full/full/0/default.jpg"
+    },
+    {
+      "id": "05aee3f3-c216-41ef-8f3e-a4480e48246c",
+      "url": "https://dlc.services/thumbs/7/18/4d6bef41-039b-47fb-8704-374e0574d78a/full/full/0/default.jpg"
+    },
+    {
+      "id": "0bc1ae0f-fc62-40b7-8983-21cb5f38c1e0",
+      "url": "https://dlc.services/thumbs/7/18/ec696a39-ca4c-488d-b50c-c113c2d93d47/full/full/0/default.jpg"
+    },
+    {
+      "id": "192f45f3-6b19-431e-9be6-094bbbafb8d2",
+      "url": "https://dlc.services/thumbs/7/18/0f2b1745-c7ed-4daf-ad56-98260dec7c7d/full/full/0/default.jpg"
+    },
+    {
+      "id": "20b1241a-6402-44ae-95d3-0ea5d3c63f4d",
+      "url": "https://dlc.services/thumbs/7/18/ca43a705-99fe-4f7d-8b93-055b8084f552/full/full/0/default.jpg"
+    },
+    {
+      "id": "31a2f01d-367b-4016-a5ba-bfa3614851c1",
+      "url": "https://dlc.services/thumbs/7/18/2a8b62ca-ec56-45d4-9b1f-bce1604e04bd/full/full/0/default.jpg"
+    },
+    {
+      "id": "34580a1c-223c-4d60-92a4-439efebf3e00",
+      "url": "https://dlc.services/thumbs/7/18/28e6c51d-c071-490d-9db6-adacc860eb7b/full/full/0/default.jpg"
+    },
+    {
+      "id": "a6532245-844c-45e1-b4b9-c287e364452d",
+      "url": "https://dlc.services/thumbs/7/18/3550e22e-5298-4a1c-876c-65b70dfb9803/full/full/0/default.jpg"
+    }
+  ],
+  "exclusions": [
+    {
+      "url": "http://www.wikidata.org/entity/Q138148494",
+      "reason": "Upstream 404; skipped until the source is corrected."
+    }
+  ],
+  "note": "Images are referenced only. Use pnpm cache:images to create an ignored local cache."
+}
