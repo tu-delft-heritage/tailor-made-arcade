@@ -2,6 +2,9 @@ import { assign, setup } from 'xstate'
 import { characterIds, type CharacterId, type GameOverReason, type Question, type RoundResult } from './types.ts'
 import { moveSelection } from './cabinet.ts'
 import type { Direction } from './cabinet.ts'
+import { answerPoints, questionForLevel } from './scoring.ts'
+
+export const RESULTS_MILLISECONDS = 8000
 
 type GameContext = {
   characterId: CharacterId
@@ -9,6 +12,8 @@ type GameContext = {
   questionIndex: number
   selected: string | null
   score: number
+  level: number
+  lastPoints: number
   activeChoice: number
   results: RoundResult[]
   gameOverReason: GameOverReason | null
@@ -17,45 +22,51 @@ type GameContext = {
 export const gameMachine = setup({
   types: {
     context: {} as GameContext,
-    events: {} as { type: 'START'; questions: Question[] } | { type: 'IMAGE_READY' } |
-      { type: 'IMAGE_ERROR' } | { type: 'REPLACE_QUESTION'; question: Question } | { type: 'ANSWER'; answer: string } | { type: 'MOVE'; direction: Direction } |
-      { type: 'CONFIRM' } | { type: 'FINISH' } | { type: 'TIMEOUT'; reason: 'question-time' | 'game-time' } |
-      { type: 'HOME' } | { type: 'SELECT_TEAM' } | { type: 'CHOOSE_CHARACTER'; characterId: CharacterId } | { type: 'INTRO_DONE' }
+    events: {} as { type: 'START' | 'NEXT_GAME'; questions: Question[] } | { type: 'IMAGE_READY' } |
+      { type: 'IMAGE_ERROR' } | { type: 'REPLACE_QUESTION'; question: Question } | { type: 'ANSWER'; answer: string; remainingMilliseconds?: number } | { type: 'MOVE'; direction: Direction } |
+      { type: 'CONFIRM'; remainingMilliseconds?: number } | { type: 'FINISH' } | { type: 'TIMEOUT'; reason: 'question-time' | 'game-time' } |
+      { type: 'HOME' } | { type: 'IDLE' } | { type: 'WAKE' } | { type: 'SHOW_SCORES' } | { type: 'SELECT_TEAM' } | { type: 'CHOOSE_CHARACTER'; characterId: CharacterId } | { type: 'INTRO_DONE' }
   },
   actions: {
+    resetCharacter: assign({ characterId: 'charlotte' as const }),
     chooseCharacter: assign(({ event }) => event.type === 'CHOOSE_CHARACTER' ? { characterId: event.characterId } : {}),
-    start: assign(({ event }) => event.type === 'START' ? {
-      questions: event.questions, questionIndex: 0, selected: null, score: 0, activeChoice: 0,
-      results: [], gameOverReason: null
-    } : {}),
+    start: assign(({ context, event }) => {
+      if (event.type !== 'START' && event.type !== 'NEXT_GAME') return {}
+      const level = event.type === 'NEXT_GAME' ? context.level + 1 : 1
+      return { questions: event.questions.map(question => questionForLevel(question, level)), level,
+        questionIndex: 0, selected: null, score: 0, lastPoints: 0, activeChoice: 0, results: [], gameOverReason: null }
+    }),
     move: assign(({ context, event }) => event.type === 'MOVE'
       ? { activeChoice: moveSelection(context.activeChoice, event.direction) } : {}),
-    confirm: assign(({ context }) => {
+    confirm: assign(({ context, event }) => {
       const question = context.questions[context.questionIndex]
       const selected = question.choices[context.activeChoice]
       const correct = selected === question.answer
-      return { selected, score: context.score + (correct ? 100 : 0), results: [...context.results, correct ? 'correct' : 'wrong'] }
+      const lastPoints = answerPoints(correct, event.type === 'CONFIRM' ? event.remainingMilliseconds ?? 0 : 0, question.seconds, context.level)
+      return { selected, lastPoints, score: context.score + lastPoints, results: [...context.results, correct ? 'correct' : 'wrong'] }
     }),
     answer: assign(({ event, context }) => {
       if (event.type !== 'ANSWER') return {}
       const question = context.questions[context.questionIndex]
       const correct = event.answer === question.answer
-      return { selected: event.answer, score: context.score + (correct ? 100 : 0), results: [...context.results, correct ? 'correct' : 'wrong'] }
+      const lastPoints = answerPoints(correct, event.remainingMilliseconds ?? 0, question.seconds, context.level)
+      return { selected: event.answer, lastPoints, score: context.score + lastPoints, results: [...context.results, correct ? 'correct' : 'wrong'] }
     }),
-    next: assign(({ context }) => ({ questionIndex: context.questionIndex + 1, selected: null, activeChoice: 0 })),
+    next: assign(({ context }) => ({ questionIndex: context.questionIndex + 1, selected: null, lastPoints: 0, activeChoice: 0 })),
     timeout: assign(({ context, event }) => event.type === 'TIMEOUT' ? {
       results: context.selected === null ? [...context.results, 'timeout' as const] : context.results,
       gameOverReason: event.reason
     } : {}),
     replaceQuestion: assign(({ context, event }) => event.type === 'REPLACE_QUESTION' ? {
-      questions: context.questions.map((question, index) => index === context.questionIndex ? event.question : question),
+      questions: context.questions.map((question, index) => index === context.questionIndex ? questionForLevel(event.question, context.level) : question),
       selected: null, activeChoice: 0
     } : {}),
     imageError: assign({ gameOverReason: 'image' as const }),
-    home: assign({ questions: [], questionIndex: 0, selected: null, score: 0, activeChoice: 0,
+    home: assign({ questions: [], questionIndex: 0, selected: null, score: 0, level: 1, lastPoints: 0, activeChoice: 0,
       results: [], gameOverReason: null })
   },
   guards: {
+    completedGame: ({ context }) => context.questions.length > 0 && context.results.length === context.questions.length && context.gameOverReason === null,
     validCharacter: ({ event }) => event.type === 'CHOOSE_CHARACTER' && characterIds.includes(event.characterId),
     validAnswer: ({ context, event }) => event.type === 'ANSWER' &&
       Boolean(context.questions[context.questionIndex]?.choices.includes(event.answer)),
@@ -64,12 +75,17 @@ export const gameMachine = setup({
 }).createMachine({
   id: 'arcade',
   initial: 'title',
-  context: { characterId: 'daphne', questions: [], questionIndex: 0, selected: null, score: 0, activeChoice: 0,
+  context: { characterId: 'charlotte', questions: [], questionIndex: 0, selected: null, score: 0, level: 1, lastPoints: 0, activeChoice: 0,
     results: [], gameOverReason: null },
-  on: { HOME: { target: '.title', actions: 'home' } },
+  on: {
+    HOME: { target: '.title', actions: 'home' },
+    IDLE: { target: '.idle', actions: 'home' }
+  },
   states: {
-    title: { on: { SELECT_TEAM: 'choosing' } },
-    choosing: { on: {
+    idle: { on: { WAKE: 'title' } },
+    title: { on: { SELECT_TEAM: 'choosing', SHOW_SCORES: 'scoreboard' } },
+    scoreboard: { on: { NEXT_GAME: { guard: 'completedGame', target: 'intro', actions: 'start' } } },
+    choosing: { entry: 'resetCharacter', on: {
       CHOOSE_CHARACTER: { guard: 'validCharacter', actions: 'chooseCharacter' },
       START: { target: 'intro', actions: 'start' }
     } },
@@ -94,7 +110,10 @@ export const gameMachine = setup({
       ],
       TIMEOUT: { target: 'gameOver', actions: 'timeout' }
     } },
-    gameOver: { on: { SELECT_TEAM: 'choosing' } },
-    results: { on: { SELECT_TEAM: 'choosing' } }
+    gameOver: { on: { SELECT_TEAM: 'choosing', SHOW_SCORES: 'scoreboard' } },
+    results: { after: { [RESULTS_MILLISECONDS]: 'scoreboard' }, on: {
+      NEXT_GAME: { guard: 'completedGame', target: 'intro', actions: 'start' },
+      SELECT_TEAM: 'choosing', SHOW_SCORES: 'scoreboard'
+    } }
   }
 })

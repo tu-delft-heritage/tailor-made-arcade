@@ -3,9 +3,11 @@
   import type { Teammate } from '$lib/game/team'
   import TeamAvatar from './TeamAvatar.svelte'
 
-  let { character, score, results, questionIndex, total, totalSeconds, question, totalLabel, questionLabel, progressLabel }: {
+  let { character, score, results, questionIndex, total, totalSeconds, question, level, levelLabel, totalLabel, questionLabel, progressLabel }: {
     character: Teammate
     score: number
+    level: number
+    levelLabel: string
     results: RoundResult[]
     questionIndex: number
     total: number
@@ -20,7 +22,7 @@
 </script>
 
 <div class="game-hud">
-  <div class="player-badge"><span class="player-portrait" title={character.name}><TeamAvatar {character} /></span><span>{String(score).padStart(4, '0')}</span></div>
+  <div class="player-badge"><span class="player-portrait" title={character.name}><TeamAvatar {character} /></span><span class="player-score">{String(score).padStart(4, '0')}<small>{levelLabel} {level}</small></span></div>
   <ol class="round-progress" aria-label={progressLabel}>
     {#each Array(total) as _, index}
       {@const result = results[index]}

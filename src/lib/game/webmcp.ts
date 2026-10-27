@@ -3,6 +3,7 @@ import { characterIds, type CharacterId } from './types'
 type RoundState = {
   state: unknown
   score: number
+  level: number
   character: CharacterId
   question: { prompt: string; clue?: string; images?: string[]; image: string; imageAlt: string; choices: string[]; answer?: string; title?: string } | null
 }
@@ -24,10 +25,10 @@ export function registerArcadeTools(actions: {
     { name: 'get_arcade_round', description: 'Read the visible round, choices, and score. Correct answers appear only after submitting.',
       inputSchema: { type: 'object', properties: {}, additionalProperties: false },
       annotations: { readOnlyHint: true, untrustedContentHint: true }, execute: async () => actions.read() },
-    { name: 'start_arcade_round', description: 'Open teammate selection from the title, results, or game-over screen. Choose a teammate before beginning the mission.',
+    { name: 'start_arcade_round', description: 'Open avatar selection from the idle, title, results, or game-over screen. Choose an avatar before beginning the mission.',
       inputSchema: { type: 'object', properties: {}, additionalProperties: false },
       annotations: { readOnlyHint: false, untrustedContentHint: true }, execute: async () => {
-        if (!['title', 'results', 'gameOver'].includes(String(actions.read().state))) throw new Error('Finish the current game first.')
+        if (!['idle', 'title', 'results', 'gameOver'].includes(String(actions.read().state))) throw new Error('Finish the current game first.')
         actions.selectTeam(); await actions.settle(); return actions.read()
       } },
     { name: 'choose_arcade_teammate', description: 'Select a teammate and begin The Lost Labels mission. Every teammate has the same scoring and difficulty.',

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
-import { createActor } from 'xstate'
-import { gameMachine } from '../src/lib/game/machine.ts'
+import { createActor, SimulatedClock } from 'xstate'
+import { gameMachine, RESULTS_MILLISECONDS } from '../src/lib/game/machine.ts'
 import { createQuestionBank, createSession } from '../src/lib/game/questions/index.ts'
 import { characterIds, type CharacterId, type GameData, type Language } from '../src/lib/game/types.ts'
 
@@ -10,9 +10,30 @@ const data: GameData = JSON.parse(await readFile(new URL('../src/lib/data/game-d
 const banks = { nl: createQuestionBank(data, 'nl'), en: createQuestionBank(data, 'en') }
 const questionsFor = (seed: number, language: Language) => createSession(banks[language], seed)
 
+test('scoreboard opens from home and endings without interrupting active play', () => {
+  const actor = createActor(gameMachine).start()
+  actor.send({ type: 'SHOW_SCORES' })
+  assert.equal(actor.getSnapshot().value, 'scoreboard')
+  actor.send({ type: 'HOME' })
+  actor.send({ type: 'SELECT_TEAM' })
+  actor.send({ type: 'START', questions: questionsFor(42, 'nl') })
+  actor.send({ type: 'INTRO_DONE' })
+  actor.send({ type: 'IMAGE_READY' })
+  actor.send({ type: 'SHOW_SCORES' })
+  assert.equal(actor.getSnapshot().value, 'playing')
+  actor.send({ type: 'TIMEOUT', reason: 'question-time' })
+  actor.send({ type: 'SHOW_SCORES' })
+  assert.equal(actor.getSnapshot().value, 'scoreboard')
+  actor.send({ type: 'IDLE' })
+  actor.send({ type: 'WAKE' })
+  assert.equal(actor.getSnapshot().value, 'title')
+  actor.stop()
+})
+
 test('a session scores each answer once, advances ten rounds, and records progress', () => {
   const questions = questionsFor(42, 'nl')
-  const actor = createActor(gameMachine).start()
+  const clock = new SimulatedClock()
+  const actor = createActor(gameMachine, { clock }).start()
   actor.send({ type: 'SELECT_TEAM' })
   actor.send({ type: 'START', questions })
   actor.send({ type: 'INTRO_DONE' })
@@ -30,7 +51,35 @@ test('a session scores each answer once, advances ten rounds, and records progre
   assert.equal(snapshot.value, 'results')
   assert.equal(snapshot.context.score, 1000)
   assert.deepEqual(snapshot.context.results, Array(10).fill('correct'))
+  clock.increment(RESULTS_MILLISECONDS - 1)
+  assert.equal(actor.getSnapshot().value, 'results')
+  clock.increment(1)
+  assert.equal(actor.getSnapshot().value, 'scoreboard')
+  assert.equal(actor.getSnapshot().context.score, 1000)
   actor.stop()
+})
+
+test('leaving the win screen cancels its scoreboard timer and resets avatar selection', () => {
+  const questions = questionsFor(42, 'en').slice(0, 1)
+  for (const exit of ['SELECT_TEAM', 'HOME', 'IDLE'] as const) {
+    const clock = new SimulatedClock()
+    const actor = createActor(gameMachine, { clock }).start()
+    actor.send({ type: 'SELECT_TEAM' })
+    actor.send({ type: 'CHOOSE_CHARACTER', characterId: 'jill' })
+    actor.send({ type: 'START', questions })
+    actor.send({ type: 'INTRO_DONE' })
+    actor.send({ type: 'IMAGE_READY' })
+    actor.send({ type: 'ANSWER', answer: questions[0].answer })
+    actor.send({ type: 'FINISH' })
+    actor.send({ type: exit })
+    const destination = actor.getSnapshot().value
+    clock.increment(RESULTS_MILLISECONDS)
+    assert.equal(actor.getSnapshot().value, destination)
+    if (exit === 'IDLE') actor.send({ type: 'WAKE' })
+    if (exit !== 'SELECT_TEAM') actor.send({ type: 'SELECT_TEAM' })
+    assert.equal(actor.getSnapshot().context.characterId, 'charlotte')
+    actor.stop()
+  }
 })
 
 test('question and overall timeouts end the game and lock further scoring', () => {
@@ -55,13 +104,16 @@ test('question and overall timeouts end the game and lock further scoring', () =
 })
 
 
-test('all seven teammates can be selected; the opening cannot score or time out', () => {
+test('all ten teammates can be selected; the opening cannot score or time out', () => {
+  assert.equal(characterIds.length, 10)
+  assert.ok(['elin', 'karin', 'jill'].every(id => characterIds.includes(id as CharacterId)))
   const questions = questionsFor(42, 'en')
   for (const characterId of characterIds) {
     const actor = createActor(gameMachine).start()
     actor.send({ type: 'START', questions })
     assert.equal(actor.getSnapshot().value, 'title', 'selection cannot be bypassed')
     actor.send({ type: 'SELECT_TEAM' })
+    assert.equal(actor.getSnapshot().context.characterId, 'charlotte')
     actor.send({ type: 'CHOOSE_CHARACTER', characterId })
     actor.send({ type: 'CHOOSE_CHARACTER', characterId: 'unknown' as CharacterId })
     assert.equal(actor.getSnapshot().context.characterId, characterId)
@@ -81,11 +133,93 @@ test('all seven teammates can be selected; the opening cannot score or time out'
     actor.send({ type: 'TIMEOUT', reason: 'question-time' })
     actor.send({ type: 'SELECT_TEAM' })
     assert.equal(actor.getSnapshot().value, 'choosing')
+    assert.equal(actor.getSnapshot().context.characterId, 'charlotte')
     actor.send({ type: 'CHOOSE_CHARACTER', characterId: 'catherine' })
     actor.send({ type: 'START', questions })
     assert.equal(actor.getSnapshot().value, 'intro')
     assert.equal(actor.getSnapshot().context.characterId, 'catherine')
     assert.deepEqual(actor.getSnapshot().context.results, [])
+    actor.stop()
+  }
+})
+
+test('an abandoned mission clears its score and ignores late image, timeout, and intro callbacks while idle', () => {
+  const questions = questionsFor(12, 'en')
+  const actor = createActor(gameMachine).start()
+  actor.send({ type: 'SELECT_TEAM' })
+  actor.send({ type: 'CHOOSE_CHARACTER', characterId: 'elin' })
+  actor.send({ type: 'START', questions })
+  actor.send({ type: 'INTRO_DONE' })
+  actor.send({ type: 'IMAGE_READY' })
+  actor.send({ type: 'ANSWER', answer: questions[0].answer })
+  assert.equal(actor.getSnapshot().context.score, 100)
+  actor.send({ type: 'IDLE' })
+  for (const type of ['IMAGE_READY', 'INTRO_DONE', 'FINISH', 'CONFIRM'] as const) actor.send({ type })
+  actor.send({ type: 'TIMEOUT', reason: 'game-time' })
+  assert.equal(actor.getSnapshot().value, 'idle')
+  assert.equal(actor.getSnapshot().context.score, 0)
+  assert.deepEqual(actor.getSnapshot().context.results, [])
+  assert.deepEqual(actor.getSnapshot().context.questions, [])
+  actor.send({ type: 'WAKE' })
+  actor.send({ type: 'SELECT_TEAM' })
+  actor.send({ type: 'START', questions })
+  assert.equal(actor.getSnapshot().value, 'intro')
+  assert.equal(actor.getSnapshot().context.characterId, 'charlotte')
+  actor.stop()
+})
+
+test('a successful player can continue with the same avatar, harder clocks and higher rewards', () => {
+  const questions = questionsFor(42, 'en').slice(0, 1)
+  for (const viaScoreboard of [false, true]) {
+    const clock = new SimulatedClock()
+    const actor = createActor(gameMachine, { clock }).start()
+    actor.send({ type: 'SHOW_SCORES' })
+    actor.send({ type: 'NEXT_GAME', questions })
+    assert.equal(actor.getSnapshot().value, 'scoreboard', 'home scoreboard cannot unlock a harder round')
+    actor.send({ type: 'HOME' })
+    actor.send({ type: 'SELECT_TEAM' })
+    actor.send({ type: 'CHOOSE_CHARACTER', characterId: 'elin' })
+    actor.send({ type: 'START', questions })
+    actor.send({ type: 'INTRO_DONE' })
+    actor.send({ type: 'IMAGE_READY' })
+    actor.send({ type: 'ANSWER', answer: questions[0].answer, remainingMilliseconds: questions[0].seconds * 500 })
+    assert.equal(actor.getSnapshot().context.lastPoints, 150)
+    actor.send({ type: 'ANSWER', answer: questions[0].answer, remainingMilliseconds: questions[0].seconds * 1000 })
+    assert.equal(actor.getSnapshot().context.score, 150, 'a locked answer cannot earn a second bonus')
+    actor.send({ type: 'FINISH' })
+    if (viaScoreboard) clock.increment(RESULTS_MILLISECONDS)
+    actor.send({ type: 'NEXT_GAME', questions })
+    let context = actor.getSnapshot().context
+    assert.equal(actor.getSnapshot().value, 'intro')
+    assert.equal(context.characterId, 'elin')
+    assert.equal(context.level, 2)
+    assert.equal(context.score, 0)
+    assert.equal(context.lastPoints, 0)
+    assert.deepEqual(context.results, [])
+    assert.equal(context.questions[0].seconds, Math.round(questions[0].seconds * 0.85))
+    clock.increment(RESULTS_MILLISECONDS)
+    assert.equal(actor.getSnapshot().value, 'intro', 'the earlier win timer cannot interrupt the next round')
+    actor.send({ type: 'INTRO_DONE' })
+    actor.send({ type: 'REPLACE_QUESTION', question: questions[0] })
+    assert.equal(actor.getSnapshot().context.questions[0].seconds, context.questions[0].seconds, 'replacements retain difficulty')
+    actor.send({ type: 'IMAGE_READY' })
+    actor.send({ type: 'ANSWER', answer: questions[0].answer, remainingMilliseconds: context.questions[0].seconds * 1000 })
+    assert.equal(actor.getSnapshot().context.score, 250)
+    actor.send({ type: 'FINISH' })
+    actor.send({ type: 'NEXT_GAME', questions })
+    assert.equal(actor.getSnapshot().context.level, 3)
+    actor.send({ type: 'INTRO_DONE' })
+    actor.send({ type: 'TIMEOUT', reason: 'game-time' })
+    actor.send({ type: 'SHOW_SCORES' })
+    actor.send({ type: 'NEXT_GAME', questions })
+    assert.equal(actor.getSnapshot().value, 'scoreboard', 'game over cannot advance difficulty')
+    actor.send({ type: 'HOME' })
+    actor.send({ type: 'SELECT_TEAM' })
+    actor.send({ type: 'CHOOSE_CHARACTER', characterId: 'karin' })
+    actor.send({ type: 'START', questions })
+    context = actor.getSnapshot().context
+    assert.equal(context.level, 1)
+    assert.equal(context.questions[0].seconds, questions[0].seconds)
     actor.stop()
   }
 })

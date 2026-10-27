@@ -10,21 +10,26 @@
   import TeamAvatar from '$lib/components/TeamAvatar.svelte'
   import DepotScene from '$lib/components/DepotScene.svelte'
   import LabelSpill from '$lib/components/LabelSpill.svelte'
+  import StoryArtwork from '$lib/components/StoryArtwork.svelte'
+  import ScoreTable from '$lib/components/ScoreTable.svelte'
+  import ObjectQr from '$lib/components/ObjectQr.svelte'
   import { team } from '$lib/game/team'
-  import { cabinetKeys, joystickDirection, descriptionPages } from '$lib/game/cabinet'
+  import { cabinetKeys, joystickDirection, descriptionPages, moveTeammate } from '$lib/game/cabinet'
+  import type { Direction } from '$lib/game/cabinet'
   import { copy } from '$lib/game/i18n'
   import { gameMachine } from '$lib/game/machine'
+  import { createInactivityTimer, IDLE_MILLISECONDS, IDLE_WARNING_MILLISECONDS } from '$lib/game/inactivity'
+  import { SCOREBOARD_KEY, MAX_SCORE, isNewHighScore, parseScoreboard, readScoreboard, recordHighScore } from '$lib/game/scoreboard'
+  import { GAME_SECONDS, QUESTION_SECONDS, roundRules } from '$lib/game/scoring'
+  import { formatDate } from '$lib/game/dates'
   import { createQuestionBank, createSession, questionObjects, replacementQuestion } from '$lib/game/questions'
   import type { CharacterId, GameData, GameObject, Language, Question } from '$lib/game/types'
   import { registerArcadeTools } from '$lib/game/webmcp'
 
   const SESSION_LENGTH = 10
-  const QUESTION_SECONDS = 20
-  const GAME_SECONDS = 240
   let questionBank: Question[] = []
   let failedObjects = new Set<string>()
   let imageRetries = 0
-  let loadingStarted = 0
   const cabinetMode = ['1', 'true', 'yes'].includes(String(env.PUBLIC_CABINET ?? '').toLowerCase())
   const configuredImageBase = String(env.PUBLIC_OBJECT_IMAGE_BASE ?? '').trim().replace(/\/$/, '')
   const { snapshot, send, actorRef } = useMachine(gameMachine)
@@ -32,26 +37,47 @@
   const questionIndex = $derived($snapshot.context.questionIndex)
   const question = $derived(questions[questionIndex] ?? null)
   const score = $derived($snapshot.context.score)
+  const level = $derived($snapshot.context.level)
+  const rules = $derived(roundRules(level))
+  const canContinueRound = $derived(($snapshot.matches('results') || $snapshot.matches('scoreboard')) &&
+    questions.length > 0 && $snapshot.context.results.length === questions.length && $snapshot.context.gameOverReason === null)
   const selected = $derived($snapshot.context.selected)
   const correct = $derived(Boolean(selected && selected === question?.answer))
   const playing = $derived($snapshot.matches('playing'))
-  const character = $derived(team.find(member => member.id === $snapshot.context.characterId) ?? team[1])
+  const character = $derived(team.find(member => member.id === $snapshot.context.characterId) ?? team[0])
   let language = $state<Language>('nl')
   const text = $derived(copy[language])
-  const pages = $derived(descriptionPages(question?.explanation ?? '', 140))
+  const pages = $derived(descriptionPages(question?.explanation ?? '', question?.answerObjectId ? 100 : 140))
   let best = $state(0)
+  let scores = $state(parseScoreboard(null))
+  let recordToBeat = $state(0)
+  const newHighScore = $derived(($snapshot.matches('results') || $snapshot.matches('scoreboard')) &&
+    $snapshot.context.gameOverReason === null && isNewHighScore(score, recordToBeat))
+  let homeChoice = $state(0)
+  const highestScore = $derived(Math.max(best, ...Object.values(scores)))
   let storageReady = $state(false)
   let screenHeading = $state<HTMLElement>()
+  let teamRoster = $state<HTMLDivElement>()
   let photoTimer: ReturnType<typeof setTimeout> | undefined
   let timerInterval: ReturnType<typeof setInterval> | undefined
   let noticeTimer: ReturnType<typeof setTimeout> | undefined
   let introTimer: ReturnType<typeof setTimeout> | undefined
+  let inactivity: ReturnType<typeof createInactivityTimer> | undefined
+  let idleWarningSeconds = $state<number | null>(null)
+  let idleWarningDeadline = 0
+  let idleContinue = $state<HTMLButtonElement>()
+  let introReady = $state(false)
   let spillKey = $state(0)
-  const sceneIndex = $derived($snapshot.matches('choosing') ? 1 : questionIndex % 3)
-  let totalDeadline = 0
-  let questionDeadline = 0
+  const sceneIndex = $derived($snapshot.matches('choosing') ? 1 : $snapshot.matches('results') ? 2 : questionIndex % 3)
+  const storyScene = $derived($snapshot.matches('idle') ? 'idle' : $snapshot.matches('gameOver') ? 'gameOver' : $snapshot.matches('results') ? 'results' : null)
+  let totalDeadline = $state(0)
+  let questionDeadline = $state(0)
+  let totalMillisecondsLeft = GAME_SECONDS * 1000
+  let timerNow = $state(0)
   let totalRemaining = $state(GAME_SECONDS)
   let questionRemaining = $state(QUESTION_SECONDS)
+  const countdownRemaining = $derived(playing && questionDeadline && totalDeadline ? Math.max(0, Math.min(questionDeadline, totalDeadline) - timerNow) : null)
+  const countdownLabel = $derived(!playing || totalRemaining <= questionRemaining ? text.total : text.round)
   let sound = $state(true)
   let zoom = $state(1)
   let descriptionPage = $state(0)
@@ -59,6 +85,17 @@
   let lastJoystickMove = 0
   let audioContext: AudioContext | undefined
   const scoreText = (number: number) => String(number).padStart(4, '0')
+
+  function recordActivity() {
+    const asleep = actorRef.getSnapshot().matches('idle')
+    const warned = idleWarningSeconds !== null
+    idleWarningSeconds = null
+    idleWarningDeadline = 0
+    inactivity?.reset()
+    if (asleep) send({ type: 'WAKE' })
+    if (warned) void tick().then(() => screenHeading?.focus({ preventScroll: true }))
+    return asleep || warned
+  }
 
   function imageUrl(object: GameObject) {
     if (!configuredImageBase) return object.imageRemote
@@ -68,28 +105,37 @@
   }
 
   function storageKey() { return `daphnes-arcade:best:v3:${language}` }
+  function scoreStorage() { try { return window.localStorage } catch { return undefined } }
   function loadBest() {
     try {
       const stored = Number(localStorage.getItem(storageKey()))
-      best = Number.isInteger(stored) && stored >= 0 && stored <= SESSION_LENGTH * 100 ? stored : 0
+      best = Number.isInteger(stored) && stored >= 0 && stored <= MAX_SCORE ? stored : 0
     } catch { best = 0 }
   }
   function chooseLanguage(next: Language) {
+    recordActivity()
     if (!$snapshot.matches('title')) return
     language = next
     try { localStorage.setItem('daphnes-arcade:language:v1', next) } catch { /* Preference is optional. */ }
     if (storageReady) loadBest()
   }
+  function showScoreboard() {
+    recordActivity()
+    send({ type: 'SHOW_SCORES' })
+  }
+  function goHome() { recordActivity(); homeChoice = 0; send({ type: 'HOME' }) }
   function selectTeam() {
+    recordActivity()
     if (!['title', 'results', 'gameOver'].includes(String(actorRef.getSnapshot().value))) return
     totalDeadline = 0
     questionDeadline = 0
     send({ type: 'SELECT_TEAM' })
   }
-  function chooseCharacter(characterId: CharacterId) { send({ type: 'CHOOSE_CHARACTER', characterId }) }
-  function moveCharacter(delta: number) {
+  function chooseCharacter(characterId: CharacterId) { recordActivity(); send({ type: 'CHOOSE_CHARACTER', characterId }) }
+  function moveCharacter(direction: Direction) {
     const index = team.findIndex(member => member.id === character.id)
-    chooseCharacter(team[(index + delta + team.length) % team.length].id)
+    const columns = teamRoster ? getComputedStyle(teamRoster).gridTemplateColumns.split(' ').length : 5
+    chooseCharacter(team[moveTeammate(index, direction, columns, team.length)].id)
   }
   function finishIntro() {
     clearTimeout(introTimer)
@@ -103,20 +149,67 @@
     } catch { /* Play still works without browser storage. */ }
     storageReady = true
     loadBest()
+    scores = readScoreboard(scoreStorage())
+    const syncScores = (event: StorageEvent) => {
+      if (event.key === SCOREBOARD_KEY || event.key === null) scores = readScoreboard(scoreStorage())
+    }
+    window.addEventListener('storage', syncScores)
     timerInterval = setInterval(updateTimers, 100)
+    inactivity = createInactivityTimer(() => {
+      totalDeadline = 0
+      questionDeadline = 0
+      soundNotice = ''
+      idleWarningSeconds = null
+      idleWarningDeadline = 0
+      send({ type: 'IDLE' })
+    }, IDLE_MILLISECONDS, () => {
+      if (!actorRef.getSnapshot().matches('reveal')) return
+      idleWarningDeadline = performance.now() + IDLE_WARNING_MILLISECONDS
+      idleWarningSeconds = IDLE_WARNING_MILLISECONDS / 1000
+    })
+    let lastPointerMove = 0
+    let suppressWakeClick = false
+    const pointerActivity = (event: PointerEvent) => {
+      // Keep the warning mounted until click, so dismissing it cannot swallow the next action.
+      if (idleWarningSeconds !== null) return
+      if (event.type === 'pointermove') {
+        if (performance.now() - lastPointerMove < 500) return
+        lastPointerMove = performance.now()
+      }
+      if (recordActivity() && event.type === 'pointerdown') {
+        suppressWakeClick = true
+        event.preventDefault()
+        event.stopImmediatePropagation()
+      }
+    }
+    const consumeWakeClick = (event: MouseEvent) => {
+      if (idleWarningSeconds !== null) {
+        recordActivity()
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        return
+      }
+      if (!suppressWakeClick) return
+      suppressWakeClick = false
+      event.preventDefault()
+      event.stopImmediatePropagation()
+    }
+    window.addEventListener('pointerdown', pointerActivity, true)
+    window.addEventListener('pointermove', pointerActivity)
+    window.addEventListener('click', consumeWakeClick, true)
     const disposeTools = registerArcadeTools({
       read: () => {
         const state = actorRef.getSnapshot()
         const current = state.context.questions[state.context.questionIndex]
         const revealed = state.matches('reveal') || state.matches('results')
-        return { state: state.value, score: state.context.score, character: state.context.characterId,
+        return { state: state.value, score: state.context.score, level: state.context.level, character: state.context.characterId,
           question: current ? { prompt: current.prompt, clue: current.clue,
             images: questionObjects(current).map(o => imageUrl(o)),
             image: imageUrl(current.object), imageAlt: current.object.imageAlt[current.language] ?? '',
             choices: current.choices,
             ...(revealed ? { answer: current.answer, title: current.object.title } : {}) } : null }
       },
-      selectTeam, chooseCharacter, start, finishIntro, answer: submitAnswer, finish: continueGame, settle: tick
+      selectTeam, chooseCharacter, start, finishIntro: () => { recordActivity(); finishIntro() }, answer: submitAnswer, finish: continueGame, settle: tick
     })
     return () => {
       disposeTools()
@@ -124,11 +217,22 @@
       clearTimeout(photoTimer)
       clearTimeout(noticeTimer)
       clearTimeout(introTimer)
+      inactivity?.stop()
+      window.removeEventListener('pointerdown', pointerActivity, true)
+      window.removeEventListener('pointermove', pointerActivity)
+      window.removeEventListener('click', consumeWakeClick, true)
+      window.removeEventListener('storage', syncScores)
       void audioContext?.close()
     }
   })
 
   $effect(() => {
+    if (idleWarningSeconds !== null) idleContinue?.focus({ preventScroll: true })
+  })
+  $effect(() => {
+    if (($snapshot.matches('results') || $snapshot.matches('gameOver')) && storageReady && score > scores[character.id]) {
+      scores = recordHighScore(scores, character.id, score, scoreStorage())
+    }
     if (($snapshot.matches('results') || $snapshot.matches('gameOver')) && storageReady && score > best) {
       best = score
       try { localStorage.setItem(storageKey(), String(best)) } catch { /* Optional local record. */ }
@@ -142,15 +246,21 @@
     if ($snapshot.matches('loading')) {
       const current = question
       if (!current) return
-      loadingStarted = performance.now()
       photoTimer = setTimeout(() => imageError(current.id), 12_000)
       return () => clearTimeout(photoTimer)
     }
   })
   $effect(() => {
-    if ($snapshot.matches('intro')) {
-      introTimer = setTimeout(finishIntro, 3300)
+    if ($snapshot.matches('intro') && introReady) {
+      introTimer = setTimeout(finishIntro, 4200)
       return () => clearTimeout(introTimer)
+    }
+  })
+
+  $effect(() => {
+    if ($snapshot.matches('choosing')) {
+      const image = new Image()
+      image.src = character.shockedPortrait
     }
   })
 
@@ -161,11 +271,14 @@
   })
 
   function updateTimers() {
+    if (idleWarningDeadline) idleWarningSeconds = Math.max(0, Math.ceil((idleWarningDeadline - performance.now()) / 1000))
     const state = actorRef.getSnapshot()
-    if (!state.matches('loading') && !state.matches('playing') && !state.matches('reveal')) return
+    if (!state.matches('playing')) return
     const now = performance.now()
-    if (totalDeadline && !state.matches('loading')) {
-      totalRemaining = Math.max(0, Math.ceil((totalDeadline - now) / 1000))
+    timerNow = now
+    if (totalDeadline) {
+      totalMillisecondsLeft = Math.max(0, totalDeadline - now)
+      totalRemaining = Math.ceil(totalMillisecondsLeft / 1000)
       if (totalRemaining === 0) {
         totalDeadline = 0
         questionDeadline = 0
@@ -208,21 +321,27 @@
       void document.documentElement.requestFullscreen().catch(() => {})
     }
   }
-  function start() {
-    if (!actorRef.getSnapshot().matches('choosing')) return
+  function start() { beginGame(false) }
+  function nextRound() { beginGame(true) }
+  function beginGame(continuing: boolean) {
+    recordActivity()
+    if (continuing ? !canContinueRound : !actorRef.getSnapshot().matches('choosing')) return
     enterFullscreen()
     spillKey += 1
+    introReady = false
     zoom = 1
     descriptionPage = 0
-    totalRemaining = GAME_SECONDS
-    questionRemaining = QUESTION_SECONDS
+    recordToBeat = Math.max(scores[character.id], readScoreboard(scoreStorage())[character.id])
     const seed = crypto.getRandomValues(new Uint32Array(1))[0]
     questionBank = createQuestionBank(data as GameData, language)
     failedObjects = new Set()
     imageRetries = 0
     const mission = createSession(questionBank, seed, SESSION_LENGTH)
-    questionRemaining = mission[0].seconds
-    send({ type: 'START', questions: mission })
+    send({ type: continuing ? 'NEXT_GAME' : 'START', questions: mission })
+    const state = actorRef.getSnapshot()
+    totalRemaining = roundRules(state.context.level).totalSeconds
+    totalMillisecondsLeft = totalRemaining * 1000
+    questionRemaining = state.context.questions[0].seconds
     totalDeadline = 0
     questionDeadline = 0
     beep()
@@ -230,14 +349,13 @@
   function imageReady(id: string) {
     const state = actorRef.getSnapshot()
     if (!state.matches('loading') || state.context.questions[state.context.questionIndex]?.id !== id) return
-    if (totalDeadline && loadingStarted) totalDeadline += performance.now() - loadingStarted
-    loadingStarted = 0
     clearTimeout(photoTimer)
     send({ type: 'IMAGE_READY' })
     if (actorRef.getSnapshot().matches('playing')) {
-      if (!totalDeadline) totalDeadline = performance.now() + GAME_SECONDS * 1000
+      timerNow = performance.now()
+      totalDeadline = timerNow + totalMillisecondsLeft
       questionRemaining = question?.seconds ?? QUESTION_SECONDS
-      questionDeadline = performance.now() + questionRemaining * 1000
+      questionDeadline = timerNow + questionRemaining * 1000
     }
   }
   function imageError(id: string) {
@@ -245,13 +363,11 @@
     const current = state.context.questions[state.context.questionIndex]
     if (!state.matches('loading') || current?.id !== id) return
     clearTimeout(photoTimer)
-    if (totalDeadline && loadingStarted) totalDeadline += performance.now() - loadingStarted
-    loadingStarted = 0
     questionObjects(current).forEach(o => failedObjects.add(o.id))
     const replacement = imageRetries++ < 12 ? replacementQuestion(questionBank, state.context.questions, failedObjects, current.kind) : undefined
     if (replacement) {
-      questionRemaining = replacement.seconds
       send({ type: 'REPLACE_QUESTION', question: replacement })
+      questionRemaining = actorRef.getSnapshot().context.questions[state.context.questionIndex].seconds
       return
     }
     totalDeadline = 0
@@ -259,20 +375,25 @@
     send({ type: 'IMAGE_ERROR' })
   }
   function submitAnswer(value: string) {
-    if (!playing || !question) return
+    recordActivity()
+    if (!playing || !question || !question.choices.includes(value)) return
+    // Settle elapsed time before accepting an answer, then freeze both clocks.
+    updateTimers()
+    if (!actorRef.getSnapshot().matches('playing')) return
+    const remainingMilliseconds = Math.max(0, questionDeadline - timerNow)
+    totalDeadline = 0
     questionDeadline = 0
     beep(value === question.answer)
-    send({ type: 'ANSWER', answer: value })
+    send({ type: 'ANSWER', answer: value, remainingMilliseconds })
   }
   function confirmAnswer() {
     if (!playing || !question) return
     const value = question.choices[$snapshot.context.activeChoice]
-    questionDeadline = 0
     zoom = 1
-    beep(value === question.answer)
-    send({ type: 'CONFIRM' })
+    submitAnswer(value)
   }
   function continueGame() {
+    if (recordActivity()) return
     if (!$snapshot.matches('reveal')) return
     zoom = 1
     descriptionPage = 0
@@ -284,6 +405,9 @@
 
   function handleKeydown(event: KeyboardEvent) {
     if (event.altKey || event.ctrlKey || event.metaKey) return
+    if (recordActivity()) { event.preventDefault(); return }
+    if (event.key === 'Enter' && event.target instanceof HTMLAnchorElement) return
+    if (event.key === 'Escape' && $snapshot.matches('scoreboard')) { event.preventDefault(); goHome(); return }
     const direction = joystickDirection(event.code)
     const buttonCode = event.key === 'Enter' ? cabinetKeys.submit
       : event.key === '+' ? cabinetKeys.zoomIn
@@ -299,8 +423,11 @@
       lastJoystickMove = now
       if ($snapshot.matches('title') && (direction === 'left' || direction === 'right')) {
         chooseLanguage(language === 'nl' ? 'en' : 'nl')
+      } else if ($snapshot.matches('title')) {
+        homeChoice = direction === 'down' ? 1 : 0
+        screenHeading?.focus({ preventScroll: true })
       } else if ($snapshot.matches('choosing')) {
-        moveCharacter(direction === 'left' || direction === 'up' ? -1 : 1)
+        moveCharacter(direction)
         screenHeading?.focus({ preventScroll: true })
       } else if (playing) {
         send({ type: 'MOVE', direction })
@@ -329,7 +456,10 @@
     if (buttonCode === cabinetKeys.submit) {
       // Native focused buttons keep their Enter action (back, language, teammate).
       if (event.key === 'Enter' && event.target instanceof HTMLButtonElement) { event.target.click(); return }
-      if ($snapshot.matches('title') || $snapshot.matches('results') || $snapshot.matches('gameOver')) selectTeam()
+      if ($snapshot.matches('title')) { if (homeChoice === 1) showScoreboard(); else selectTeam() }
+      else if ($snapshot.matches('scoreboard')) { if (canContinueRound) nextRound(); else goHome() }
+      else if ($snapshot.matches('results')) showScoreboard()
+      else if ($snapshot.matches('gameOver')) selectTeam()
       else if ($snapshot.matches('choosing')) start()
       else if ($snapshot.matches('intro')) finishIntro()
       else if (playing) confirmAnswer()
@@ -339,40 +469,56 @@
 </script>
 
 <svelte:head>
-  <title>Daphne's Arcade</title>
-  <meta name="description" content="Daphne’s Arcade: The Lost Labels. Kies je teamgenoot en help Daphne de labels weer aan de erfgoedcollectie van TU Delft te koppelen." />
+  <title>Tailor-Made Arcade</title>
+  <meta name="description" content="Tailor-Made Arcade: The Lost Labels. Kies je avatar en koppel de verdwenen labels weer aan de erfgoedcollectie van TU Delft." />
 </svelte:head>
 <svelte:window onkeydown={handleKeydown} />
 
 <main class="cabinet" class:cabinet-mode={cabinetMode}>
-  <div class="screen" data-scene={sceneIndex} class:menu-scene={$snapshot.matches('title') || $snapshot.matches('choosing')}>
+  <div class="screen" data-scene={sceneIndex} data-state={$snapshot.value} class:menu-scene={$snapshot.matches('title') || $snapshot.matches('choosing') || $snapshot.matches('scoreboard')}>
     <DepotScene variant={sceneIndex} />
-    {#if questions.length && !$snapshot.matches('title') && !$snapshot.matches('choosing')}
+    {#if storyScene}<StoryArtwork scene={storyScene} idleAlt={text.idleAlt} />{/if}
+    {#if questions.length && !storyScene && !$snapshot.matches('title') && !$snapshot.matches('choosing') && !$snapshot.matches('scoreboard') && (!$snapshot.matches('intro') || introReady)}
       {#key spillKey}<LabelSpill />{/key}
     {/if}
     {#if soundNotice}<div class="sound-notice" role="status">{soundNotice}</div>{/if}
-    {#if $snapshot.matches('title')}
-      <section class="attract-screen">
-        <p class="high-score">{text.highScore} {scoreText(best)}</p>
+    {#if $snapshot.matches('reveal')}<div class="answer-feedback-frame" class:correct class:wrong={!correct} aria-hidden="true"></div>{/if}
+    {#if $snapshot.matches('idle')}
+      <section inert={idleWarningSeconds !== null} class="idle-screen">
+        <h1 class="idle-title" bind:this={screenHeading} tabindex="-1">TAILOR-MADE<span>ARCADE</span></h1>
+        <button type="button" class="nes-btn cabinet-prompt start-prompt" onclick={() => recordActivity()}><span class="physical-button green"></span>{text.wake}</button>
+      </section>
+    {:else if $snapshot.matches('title')}
+      <section inert={idleWarningSeconds !== null} class="attract-screen">
+        <p class="high-score">{text.highScore} {scoreText(highestScore)}</p>
         <div class="title-copy">
-          <h1 class="arcade-title" bind:this={screenHeading} tabindex="-1">DAPHNE'S<span>ARCADE</span></h1>
+          <h1 class="arcade-title" bind:this={screenHeading} tabindex="-1">TAILOR-MADE<span>ARCADE</span></h1>
           <p class="mission-tag">{text.mission}</p>
         </div>
-        <div class="team-lineup" aria-hidden="true">
-          {#each team as member}<div style={`--member-color:${member.color}`}><TeamAvatar character={member} decorative /></div>{/each}
+        <div class="home-actions">
+          <button type="button" class="nes-btn cabinet-prompt start-prompt" class:menu-selected={homeChoice === 0} onclick={selectTeam}>
+            <span class="physical-button green"></span>{text.start}
+          </button>
+          <button type="button" class="nes-btn scoreboard-link" class:menu-selected={homeChoice === 1} onclick={showScoreboard}>{text.scoreboard}</button>
         </div>
-        <button type="button" class="nes-btn cabinet-prompt start-prompt" onclick={selectTeam}>
-          <span class="physical-button green"></span>{text.start}
-        </button>
         <div class="language-switch" aria-label={text.language}>
           <button type="button" class="nes-btn" class:is-primary={language === 'nl'} aria-pressed={language === 'nl'} onclick={() => chooseLanguage('nl')}>NL</button>
           <button type="button" class="nes-btn" class:is-primary={language === 'en'} aria-pressed={language === 'en'} onclick={() => chooseLanguage('en')}>EN</button>
         </div>
       </section>
+    {:else if $snapshot.matches('scoreboard')}
+      <section inert={idleWarningSeconds !== null} class="scoreboard-screen">
+        <h1 class="screen-title" bind:this={screenHeading} tabindex="-1">{text.scoreboard}</h1>
+        <ScoreTable {scores} {language} recordCharacter={newHighScore ? character.id : null} />
+        <div class="scoreboard-actions">
+          <button type="button" class="nes-btn back-button" onclick={goHome}>← {text.back}</button>
+          {#if canContinueRound}<button type="button" class="nes-btn cabinet-prompt" onclick={nextRound}><span class="physical-button green"></span>{text.nextRound} {level + 1}</button>{/if}
+        </div>
+      </section>
     {:else if $snapshot.matches('choosing')}
-      <section class="team-screen">
+      <section inert={idleWarningSeconds !== null} class="team-screen">
         <h1 class="screen-title" bind:this={screenHeading} tabindex="-1">{text.selectTeam}</h1>
-        <div class="team-roster" role="group" aria-label={text.selectTeam}>
+        <div class="team-roster" bind:this={teamRoster} role="group" aria-label={text.selectTeam}>
           {#each team as member}
             <button type="button" class="teammate-card" class:chosen={character.id === member.id} style={`--member-color:${member.color}`}
               aria-pressed={character.id === member.id} onclick={() => chooseCharacter(member.id)}>
@@ -389,66 +535,96 @@
         </footer>
       </section>
     {:else if $snapshot.matches('intro')}
-      <section class="intro-screen">
+      <section inert={idleWarningSeconds !== null} class="intro-screen">
         <h1 class="screen-title" bind:this={screenHeading} tabindex="-1">{text.introTitle}</h1>
-        <div class="intro-character"><TeamAvatar character={team[1]} decorative /></div>
-        <p class="intro-hint">{text.introHint}</p>
+        <div class="intro-character" class:ready={introReady}><TeamAvatar {character} shocked onready={() => introReady = true} /></div>
+        <p class="intro-hint">{text.introHint.replace('{name}', character.name)}</p>
+        <p class="round-rules">{text.level} {level} · {rules.multiplier}× {text.points} · {totalRemaining}s</p>
         <button class="nes-btn cabinet-prompt" type="button" onclick={finishIntro}><span class="physical-button green"></span>{text.go}</button>
       </section>
     {:else if question && ($snapshot.matches('loading') || playing)}
-      <section class="play-screen">
+      <section inert={idleWarningSeconds !== null} class="play-screen">
         <GameHud {character} {score} results={$snapshot.context.results} {questionIndex} total={questions.length} totalSeconds={totalRemaining} question={questionRemaining}
-          totalLabel={text.total} questionLabel={text.round} progressLabel={text.progress} />
+          {level} levelLabel={text.level} totalLabel={text.total} questionLabel={text.round} progressLabel={text.progress} />
         <h1 class="question-prompt" bind:this={screenHeading} tabindex="-1">{question.prompt}</h1>
         {#key question.id}
-          <QuestionScene {question} {language} {zoom} {imageUrl} onready={imageReady} onerror={imageError} />
+          <QuestionScene {question} {language} {zoom} {imageUrl} {countdownRemaining} {countdownLabel} onready={imageReady} onerror={imageError} />
         {/key}
         <AnswerChoices choices={question.choices} activeChoice={$snapshot.context.activeChoice}
           disabled={!playing} label={text.answerLabel} onanswer={submitAnswer} />
         {#if !playing}<p class="loading-notice" role="status">{text.loading}</p>{/if}
       </section>
     {:else if $snapshot.matches('reveal') && question}
-      <section class="reveal-screen">
+      <section inert={idleWarningSeconds !== null} class="reveal-screen">
         <GameHud {character} {score} results={$snapshot.context.results} {questionIndex} total={questions.length} totalSeconds={totalRemaining} question={questionRemaining}
-          totalLabel={text.total} questionLabel={text.round} progressLabel={text.progress} />
-        <h1 class="verdict" class:wrong={!correct} bind:this={screenHeading} tabindex="-1">{correct ? '+100' : text.wrong}</h1>
+          {level} levelLabel={text.level} totalLabel={text.total} questionLabel={text.round} progressLabel={text.progress} />
+        <h1 class="verdict" class:correct class:wrong={!correct} bind:this={screenHeading} tabindex="-1">
+          <span class="verdict-symbol" aria-hidden="true">{correct ? '✓' : '×'}</span>
+          <span>{correct ? text.correct : text.wrong}</span><span class="verdict-points">+{$snapshot.context.lastPoints}</span>
+        </h1>
         <p class="question-prompt reveal-prompt">{question.prompt}</p>
         <QuestionScene {question} {language} {zoom} {imageUrl} revealed />
-        <div class="explanation">
-          <h2>{question.answer}</h2>
-          <p class="description-page">{pages[descriptionPage]}</p>
-          {#if pages.length > 1}
-            <div class="page-controls">
-              <button type="button" disabled={descriptionPage === 0} aria-label={text.previousPage} onclick={() => descriptionPage -= 1}>◀</button>
-              <span>{descriptionPage + 1}/{pages.length}</span>
-              <button type="button" disabled={descriptionPage === pages.length - 1} aria-label={text.nextPage} onclick={() => descriptionPage += 1}>▶</button>
-            </div>
-          {/if}
+        <div class="explanation" class:with-qr={Boolean(question.answerObjectId)}>
+          <div class="explanation-copy">
+            <h2>{question.photos ? `${question.answer} · ${question.object.title}` : question.answer}</h2>
+            {#if question.photos}
+              <dl class="date-answers" aria-label={text.collectionDating}>
+                {#each question.photos as object, index}
+                  <div class:correct-date={question.answer === 'ABCD'[index]}>
+                    <dt>{'ABCD'[index]}{#if question.answer === 'ABCD'[index]}<span aria-label={text.correct}> ✓</span>{/if}</dt>
+                    <dd>{object.date ? formatDate(object.date, language) : ''}</dd>
+                  </div>
+                {/each}
+              </dl>
+            {:else}<p class="description-page">{pages[descriptionPage]}</p>{/if}
+            {#if !question.photos && pages.length > 1}
+              <div class="page-controls">
+                <button type="button" disabled={descriptionPage === 0} aria-label={text.previousPage} onclick={() => descriptionPage -= 1}>◀</button>
+                <span>{descriptionPage + 1}/{pages.length}</span>
+                <button type="button" disabled={descriptionPage === pages.length - 1} aria-label={text.nextPage} onclick={() => descriptionPage += 1}>▶</button>
+              </div>
+            {/if}
+          </div>
+          {#if question.answerObjectId}<ObjectQr objectId={question.answerObjectId} {language} />{/if}
         </div>
         <button type="button" class="nes-btn cabinet-prompt continue-button" onclick={continueGame}>
           <span class="physical-button green"></span>{questionIndex === questions.length - 1 ? text.results : text.next}
         </button>
       </section>
     {:else if $snapshot.matches('results')}
-      <section class="results-screen">
-        <div class="result-player"><TeamAvatar {character} decorative /></div>
-        <h1 class="screen-title" bind:this={screenHeading} tabindex="-1">{text.missionComplete}</h1>
-        <p class="final-score">{scoreText(score)}</p>
-        <p class="result-summary">{$snapshot.context.results.filter(result => result === 'correct').length}/{questions.length} {text.recovered}</p>
-        <button type="button" class="nes-btn cabinet-prompt" onclick={selectTeam}>
-          <span class="physical-button green"></span>{text.playAgain}
-        </button>
+      <section inert={idleWarningSeconds !== null} class="ending-screen victory-screen">
+        <h1 class="screen-title ending-title" bind:this={screenHeading} tabindex="-1">{text.missionComplete}</h1>
+        <div class="ending-panel">
+          <p class="ending-quote">“{text.victoryQuote}”</p>
+          <p class="final-score">{scoreText(score)}</p>
+          {#if newHighScore}<p class="record-banner" role="status">{text.newHighScore}</p>{/if}
+          <button type="button" class="nes-btn cabinet-prompt" onclick={showScoreboard}>
+            <span class="physical-button green"></span>{text.scoreboard}
+          </button>
+          <button type="button" class="nes-btn scoreboard-link" onclick={nextRound}>{text.nextRound} {level + 1}</button>
+        </div>
       </section>
     {:else if $snapshot.matches('gameOver')}
-      <section class="results-screen">
-        <div class="result-player"><TeamAvatar {character} decorative /></div>
-        <h1 class="screen-title" bind:this={screenHeading} tabindex="-1">{text.gameOver}</h1>
-        <p class="game-over-reason">{$snapshot.context.gameOverReason === 'question-time' ? text.questionTime : $snapshot.context.gameOverReason === 'game-time' ? text.gameTime : text.imageError}</p>
-        <p class="final-score">{scoreText(score)}</p>
-        <button type="button" class="nes-btn cabinet-prompt" onclick={selectTeam}>
-          <span class="physical-button green"></span>{text.retry}
-        </button>
+      <section inert={idleWarningSeconds !== null} class="ending-screen game-over-screen">
+        <h1 class="screen-title ending-title" bind:this={screenHeading} tabindex="-1">{text.gameOver}</h1>
+        <div class="ending-panel">
+          <p class="ending-quote">“{text.bossQuote}”</p>
+          <p class="final-score">{scoreText(score)}</p>
+          <button type="button" class="nes-btn cabinet-prompt" onclick={selectTeam}>
+            <span class="physical-button green"></span>{text.retry}
+          </button>
+          <button type="button" class="nes-btn scoreboard-link" onclick={showScoreboard}>{text.scoreboard}</button>
+        </div>
       </section>
+    {/if}
+    {#if idleWarningSeconds !== null}
+      <div class="idle-warning-backdrop">
+        <dialog open class="idle-warning" aria-modal="true" aria-labelledby="idle-warning-title" aria-describedby="idle-warning-time">
+          <h2 id="idle-warning-title">{text.stillPlaying}</h2>
+          <strong id="idle-warning-time" class="idle-countdown"><span class="sr-only">{text.idleReturn.replace('{seconds}', String(idleWarningSeconds))}</span><span aria-hidden="true">{idleWarningSeconds}</span></strong>
+          <button type="button" class="nes-btn cabinet-prompt" bind:this={idleContinue} onclick={() => recordActivity()}><span class="physical-button green"></span>{text.keepPlaying}</button>
+        </dialog>
+      </div>
     {/if}
   </div>
 </main>
