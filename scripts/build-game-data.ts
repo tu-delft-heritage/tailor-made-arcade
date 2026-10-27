@@ -21,7 +21,9 @@ function entity(namespace: string, label: string, url?: string, bilingual = fals
   label = clean(label)
   const term: any = url ? termByUrl.get(canonical(url)) : undefined
   const labelKey = `${namespace}:${key(label)}`
-  const id = idsByLabel.get(labelKey) ?? `${namespace}:${url ? canonical(url) : key(label)}`
+  // Collection records can share titles; their relation identity must remain the source URI.
+  const id = namespace === 'related' && url ? `${namespace}:${canonical(url)}`
+    : idsByLabel.get(labelKey) ?? `${namespace}:${url ? canonical(url) : key(label)}`
   const labels: LocalizedText = { nl: label }
   if (bilingual) labels.en = label
   else if (term?.labels.en?.[0]) labels.en = term.labels.en[0]

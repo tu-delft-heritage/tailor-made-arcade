@@ -4,10 +4,13 @@ import { test } from 'node:test'
 import { createActor } from 'xstate'
 import { createQuestionBank, createSession, questionKinds, questionObjects, replacementQuestion } from '../src/lib/game/questions/index.ts'
 import { dateRange, rangesOverlap, confusable } from '../src/lib/game/questions/metadata.ts'
+import { formatDate } from '../src/lib/game/dates.ts'
 import { definitionClue, mentionsEntity } from '../src/lib/game/questions/definition.ts'
 import { gameMachine } from '../src/lib/game/machine.ts'
 import type { FactField, GameData, Language } from '../src/lib/game/types.ts'
 const data: GameData = JSON.parse(await readFile(new URL('../src/lib/data/game-data.json', import.meta.url), 'utf8'))
+const sourceObjects: { id: string; related: { id: string }[] }[] = JSON.parse(await readFile(new URL('../data/objects.json', import.meta.url), 'utf8'))
+const sourceRelations = new Map(sourceObjects.map(object => [object.id, object.related.map(related => related.id)]))
 const banks = { nl: createQuestionBank(data, 'nl'), en: createQuestionBank(data, 'en') }
 
 test('all 720 records can appear in both languages; every supported field has questions', () => {
@@ -19,6 +22,8 @@ test('all 720 records can appear in both languages; every supported field has qu
   }
 })
 for (const language of ['nl', 'en'] as Language[]) {
+  const dateSources = new Map(Object.values(data.entities).filter(e => e.id.startsWith('date:') && e.labels[language])
+    .map(e => [formatDate(e.labels[language]!, language), e.labels[language]!]))
   test(`${language}: every generated question has one answer, explicit prompt and source evidence`, () => {
     for (const q of banks[language]) {
       assert.equal(q.choices.length, 4, q.id)
@@ -26,11 +31,29 @@ for (const language of ['nl', 'en'] as Language[]) {
       assert.equal(q.choices.filter(c => c === q.answer).length, 1, q.id)
       assert.ok(q.prompt.endsWith('?'), q.id)
       assert.ok(q.explanation.length && q.evidence.length, q.id)
+      if (!q.photos) assert.ok(q.explanation.startsWith(`${q.object.title}\n`), `Catalogue label missing: ${q.id}`)
+      if (['identify-object', 'definition-detective', 'odd-one-out'].includes(q.kind)) {
+        assert.equal(q.answerObjectId, q.object.id, q.id)
+      } else if (q.kind === 'related') {
+        const answerEntities = q.object.facts.related!.map(id => data.entities[id]).filter(entity => entity.labels[language] === q.answer)
+        const answerObject = data.objects.find(object => object.id === q.answerObjectId)
+        assert.ok(answerObject, q.id)
+        assert.ok(answerEntities.some(entity => entity.source === answerObject.source), 'QR must link to the object named in the answer')
+        assert.ok(sourceRelations.get(q.object.id)?.includes(answerObject.id), 'QR destination must be a relation in the original source record')
+        assert.notEqual(answerObject.id, q.object.id, 'related-object QR must not link to the pictured object')
+      } else assert.equal(q.answerObjectId, undefined, q.id)
+      if (['height', 'width', 'depth'].includes(q.kind)) {
+        assert.ok(q.dimensions, q.id)
+        for (const [axis, measurement] of Object.entries(q.dimensions)) {
+          assert.ok(measurement.millimetres > 0, q.id)
+          assert.ok(q.object.facts[axis as FactField]?.some(id => data.entities[id].labels[language] === measurement.label), q.id)
+        }
+      } else assert.equal(q.dimensions, undefined, q.id)
       assert.ok(q.evidence.every(e => e.source.startsWith('http') && e.values.length), q.id)
       if (q.kind === 'definition-detective') {
         assert.equal(q.clue, definitionClue(data.entities[q.object.facts.type![0]], language))
       } else if (q.kind === 'odd-one-out') {
-        const [start, end] = q.prompt.match(/\d{4}/g)!.map(Number)
+        const [start, end] = q.datePeriod!
         const outside = q.photos!.filter(o => { const range = dateRange(o.date!)!; return range[1] < start || range[0] > end })
         assert.deepEqual(outside.map(o => o.id), [q.object.id])
         assert.equal(q.photos!['ABCD'.indexOf(q.answer)].id, q.object.id)
@@ -38,10 +61,12 @@ for (const language of ['nl', 'en'] as Language[]) {
       } else {
         const field: FactField = q.kind === 'identify-object' ? 'type' : q.kind
         const correct = q.object.facts[field]!.map(id => data.entities[id])
-        assert.ok(correct.some(e => e.labels[language] === q.answer), q.id)
+        const display = (value: string) => field === 'date' ? formatDate(value, language) : value
+        assert.ok(correct.some(e => e.labels[language] && display(e.labels[language]!) === q.answer), q.id)
+        assert.ok(q.explanation.includes(`${q.object.identifier}\n`), q.id)
         for (const other of q.choices.filter(c => c !== q.answer)) {
-          assert.ok(!correct.some(e => e.labels[language] === other), `Second correct fact: ${q.id}`)
-          if (field === 'date') assert.equal(rangesOverlap(q.answer, other), false)
+          assert.ok(!correct.some(e => e.labels[language] && display(e.labels[language]!) === other), `Second correct fact: ${q.id}`)
+          if (field === 'date') assert.equal(rangesOverlap(dateSources.get(q.answer)!, dateSources.get(other)!), false)
         }
         if (q.kind === 'professor') {
           const person = correct.find(e => e.labels[language] === q.answer)!

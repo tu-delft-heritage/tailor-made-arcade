@@ -18,12 +18,25 @@ export function moveSelection(index: number, direction: Direction): number {
   return index % 2 === 0 ? index + 1 : index
 }
 
+/** Move through the visible teammate grid, including a partially filled last row. */
+export function moveTeammate(index: number, direction: Direction, columns: number, count: number): number {
+  if (count <= 0 || columns <= 0) return index
+  if (direction === 'up') return index >= columns ? index - columns : index
+  if (direction === 'down') return index + columns < count ? index + columns : index
+  if (direction === 'left') return index % columns > 0 ? index - 1 : index
+  return index % columns < columns - 1 && index + 1 < count ? index + 1 : index
+}
+
 export function descriptionPages(text: string, limit = 210): string[] {
   const pages: string[] = []
   let page = ''
-  for (const word of text.trim().split(/\s+/)) {
-    if (page && page.length + word.length + 1 > limit) { pages.push(page); page = '' }
-    page += (page ? ' ' : '') + word
+  for (const paragraph of text.trim().split(/\n+/)) {
+    let separator = page ? '\n' : ''
+    for (const word of paragraph.trim().split(/\s+/)) {
+      if (page && page.length + word.length + separator.length > limit) { pages.push(page); page = ''; separator = '' }
+      page += separator + word
+      separator = ' '
+    }
   }
   if (page) pages.push(page)
   return pages.length ? pages : ['']

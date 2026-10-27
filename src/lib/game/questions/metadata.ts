@@ -1,5 +1,8 @@
 import { factFields, type Entity, type FactField, type GameData, type Language, type Question, type QuestionKind } from '../types.ts'
 import { hash, randomSource, shuffle } from './random.ts'
+import { dimensionAxes, objectDimensions, type DimensionAxis } from '../dimensions.ts'
+import { dateRange, formatDate } from '../dates.ts'
+export { dateRange } from '../dates.ts'
 
 export const prompts: Record<FactField, Record<Language, string>> = {
   type: { nl: 'Welk objecttype staat op dit collectielabel?', en: 'Which object type belongs on this label?' },
@@ -43,11 +46,6 @@ export function confusable(a: Entity, b: Entity): boolean {
     return x === y || (Math.min(x.length, y.length) >= 4 && (x.includes(y) || y.includes(x)))
   }))
 }
-export function dateRange(value: string): [number, number] | null {
-  if (!/^\d{4}([/–]\d{4})?$/.test(value)) return null
-  const [start, end = start] = value.split(/[/–]/).map(Number)
-  return start <= end ? [start, end] : null
-}
 export function rangesOverlap(a: string, b: string) {
   const x = dateRange(a), y = dateRange(b)
   return !x || !y || x[0] <= y[1] && y[0] <= x[1]
@@ -68,11 +66,13 @@ export function metadataQuestions(data: GameData, language: Language): QuestionB
     if (!eligible.length) { exclude(`${field}: no ${language} label`); continue }
     const random = randomSource(hash(`${object.id}:${field}:${language}`))
     const answerEntity = shuffle(eligible, random)[0]
-    const answer = answerEntity.labels[language]!
+    const sourceAnswer = answerEntity.labels[language]!
+    const display = (value: string) => field === 'date' ? formatDate(value, language) : value
+    const answer = display(sourceAnswer)
     const candidates = shuffle(pools[field], random).filter(candidate => {
       if (correctEntities.some(correct => confusable(correct, candidate))) return false
       const label = candidate.labels[language]!
-      if (field === 'date' && rangesOverlap(answer, label)) return false
+      if (field === 'date' && rangesOverlap(sourceAnswer, label)) return false
       if (['height', 'width', 'depth'].includes(field)) {
         const a = parseFloat(answer), b = parseFloat(label)
         if (b / a < 0.2 || b / a > 5 || Math.abs(a - b) < a * 0.2) return false
@@ -89,17 +89,21 @@ export function metadataQuestions(data: GameData, language: Language): QuestionB
     }
     if (distractors.length < 3) { exclude(`${field}: fewer than three unambiguous distractors`); continue }
     const kind: QuestionKind = field === 'type' ? 'identify-object' : field
-    const labels = eligible.map(e => e.labels[language]).join('; ')
+    const labels = eligible.map(e => display(e.labels[language]!)).join('; ')
     let prompt = prompts[field][language]
     if (field === 'depicted' && object.type.nl === 'schilderij') prompt = language === 'nl' ? 'Wie is afgebeeld op dit schilderij?' : 'Who is depicted in this painting?'
     const roleNames = (['maker', 'designer', 'manufacturer'] as const).filter(role => object.facts[role]?.includes(answerEntity.id)).map(role => fieldLabels[role][language].toLowerCase())
     const detail = field === 'professor' ? `${answer} — ${roleNames.join(', ')}.` : `${fieldLabels[field][language]}: ${labels}.`
+    const answerObjectId = field === 'type' ? object.id : field === 'related'
+      ? data.objects.find(candidate => candidate.source === answerEntity.source)?.id : undefined
     bank.push({ id: `${kind}:${object.id}`, kind, object, language, prompt,
-      choices: shuffle([answer, ...distractors.map(e => e.labels[language]!)], random), answer,
-      explanation: `${language === 'nl' ? 'Collectierecord' : 'Collection record'} ${object.identifier}. ${detail}`,
+      choices: shuffle([answer, ...distractors.map(e => display(e.labels[language]!))], random), answer,
+      ...(answerObjectId ? { answerObjectId } : {}),
+      explanation: `${object.title}\n${language === 'nl' ? 'Collectierecord' : 'Collection record'} ${object.identifier}\n${detail}`,
       evidence: [{ objectId: object.id, field: sourceFields[field], values: ids, source: object.source },
         ...(field === 'professor' && answerEntity.professorEvidence ? [{ objectId: answerEntity.professorEvidence.objectId,
           field: 'description:professorship', values: [answerEntity.professorEvidence.quote], source: data.objects.find(o => o.id === answerEntity.professorEvidence!.objectId)!.source }] : [])],
+      ...(dimensionAxes.includes(field as DimensionAxis) ? { dimensions: objectDimensions(object, data.entities, language) } : {}),
       seconds: 20 })
   }
   return bank

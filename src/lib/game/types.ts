@@ -1,3 +1,5 @@
+import type { Dimensions } from './dimensions.ts'
+
 export type Language = 'nl' | 'en'
 export const characterIds = ['charlotte', 'daphne', 'anna', 'liselotte', 'isabel', 'cormac', 'catherine', 'elin', 'karin', 'jill'] as const
 export type CharacterId = typeof characterIds[number]
@@ -36,10 +38,13 @@ export type Question = {
   prompt: string
   choices: string[]
   answer: string
+  answerObjectId?: string
   explanation: string
   evidence: { objectId: string; field: string; values: string[]; source: string }[]
   clue?: string
   photos?: GameObject[]
+  datePeriod?: [number, number]
+  dimensions?: Dimensions
   seconds: number
 }
 export type RoundResult = 'correct' | 'wrong' | 'timeout'

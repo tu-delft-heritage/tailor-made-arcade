@@ -52,8 +52,8 @@ export function definitionQuestions(data: GameData, language: Language): Questio
     if (distractors.length < 3) return []
     return [{ id: `definition:${object.id}`, kind: 'definition-detective', object, language,
       prompt: language === 'nl' ? 'Welk objecttype past bij deze definitie?' : 'Which object type matches this definition?',
-      clue, answer, choices: shuffle([answer, ...distractors.map(e => e.labels[language]!)], random),
-      explanation: `${language === 'nl' ? 'Definitie uit de gekoppelde erfgoedwoordenlijst.' : 'Definition from the linked heritage vocabulary.'} ${clue}`,
+      clue, answer, answerObjectId: object.id, choices: shuffle([answer, ...distractors.map(e => e.labels[language]!)], random),
+      explanation: `${object.title}\n${language === 'nl' ? 'Collectierecord' : 'Collection record'} ${object.identifier}\n${language === 'nl' ? 'Definitie uit de gekoppelde erfgoedwoordenlijst.' : 'Definition from the linked heritage vocabulary.'} ${clue}`,
       evidence: [{ objectId: object.id, field: 'exampleOfWork:linked-definition', values: [entity.id], source: entity.source! }], seconds: 30 } satisfies Question]
   })
 }

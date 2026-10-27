@@ -1,5 +1,5 @@
 import type { GameData, GameObject, Language, Question } from '../types.ts'
-import { dateRange } from './metadata.ts'
+import { dateRange, formatDate } from '../dates.ts'
 import { hash, randomSource, shuffle } from './random.ts'
 
 export function oddOneOutQuestions(data: GameData, language: Language): Question[] {
@@ -26,10 +26,11 @@ export function oddOneOutQuestions(data: GameData, language: Language): Question
       if (companions.length !== 3) continue
       const photos = shuffle([object, ...companions], random)
       const answer = 'ABCD'[photos.indexOf(object)]
+      const periodLabel = formatDate(`${period}/${period + 99}`, language)
       return [{ id: `odd:${object.id}`, kind: 'odd-one-out', object, language,
-        prompt: language === 'nl' ? `Welk object dateert van buiten ${period}–${period + 99}?` : `Which object is dated outside ${period}–${period + 99}?`,
-        photos, answer, choices: ['A', 'B', 'C', 'D'],
-        explanation: `${language === 'nl' ? 'Datering in de collectie' : 'Collection dating'}: ${photos.map((o, i) => `${'ABCD'[i]}: ${o.date!.replace('/', '–')}`).join('; ')}.`,
+        prompt: language === 'nl' ? `Welk object komt niet uit de ${periodLabel}?` : `Which object is not from the ${periodLabel}?`,
+        photos, datePeriod: [period, period + 99], answer, answerObjectId: object.id, choices: ['A', 'B', 'C', 'D'],
+        explanation: `${language === 'nl' ? 'Datering in de collectie' : 'Collection dating'}:\n${photos.map((o, i) => `${'ABCD'[i]}: ${formatDate(o.date!, language)}`).join('\n')}`,
         evidence: photos.map(o => ({ objectId: o.id, field: 'temporalCoverage', values: [o.date!], source: o.source })), seconds: 30 } satisfies Question]
     }
     return []

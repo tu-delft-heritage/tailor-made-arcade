@@ -1,0 +1,1060 @@
+{
+  "version": 3,
+  "objects": 720,
+  "runtimeBytes": 1243060,
+  "gzipBytes": 267580,
+  "coverage": {
+    "nl": {
+      "questions": 6116,
+      "eligibleObjects": 720,
+      "byKind": {
+        "identify-object": 720,
+        "material": 709,
+        "maker": 129,
+        "designer": 83,
+        "manufacturer": 330,
+        "place": 250,
+        "depicted": 36,
+        "professor": 32,
+        "date": 703,
+        "height": 680,
+        "width": 679,
+        "depth": 668,
+        "owner": 11,
+        "related": 152,
+        "definition-detective": 232,
+        "odd-one-out": 702
+      },
+      "excludedObjects": [],
+      "exclusions": {
+        "maker: missing/invalid source value": 591,
+        "manufacturer: missing/invalid source value": 390,
+        "place: missing/invalid source value": 470,
+        "depicted: missing/invalid source value": 684,
+        "professor: missing/invalid source value": 688,
+        "owner: missing/invalid source value": 709,
+        "related: missing/invalid source value": 568,
+        "designer: missing/invalid source value": 637,
+        "height: missing/invalid source value": 40,
+        "width: missing/invalid source value": 41,
+        "depth: missing/invalid source value": 50,
+        "date: missing/invalid source value": 17,
+        "material: missing/invalid source value": 11,
+        "depth: fewer than three unambiguous distractors": 2,
+        "definition: missing translation, short safe clue, or distinct distractors": 488,
+        "odd-one-out: missing/non-isolatable dates or photos": 18
+      },
+      "preview": [
+        {
+          "kind": "identify-object",
+          "prompt": "Welk objecttype staat op dit collectielabel?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "hoekspiegel",
+            "technisch rapport",
+            "hellingmeter",
+            "aneroïdebarometer"
+          ],
+          "answer": "hoekspiegel",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollectierecord 2000.0446.GEO\nObjecttype: hoekspiegel.",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "exampleOfWork",
+              "values": [
+                "type:https://data.cultureelerfgoed.nl/term/id/cht/e8fb5077-d503-48f7-9ca3-25aac69d0095"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "material",
+          "prompt": "Welk materiaal staat bij dit object vermeld?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "paneel",
+            "metaal",
+            "mineraal",
+            "olieverf"
+          ],
+          "answer": "metaal",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollectierecord 2000.0446.GEO\nMateriaal: metaal; glas.",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "material",
+              "values": [
+                "material:https://vocab.getty.edu/aat/300010900",
+                "material:https://vocab.getty.edu/aat/300010797"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "maker",
+          "prompt": "Wie staat vermeld als maker van dit object?",
+          "objectIds": [
+            "03268153-c9a0-4e81-9771-0566cfa4f3d1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/eed1240e-e59f-407d-871a-c55712b00ed1/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "Floris Arntzenius",
+            "Max Hildebrand",
+            "Jan Pieter Veth",
+            "Van Rest"
+          ],
+          "answer": "Van Rest",
+          "explanation": "Gravimeter door Van Rest\nCollectierecord 2000.0535.GEO\nMaker: Van Rest.",
+          "evidence": [
+            {
+              "objectId": "03268153-c9a0-4e81-9771-0566cfa4f3d1",
+              "field": "creator:maker",
+              "values": [
+                "person:vanrest"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/03268153-c9a0-4e81-9771-0566cfa4f3d1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "designer",
+          "prompt": "Wie heeft dit object ontworpen?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "Naudet",
+            "Frederik Kaiser",
+            "Karl Maximilian von Bauernfeind",
+            "T.H. Snoeck"
+          ],
+          "answer": "Karl Maximilian von Bauernfeind",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollectierecord 2000.0446.GEO\nOntwerper: Karl Maximilian von Bauernfeind.",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "creator:ontwerper",
+              "values": [
+                "person:karlmaximilianvonbauernfeind"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "manufacturer",
+          "prompt": "Wie heeft dit object geproduceerd?",
+          "objectIds": [
+            "014ed4d8-7f80-4779-a8b0-23228e6a8151"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/82fa7c92-c299-4091-898e-052211e69564/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "Koninklijke Philips Electronics",
+            "Wed. J. Ahrend & Zoon",
+            "Otto Fennel & Söhne",
+            "Ateliers H. Morin"
+          ],
+          "answer": "Wed. J. Ahrend & Zoon",
+          "explanation": "Transporteur van Wed. J. Ahrend & Zoon\nCollectierecord 2000.0176.GEO\nProducent: Wed. J. Ahrend & Zoon.",
+          "evidence": [
+            {
+              "objectId": "014ed4d8-7f80-4779-a8b0-23228e6a8151",
+              "field": "creator:producent",
+              "values": [
+                "organization:wedjahrendzoon"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/014ed4d8-7f80-4779-a8b0-23228e6a8151/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "place",
+          "prompt": "Waar is dit object gemaakt?",
+          "objectIds": [
+            "014ed4d8-7f80-4779-a8b0-23228e6a8151"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/82fa7c92-c299-4091-898e-052211e69564/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "Hannover",
+            "Maastricht",
+            "Hamburg",
+            "Amsterdam"
+          ],
+          "answer": "Amsterdam",
+          "explanation": "Transporteur van Wed. J. Ahrend & Zoon\nCollectierecord 2000.0176.GEO\nVervaardigingsplaats: Amsterdam.",
+          "evidence": [
+            {
+              "objectId": "014ed4d8-7f80-4779-a8b0-23228e6a8151",
+              "field": "locationCreated",
+              "values": [
+                "place:https://www.geonames.org/2759794"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/014ed4d8-7f80-4779-a8b0-23228e6a8151/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "depicted",
+          "prompt": "Wie is afgebeeld op dit schilderij?",
+          "objectIds": [
+            "04dc7bba-87fb-4a73-adb7-c96f5bdc79c2"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/8bf2104d-b8cb-4828-b2c7-809489afd080/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "Hendrik Jan Heuvelink",
+            "Jean Marie Telders",
+            "M.W. Beijerinck",
+            "J.F. de Vogel"
+          ],
+          "answer": "M.W. Beijerinck",
+          "explanation": "Portret van prof. M.W. Beijerinck\nCollectierecord 2011.0009.CVB\nAfgebeeld: M.W. Beijerinck.",
+          "evidence": [
+            {
+              "objectId": "04dc7bba-87fb-4a73-adb7-c96f5bdc79c2",
+              "field": "about",
+              "values": [
+                "person:mwbeijerinck"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/04dc7bba-87fb-4a73-adb7-c96f5bdc79c2/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "professor",
+          "prompt": "Welke (latere) hoogleraar werkte aan dit object?",
+          "objectIds": [
+            "09604e7e-4544-40ad-976e-00331068d2f4"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/9670d2ed-5dbb-4bf0-aa88-14ab161f8f1b/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "J.W. Dieperink",
+            "Gerard de Josselin de Jong",
+            "prof. dr. ir. Felix Andries Vening Meinesz",
+            "Matthijs Johannes Martinus Bogaerts"
+          ],
+          "answer": "J.W. Dieperink",
+          "explanation": "Horizontale veldenmillimeterbaak volgens prof. J.W Dieperink door G. de Koningh\nCollectierecord 2000.0195.GEO\nJ.W. Dieperink — ontwerper.",
+          "evidence": [
+            {
+              "objectId": "09604e7e-4544-40ad-976e-00331068d2f4",
+              "field": "creator + reviewed professor evidence",
+              "values": [
+                "person:jwdieperink"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/09604e7e-4544-40ad-976e-00331068d2f4/schema.json"
+            },
+            {
+              "objectId": "09604e7e-4544-40ad-976e-00331068d2f4",
+              "field": "description:professorship",
+              "values": [
+                "Horizontale veldenmillimeterbaak vervaardigd door G. de Koningh, met een witte achtergrond naar een ontwerp van hoogleraar Jan Willem Dieperink (1878-1934). De baak was bestemd voor dradenafstandmeting tot een afstand van 120 meter."
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/09604e7e-4544-40ad-976e-00331068d2f4/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "date",
+          "prompt": "Uit welk jaar of welke periode dateert dit object?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "1954",
+            "1950–2000",
+            "1875–1925",
+            "1750–1850"
+          ],
+          "answer": "1875–1925",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollectierecord 2000.0446.GEO\nDatering: 1875–1925.",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "temporalCoverage",
+              "values": [
+                "date:18751925"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "height",
+          "prompt": "Welke hoogte staat op het collectielabel?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "73 mm",
+            "330 mm",
+            "94 mm",
+            "38 mm"
+          ],
+          "answer": "73 mm",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollectierecord 2000.0446.GEO\nHoogte: 73 mm.",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "height",
+              "values": [
+                "height:73mm"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "width",
+          "prompt": "Welke breedte staat op het collectielabel?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "137 mm",
+            "150 mm",
+            "20 mm",
+            "35 mm"
+          ],
+          "answer": "35 mm",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollectierecord 2000.0446.GEO\nBreedte: 35 mm.",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "width",
+              "values": [
+                "width:35mm"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "depth",
+          "prompt": "Welke diepte staat op het collectielabel?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "107 mm",
+            "125 mm",
+            "55 mm",
+            "30 mm"
+          ],
+          "answer": "30 mm",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollectierecord 2000.0446.GEO\nDiepte: 30 mm.",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "depth",
+              "values": [
+                "depth:30mm"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "owner",
+          "prompt": "Wie had dit object volgens de collectie in bezit?",
+          "objectIds": [
+            "144c8a72-ed25-4241-8fa2-9a435d4edf2d"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/efb2d565-1f06-463a-b150-528284979426/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "TU Delft faculteit TNW",
+            "Cornelis Benjamin Biezeno",
+            "Antonia Elisabeth Korvezee",
+            "Jacob Menno Tienstra"
+          ],
+          "answer": "TU Delft faculteit TNW",
+          "explanation": "Zwart-wit foto van vergroting vanaf positief Waarnemingsboek, in houten lijst\nCollectierecord 2024.4056.TNW\nVoormalig eigenaar: Abraham Cornelis Sebastiaan Van Heel; TU Delft faculteit TNW.",
+          "evidence": [
+            {
+              "objectId": "144c8a72-ed25-4241-8fa2-9a435d4edf2d",
+              "field": "contributor:had in bezit",
+              "values": [
+                "person:abrahamcornelissebastiaanvanheel",
+                "organization:tudelftfaculteittnw"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/144c8a72-ed25-4241-8fa2-9a435d4edf2d/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "related",
+          "prompt": "Welk object is in de catalogus hieraan gekoppeld?",
+          "objectIds": [
+            "023b725b-571b-408b-8984-e1dda6f2a823"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/009925b0-8f1d-4aa3-aa2d-52c289177564/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "Statief met afdekplaat en klemschroef door Kern & Co. AG",
+            "Uitklapbare verticale E baak",
+            "Centreerkijker door M. Hildebrand",
+            "Hangbaak volgens prof. J.W. Dieperink"
+          ],
+          "answer": "Centreerkijker door M. Hildebrand",
+          "explanation": "Centreerkijker door Hildebrand & Schramm\nCollectierecord 2000.0276.GEO\nGekoppeld object: Centreerkijker door M. Hildebrand.",
+          "evidence": [
+            {
+              "objectId": "023b725b-571b-408b-8984-e1dda6f2a823",
+              "field": "isRelatedTo",
+              "values": [
+                "related:https://heritage.tudelft.nl/iiif/manifests/c943823c-15d8-4983-95b7-f561b7ea07da/schema.json"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/023b725b-571b-408b-8984-e1dda6f2a823/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "definition-detective",
+          "prompt": "Welk objecttype past bij deze definitie?",
+          "clue": "Instrumenten die variaties meten in het gravitatieveld van de aarde door kleine verschillen waar te nemen in het gewicht van een voorwerp met een constante massa.",
+          "objectIds": [
+            "03268153-c9a0-4e81-9771-0566cfa4f3d1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/eed1240e-e59f-407d-871a-c55712b00ed1/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "gravimeter",
+            "baak",
+            "transporteur",
+            "piket"
+          ],
+          "answer": "gravimeter",
+          "explanation": "Gravimeter door Van Rest\nCollectierecord 2000.0535.GEO\nDefinitie uit de gekoppelde erfgoedwoordenlijst. Instrumenten die variaties meten in het gravitatieveld van de aarde door kleine verschillen waar te nemen in het gewicht van een voorwerp met een constante massa.",
+          "evidence": [
+            {
+              "objectId": "03268153-c9a0-4e81-9771-0566cfa4f3d1",
+              "field": "exampleOfWork:linked-definition",
+              "values": [
+                "type:https://vocab.getty.edu/aat/300197563"
+              ],
+              "source": "http://vocab.getty.edu/aat/300197563"
+            }
+          ]
+        },
+        {
+          "kind": "odd-one-out",
+          "prompt": "Welk object komt niet uit de 18e eeuw?",
+          "objectIds": [
+            "603469b6-ce8a-4756-9c57-8ae8681a3675",
+            "c2270212-edba-455d-8ce1-c5d0862d9ca1",
+            "2a68fb68-bcaa-434a-abff-46904a5250f2",
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/0892a322-4b8a-4f68-bcc6-2ad7669aeeaa/full/full/0/default.jpg",
+            "https://dlc.services/thumbs/7/18/be7f27e2-fa45-41f4-a5ce-22d9c1d33709/full/full/0/default.jpg",
+            "https://dlc.services/thumbs/7/18/bd100430-2e1f-4d5d-8005-59067e7bd005/full/full/0/default.jpg",
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "answer": "D",
+          "explanation": "Datering in de collectie:\nA: 1725–1775\nB: 1750–1775\nC: 1725–1775\nD: 1875–1925",
+          "evidence": [
+            {
+              "objectId": "603469b6-ce8a-4756-9c57-8ae8681a3675",
+              "field": "temporalCoverage",
+              "values": [
+                "1725/1775"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/603469b6-ce8a-4756-9c57-8ae8681a3675/schema.json"
+            },
+            {
+              "objectId": "c2270212-edba-455d-8ce1-c5d0862d9ca1",
+              "field": "temporalCoverage",
+              "values": [
+                "1750/1775"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/c2270212-edba-455d-8ce1-c5d0862d9ca1/schema.json"
+            },
+            {
+              "objectId": "2a68fb68-bcaa-434a-abff-46904a5250f2",
+              "field": "temporalCoverage",
+              "values": [
+                "1725/1775"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/2a68fb68-bcaa-434a-abff-46904a5250f2/schema.json"
+            },
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "temporalCoverage",
+              "values": [
+                "1875/1925"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        }
+      ]
+    },
+    "en": {
+      "questions": 5581,
+      "eligibleObjects": 720,
+      "byKind": {
+        "identify-object": 299,
+        "material": 706,
+        "maker": 129,
+        "designer": 83,
+        "manufacturer": 330,
+        "place": 250,
+        "depicted": 36,
+        "professor": 32,
+        "date": 703,
+        "height": 680,
+        "width": 679,
+        "depth": 668,
+        "owner": 11,
+        "related": 0,
+        "definition-detective": 273,
+        "odd-one-out": 702
+      },
+      "excludedObjects": [],
+      "exclusions": {
+        "type: no en label": 421,
+        "maker: missing/invalid source value": 591,
+        "manufacturer: missing/invalid source value": 390,
+        "place: missing/invalid source value": 470,
+        "depicted: missing/invalid source value": 684,
+        "professor: missing/invalid source value": 688,
+        "owner: missing/invalid source value": 709,
+        "related: missing/invalid source value": 568,
+        "designer: missing/invalid source value": 637,
+        "related: no en label": 152,
+        "height: missing/invalid source value": 40,
+        "width: missing/invalid source value": 41,
+        "depth: missing/invalid source value": 50,
+        "date: missing/invalid source value": 17,
+        "material: missing/invalid source value": 11,
+        "material: no en label": 3,
+        "depth: fewer than three unambiguous distractors": 2,
+        "definition: missing translation, short safe clue, or distinct distractors": 447,
+        "odd-one-out: missing/non-isolatable dates or photos": 18
+      },
+      "preview": [
+        {
+          "kind": "identify-object",
+          "prompt": "Which object type belongs on this label?",
+          "objectIds": [
+            "03268153-c9a0-4e81-9771-0566cfa4f3d1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/eed1240e-e59f-407d-871a-c55712b00ed1/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "gravimeters",
+            "textbooks",
+            "surveying accessories",
+            "spring scales"
+          ],
+          "answer": "gravimeters",
+          "explanation": "Gravimeter door Van Rest\nCollection record 2000.0535.GEO\nObject type: gravimeters.",
+          "evidence": [
+            {
+              "objectId": "03268153-c9a0-4e81-9771-0566cfa4f3d1",
+              "field": "exampleOfWork",
+              "values": [
+                "type:https://vocab.getty.edu/aat/300197563"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/03268153-c9a0-4e81-9771-0566cfa4f3d1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "material",
+          "prompt": "Which material is recorded for this object?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "tempera",
+            "cardboard",
+            "wood (plant material)",
+            "metal"
+          ],
+          "answer": "metal",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollection record 2000.0446.GEO\nMaterial: metal; glass (material).",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "material",
+              "values": [
+                "material:https://vocab.getty.edu/aat/300010900",
+                "material:https://vocab.getty.edu/aat/300010797"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "maker",
+          "prompt": "Who is recorded as the maker of this object?",
+          "objectIds": [
+            "03268153-c9a0-4e81-9771-0566cfa4f3d1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/eed1240e-e59f-407d-871a-c55712b00ed1/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "Gerard Hulst van Keulen",
+            "Carl Bamberg",
+            "Van Rest",
+            "Max Hildebrand"
+          ],
+          "answer": "Van Rest",
+          "explanation": "Gravimeter door Van Rest\nCollection record 2000.0535.GEO\nMaker: Van Rest.",
+          "evidence": [
+            {
+              "objectId": "03268153-c9a0-4e81-9771-0566cfa4f3d1",
+              "field": "creator:maker",
+              "values": [
+                "person:vanrest"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/03268153-c9a0-4e81-9771-0566cfa4f3d1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "designer",
+          "prompt": "Who designed this object?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "Christoph Scheiner",
+            "TU Delft",
+            "Heinrich (Zwitsers 1877-1951) Wild",
+            "Karl Maximilian von Bauernfeind"
+          ],
+          "answer": "Karl Maximilian von Bauernfeind",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollection record 2000.0446.GEO\nDesigner: Karl Maximilian von Bauernfeind.",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "creator:ontwerper",
+              "values": [
+                "person:karlmaximilianvonbauernfeind"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "manufacturer",
+          "prompt": "Who manufactured this object?",
+          "objectIds": [
+            "014ed4d8-7f80-4779-a8b0-23228e6a8151"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/82fa7c92-c299-4091-898e-052211e69564/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "Konsortium Luftbild GmbH",
+            "C. Plath",
+            "Lufkin Rule Company",
+            "Wed. J. Ahrend & Zoon"
+          ],
+          "answer": "Wed. J. Ahrend & Zoon",
+          "explanation": "Transporteur van Wed. J. Ahrend & Zoon\nCollection record 2000.0176.GEO\nManufacturer: Wed. J. Ahrend & Zoon.",
+          "evidence": [
+            {
+              "objectId": "014ed4d8-7f80-4779-a8b0-23228e6a8151",
+              "field": "creator:producent",
+              "values": [
+                "organization:wedjahrendzoon"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/014ed4d8-7f80-4779-a8b0-23228e6a8151/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "place",
+          "prompt": "Where was this object made?",
+          "objectIds": [
+            "014ed4d8-7f80-4779-a8b0-23228e6a8151"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/82fa7c92-c299-4091-898e-052211e69564/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "Los Angeles",
+            "Amsterdam",
+            "Kempten (Allgäu)",
+            "Boston"
+          ],
+          "answer": "Amsterdam",
+          "explanation": "Transporteur van Wed. J. Ahrend & Zoon\nCollection record 2000.0176.GEO\nPlace of creation: Amsterdam.",
+          "evidence": [
+            {
+              "objectId": "014ed4d8-7f80-4779-a8b0-23228e6a8151",
+              "field": "locationCreated",
+              "values": [
+                "place:https://www.geonames.org/2759794"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/014ed4d8-7f80-4779-a8b0-23228e6a8151/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "depicted",
+          "prompt": "Who is depicted in this painting?",
+          "objectIds": [
+            "04dc7bba-87fb-4a73-adb7-c96f5bdc79c2"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/8bf2104d-b8cb-4828-b2c7-809489afd080/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "Baltus Hendrik Pekelharing",
+            "M.W. Beijerinck",
+            "Johannes Augustus Keurenaer",
+            "Gustaaf Adolf Frederik Molengraaff"
+          ],
+          "answer": "M.W. Beijerinck",
+          "explanation": "Portret van prof. M.W. Beijerinck\nCollection record 2011.0009.CVB\nDepicted person: M.W. Beijerinck.",
+          "evidence": [
+            {
+              "objectId": "04dc7bba-87fb-4a73-adb7-c96f5bdc79c2",
+              "field": "about",
+              "values": [
+                "person:mwbeijerinck"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/04dc7bba-87fb-4a73-adb7-c96f5bdc79c2/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "professor",
+          "prompt": "Which (later) professor helped create this object?",
+          "objectIds": [
+            "09604e7e-4544-40ad-976e-00331068d2f4"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/9670d2ed-5dbb-4bf0-aa88-14ab161f8f1b/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "J.W. Dieperink",
+            "Ludwig Oswald Wenckebach",
+            "Matthijs Johannes Martinus Bogaerts",
+            "R. Roelofs"
+          ],
+          "answer": "J.W. Dieperink",
+          "explanation": "Horizontale veldenmillimeterbaak volgens prof. J.W Dieperink door G. de Koningh\nCollection record 2000.0195.GEO\nJ.W. Dieperink — designer.",
+          "evidence": [
+            {
+              "objectId": "09604e7e-4544-40ad-976e-00331068d2f4",
+              "field": "creator + reviewed professor evidence",
+              "values": [
+                "person:jwdieperink"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/09604e7e-4544-40ad-976e-00331068d2f4/schema.json"
+            },
+            {
+              "objectId": "09604e7e-4544-40ad-976e-00331068d2f4",
+              "field": "description:professorship",
+              "values": [
+                "Horizontale veldenmillimeterbaak vervaardigd door G. de Koningh, met een witte achtergrond naar een ontwerp van hoogleraar Jan Willem Dieperink (1878-1934). De baak was bestemd voor dradenafstandmeting tot een afstand van 120 meter."
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/09604e7e-4544-40ad-976e-00331068d2f4/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "date",
+          "prompt": "What year or period is this object dated to?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "1960–1970",
+            "1996",
+            "1844",
+            "1875–1925"
+          ],
+          "answer": "1875–1925",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollection record 2000.0446.GEO\nDating: 1875–1925.",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "temporalCoverage",
+              "values": [
+                "date:18751925"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "height",
+          "prompt": "What height is recorded for this object?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "20 mm",
+            "105 mm",
+            "17 mm",
+            "73 mm"
+          ],
+          "answer": "73 mm",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollection record 2000.0446.GEO\nHeight: 73 mm.",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "height",
+              "values": [
+                "height:73mm"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "width",
+          "prompt": "What width is recorded for this object?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "63 mm",
+            "35 mm",
+            "25 mm",
+            "165 mm"
+          ],
+          "answer": "35 mm",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollection record 2000.0446.GEO\nWidth: 35 mm.",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "width",
+              "values": [
+                "width:35mm"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "depth",
+          "prompt": "What depth is recorded for this object?",
+          "objectIds": [
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "45 mm",
+            "135 mm",
+            "50 mm",
+            "30 mm"
+          ],
+          "answer": "30 mm",
+          "explanation": "Dubbel Bauernfeind-prisma\nCollection record 2000.0446.GEO\nDepth: 30 mm.",
+          "evidence": [
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "depth",
+              "values": [
+                "depth:30mm"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "owner",
+          "prompt": "Who previously owned this object, according to the record?",
+          "objectIds": [
+            "144c8a72-ed25-4241-8fa2-9a435d4edf2d"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/efb2d565-1f06-463a-b150-528284979426/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "Eugen Heinrich Gugel",
+            "Abraham Cornelis Sebastiaan Van Heel",
+            "Jakob de Swaan Arons",
+            "College van Curatoren"
+          ],
+          "answer": "Abraham Cornelis Sebastiaan Van Heel",
+          "explanation": "Zwart-wit foto van vergroting vanaf positief Waarnemingsboek, in houten lijst\nCollection record 2024.4056.TNW\nPrevious owner: Abraham Cornelis Sebastiaan Van Heel; TU Delft faculteit TNW.",
+          "evidence": [
+            {
+              "objectId": "144c8a72-ed25-4241-8fa2-9a435d4edf2d",
+              "field": "contributor:had in bezit",
+              "values": [
+                "person:abrahamcornelissebastiaanvanheel",
+                "organization:tudelftfaculteittnw"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/144c8a72-ed25-4241-8fa2-9a435d4edf2d/schema.json"
+            }
+          ]
+        },
+        {
+          "kind": "definition-detective",
+          "prompt": "Which object type matches this definition?",
+          "clue": "Instruments for measuring variations in the gravitational field of the earth by detecting small differences in the weight of an object of constant mass.",
+          "objectIds": [
+            "03268153-c9a0-4e81-9771-0566cfa4f3d1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/eed1240e-e59f-407d-871a-c55712b00ed1/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "pantometers",
+            "presentation pieces",
+            "gravimeters",
+            "French curves"
+          ],
+          "answer": "gravimeters",
+          "explanation": "Gravimeter door Van Rest\nCollection record 2000.0535.GEO\nDefinition from the linked heritage vocabulary. Instruments for measuring variations in the gravitational field of the earth by detecting small differences in the weight of an object of constant mass.",
+          "evidence": [
+            {
+              "objectId": "03268153-c9a0-4e81-9771-0566cfa4f3d1",
+              "field": "exampleOfWork:linked-definition",
+              "values": [
+                "type:https://vocab.getty.edu/aat/300197563"
+              ],
+              "source": "http://vocab.getty.edu/aat/300197563"
+            }
+          ]
+        },
+        {
+          "kind": "odd-one-out",
+          "prompt": "Which object is not from the 18th century?",
+          "objectIds": [
+            "603469b6-ce8a-4756-9c57-8ae8681a3675",
+            "c2270212-edba-455d-8ce1-c5d0862d9ca1",
+            "2a68fb68-bcaa-434a-abff-46904a5250f2",
+            "009d29e8-e196-451f-8422-265b6ff27fb1"
+          ],
+          "imageUrls": [
+            "https://dlc.services/thumbs/7/18/0892a322-4b8a-4f68-bcc6-2ad7669aeeaa/full/full/0/default.jpg",
+            "https://dlc.services/thumbs/7/18/be7f27e2-fa45-41f4-a5ce-22d9c1d33709/full/full/0/default.jpg",
+            "https://dlc.services/thumbs/7/18/bd100430-2e1f-4d5d-8005-59067e7bd005/full/full/0/default.jpg",
+            "https://dlc.services/thumbs/7/18/f7db2918-13fc-4151-9c45-76a9e30adb52/full/full/0/default.jpg"
+          ],
+          "choices": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "answer": "D",
+          "explanation": "Collection dating:\nA: 1725–1775\nB: 1750–1775\nC: 1725–1775\nD: 1875–1925",
+          "evidence": [
+            {
+              "objectId": "603469b6-ce8a-4756-9c57-8ae8681a3675",
+              "field": "temporalCoverage",
+              "values": [
+                "1725/1775"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/603469b6-ce8a-4756-9c57-8ae8681a3675/schema.json"
+            },
+            {
+              "objectId": "c2270212-edba-455d-8ce1-c5d0862d9ca1",
+              "field": "temporalCoverage",
+              "values": [
+                "1750/1775"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/c2270212-edba-455d-8ce1-c5d0862d9ca1/schema.json"
+            },
+            {
+              "objectId": "2a68fb68-bcaa-434a-abff-46904a5250f2",
+              "field": "temporalCoverage",
+              "values": [
+                "1725/1775"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/2a68fb68-bcaa-434a-abff-46904a5250f2/schema.json"
+            },
+            {
+              "objectId": "009d29e8-e196-451f-8422-265b6ff27fb1",
+              "field": "temporalCoverage",
+              "values": [
+                "1875/1925"
+              ],
+              "source": "https://heritage.tudelft.nl/iiif/manifests/009d29e8-e196-451f-8422-265b6ff27fb1/schema.json"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "fieldPolicy": {
+    "identifier": "Record identity and reveal evidence, not a trivia question.",
+    "citations": "Preserved for provenance, not a trivia question.",
+    "image": "Question photographs; duplicate image URLs excluded within sessions.",
+    "description": "Reveal context and reviewed professor evidence.",
+    "about": "Person questions restricted to visual portraits, busts, medals and plaques.",
+    "temporalCoverage": "Catalogue dating; ranges kept intact, overlapping date distractors rejected.",
+    "dimensions": "Positive known units converted to mm; invalid or missing measurements excluded.",
+    "isRelatedTo": "Recorded links only; unknown, self and overlong labels excluded. English excluded without translated titles.",
+    "professor": "Requires both an explicit creator role and reviewed evidence of a (possibly later) professorship.",
+    "oddOneOut": "Four explicitly dated objects; three within one 100-year period, one wholly outside it.",
+    "definitions": "Linked vocabulary wording only; short excerpts with answer/alias leakage excluded."
+  }
+}
