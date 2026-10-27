@@ -166,6 +166,26 @@ refreshes normalized metadata from the IIIF and vocabulary caches, while
 only. Run builds with `BASE_PATH=/daphnes-arcade` when deploying under that path;
 the default is the domain root.
 
+### GitHub Pages
+
+The [Pages workflow](.github/workflows/pages.yml) builds and deploys on pushes to
+`main`, and can also be started manually from Actions. In the GitHub repository,
+set **Settings → Pages → Build and deployment → Source** to **GitHub Actions**
+before the first run ([GitHub setup guide](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)).
+Only `main` is deployed. The workflow reads the site's base path from GitHub Pages,
+so repository paths and custom domains use the correct asset URLs.
+
+CI caches the pnpm store and the generated collection JSON/coverage report.
+The collection cache key includes the checked-in object, vocabulary and professor
+snapshots, the data generator and question helpers, the lockfile and Node version.
+An exact cache hit skips metadata generation; a miss rebuilds it offline from the
+committed snapshots. To publish updated collection metadata, refresh and commit
+those snapshots first.
+
+Collection photographs are neither downloaded nor cached in CI. The build uses
+remote thumbnail URLs, with local image-cache settings explicitly disabled.
+Bundled game artwork remains part of the site. The workflow runs no tests.
+
 ### Local image cache
 
 Photographs are intentionally excluded from Git. By default the app uses the

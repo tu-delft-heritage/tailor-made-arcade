@@ -1,0 +1,89 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        id: node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          cache: true
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Cache generated collection data
+        id: collection
+        uses: actions/cache@v6
+        with:
+          path: |
+            src/lib/data/game-data.json
+            data/question-coverage.json
+          key: collection-v1-${{ runner.os }}-node${{ steps.node.outputs.node-version }}-${{ hashFiles('pnpm-lock.yaml', 'data/objects.json', 'data/vocabularies.json', 'data/professors.json', 'scripts/build-game-data.ts', 'src/lib/game/questions/**/*.ts', 'src/lib/game/types.ts', 'src/lib/game/dates.ts', 'src/lib/game/dimensions.ts') }}
+
+      - name: Generate collection data on cache miss
+        if: steps.collection.outputs.cache-hit != 'true'
+        run: pnpm build:data
+
+      # Metadata is already restored or generated; pnpm build would regenerate it.
+      # Collection photographs stay remote; no image fetch/cache step is run.
+      - name: Build static site
+        run: pnpm exec vite build
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          GAME_IMAGE_DIR: static
+          PUBLIC_OBJECT_IMAGE_BASE: ''
+          PUBLIC_CABINET: 'false'
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: build
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy site
+        id: deployment
+        uses: actions/deploy-pages@v5
