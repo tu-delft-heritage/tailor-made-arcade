@@ -1,0 +1,213 @@
+# Collection data
+
+## What is committed
+
+The repository contains the normalized collection snapshots needed for offline
+builds. Refreshing the upstream catalogue is a separate, manual operation.
+
+| File | Purpose | In Git? |
+| --- | --- | --- |
+| `data/objects.json` | All 720 normalized objects, source evidence and remote thumbnail URLs | Yes |
+| `data/vocabularies.json` | Vocabulary labels, aliases, descriptions and provenance | Yes |
+| `data/vocabulary-urls.json` | Discovered vocabulary URLs and their source references | Yes |
+| `data/professors.json` | Reviewed source passages supporting professor questions | Yes |
+| `data/game-selection.json` | Original ten-photo review; does not limit the game | Yes |
+| `data/data-quality.json` | Snapshot quality report and upstream revision | Yes |
+| `data/question-coverage.json` | Generated question counts, exclusions and review previews | Yes |
+| `src/lib/data/game-data.json` | Compiled objects and entities imported by the app | No; generated |
+| `.cache/` | Raw IIIF/vocabulary responses and optional local photographs | No |
+
+Object records preserve creator roles, places, depicted people, measurements with
+units, related records and citations. Professor questions require both reviewed
+evidence and an actual creator role; depicting a professor does not establish
+authorship. See [question-types.md](question-types.md) for field policies,
+eligibility and review limits.
+
+## Build from the snapshots
+
+```sh
+pnpm build:data
+```
+
+This reads `data/objects.json`, `data/vocabularies.json` and
+`data/professors.json`, compiles the ignored runtime JSON, and regenerates
+`data/question-coverage.json`. It makes no network requests and does not download
+photographs. The runtime metadata is about 262 KiB gzip.
+
+`pnpm dev`, `pnpm build` and `pnpm test` run this step automatically. The Pages
+workflow uses `pnpm build`, so a fresh checkout needs no collection cache or
+upstream fetch. Only package dependencies are cached in CI. See
+[deployment.md](deployment.md).
+
+## Refresh the collection
+
+Run these steps in order when publishing updated metadata:
+
+```sh
+pnpm fetch:iiif
+pnpm fetch:vocabularies --refresh
+pnpm data:prepare
+pnpm build:data
+```
+
+Review any fetch failures before continuing. The vocabulary fetch exports available
+results even when some requests fail; the current snapshot has a known missing
+identifier described below. `data:prepare` reads the local IIIF cache and vocabulary
+snapshot to update `data/objects.json` and `data/data-quality.json`.
+
+Review the changed snapshots, professor evidence and question-coverage report,
+run `pnpm test`, then commit the relevant `data/` changes. An ordinary build or
+Pages deployment never refreshes the upstream collection automatically.
+
+## Fetch IIIF schemas
+
+Requires **Node.js 22.18+**, **pnpm**, and **Git**.
+
+```sh
+pnpm install
+pnpm fetch:iiif
+```
+
+The TypeScript script fetches `build/iiif` from the `main` branch of
+[collective-access-data](https://github.com/tu-delft-heritage/collective-access-data),
+then extracts and caches every `schema.json`, preserving its relative path.
+It uses Node's built-in TypeScript support and has no runtime npm dependencies.
+
+```text
+.cache/iiif/
+  source/build/iiif/                # Complete upstream IIIF folder
+  schemas/objects/<id>/schema.json  # Extracted schema files
+  index.json                       # Source commit, paths, sizes, SHA-256 hashes
+```
+
+The source is a shallow, sparse Git checkout: files outside `build/iiif` are not
+checked out, and GitHub's partial clone support avoids downloading their contents.
+Rerunning the command fetches upstream changes, leaves unchanged schemas untouched,
+and removes cached schemas deleted upstream. JSON is validated before updating the
+schema cache; failures exit with a nonzero status. A lock prevents concurrent runs
+from writing the same cache. Cache files are ignored by Git.
+
+Optional custom cache location and source branch:
+
+```sh
+pnpm fetch:iiif --cache-dir ./my-cache --ref main
+```
+
+Custom cache directories should be dedicated to this script and added to your
+Git ignore rules. If a process is forcibly terminated, remove its `.lock` directory
+after checking that no fetch is still running.
+
+## Fetch vocabulary labels and descriptions
+
+After fetching the schemas:
+
+```sh
+pnpm fetch:vocabularies
+```
+
+This recursively discovers **every `sameAs` property**, including nested creators
+and arrays. It deduplicates known vocabulary identifiers across HTTP/HTTPS URL
+variants, preserving the original URLs and the JSON Pointer for each occurrence.
+Collection-object links are recorded in the inventory, but not downloaded as
+vocabulary terms. Unknown providers are reported explicitly.
+
+Supported sources:
+
+| Provider | Representation | Extracted fields |
+| --- | --- | --- |
+| Getty AAT (also supports TGN/ULAN URLs) | `.jsonld` | Preferred labels, aliases, referenced scope notes |
+| Cultureelerfgoed CHT | `.jsonld` | Preferred labels, aliases, scope notes and definitions |
+| Wikidata | `Special:EntityData/<QID>.json` | Labels, aliases, descriptions |
+| GeoNames | Public `sws.geonames.org/<ID>/about.rdf` | Names and language-tagged names; normally no prose descriptions |
+
+Both **Dutch (`nl`) and English (`en`)** are retained where the source provides
+them. Untagged text is kept separately as `und`; it is never assumed to be Dutch
+or English. No translations or definitions are invented. GeoNames RDF is parsed
+with `fast-xml-parser`, without requiring a GeoNames account or API key.
+
+```text
+data/
+  vocabulary-urls.json   # All unique URLs, providers, original URLs, schema references
+  vocabularies.json      # Normalized labels, aliases, descriptions, fetch provenance
+.cache/vocabularies/
+  responses/<hash>.json  # Original JSON-LD/JSON/XML body and response metadata
+  report.json            # Counts, missing description languages, failed URLs
+```
+
+The `data/` files are intended to be checked into the repository for later static
+builds. Raw response caches and reports are ignored by Git. Each term has this
+shape (text below is illustrative):
+
+```json
+{
+  "url": "http://vocab.getty.edu/aat/300010900",
+  "provider": "getty",
+  "labels": { "nl": ["metaal"], "en": ["metal"] },
+  "aliases": { "en": ["metals"] },
+  "descriptions": { "nl": ["…"], "en": ["…"] },
+  "source": {
+    "requestUrl": "https://vocab.getty.edu/aat/300010900.jsonld",
+    "responseUrl": "https://vocab.getty.edu/aat/300010900.jsonld",
+    "fetchedAt": "2026-09-15T00:00:00.000Z"
+  }
+}
+```
+
+Rerunning reuses successful cached responses and retries previously failed URLs.
+Use `--refresh` to update all responses, or `--offline` to regenerate the normalized
+files from the raw cache without network requests:
+
+```sh
+pnpm fetch:vocabularies --refresh
+pnpm fetch:vocabularies --offline
+pnpm fetch:vocabularies --schemas-dir .cache/iiif/schemas --cache-dir .cache/vocabularies --output-dir data --concurrency 3
+```
+
+Requests have a 30-second timeout, three attempts for temporary failures, and at
+most three concurrent downloads by default. HTTP 429/5xx responses are retried;
+long `Retry-After` periods are reported for a later run. Invalid responses never
+replace a valid cached copy. Missing descriptions are normal data gaps; failed
+requests or unsupported providers are listed in the report and cause exit code 1
+after all URLs have been processed. Available results are still exported. Two
+`.vocabularies.lock` directories protect the cache and output from concurrent
+writes; remove a stale lock only after confirming no fetch is running.
+
+### Initial fetch results
+
+The current snapshot has **208 external URLs**, plus **152 collection-object
+links**. The initial run cached **207 vocabulary records**, including **135 with
+Dutch descriptions** and **140 with English descriptions**. Getty accounts for
+126 records, of which 120 have descriptions in both languages. All 54 GeoNames
+records were retrieved, but none provides Dutch or English prose descriptions.
+
+One upstream identifier returned HTTP 404:
+[Wikidata Q138148494](https://www.wikidata.org/entity/Q138148494), referenced as
+`exampleOfWork.sameAs` for “polarisatie prisma” in object
+`86092889-a03d-459a-a076-577fdf18f2de`. Its original reference remains in the URL
+inventory. The command will report this failure until the source is corrected
+or the entity becomes available; it does not substitute a guessed identifier.
+
+## Local image cache
+
+Photographs are intentionally excluded from Git. By default the app uses the
+remote thumbnail URL stored in `data/objects.json`. Cache all 720 images and
+serve or bundle them locally with:
+
+```sh
+pnpm cache:images
+GAME_IMAGE_DIR=.cache/game-assets PUBLIC_OBJECT_IMAGE_BASE=/objects pnpm dev
+```
+
+Use the same environment variables with `pnpm build` to copy the cached images
+into the static output. `GAME_IMAGE_DIR` is the filesystem directory SvelteKit
+serves as static assets; `PUBLIC_OBJECT_IMAGE_BASE` is the browser URL for its
+`objects/` subdirectory. Both can point elsewhere:
+
+```sh
+pnpm cache:images -- --output-dir /path/to/arcade-assets
+GAME_IMAGE_DIR=/path/to/arcade-assets PUBLIC_OBJECT_IMAGE_BASE=/objects pnpm build
+```
+
+Reruns reuse existing files; add `--refresh` to download them again. Use
+`--prototype` only to cache the original ten reviewed photographs. See
+[`.env.example`](../.env.example) for the complete local and cabinet configuration.
