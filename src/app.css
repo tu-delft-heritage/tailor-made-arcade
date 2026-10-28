@@ -81,6 +81,7 @@ h1:focus, [role='listbox']:focus { outline: none; }
 .character-quote { font-size: min(1.15cqw, 1.7cqh); line-height: 2; text-align: center; color: #fff1cb; text-shadow: 2px 2px #101a2b; min-height: 4cqh; max-width: 70ch; justify-self: center; }
 .selection-footer { position: relative; display: flex; align-items: center; justify-content: center; }
 .screen .back-button { position: absolute; left: 0; padding: 1.5cqh 2cqw; background: #243747; color: #eee1bb; box-shadow: inset 0 -3px #0d1d2e; font-size: min(1cqw, 1.5cqh); }
+.screen .back-button:hover, .screen .back-button:focus-visible { color: var(--ink); background: var(--gold); box-shadow: inset 0 3px #fff2ac, inset 0 -3px #b58d3c; }
 .screen .scoreboard-screen .back-button { position: relative; left: auto; }
 
 .screen .intro-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3cqh; }
