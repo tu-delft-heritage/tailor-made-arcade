@@ -8,6 +8,8 @@ Each teammate has a NES-style portrait based on the supplied reference photos an
 bilingual character quotes. The selected portrait remains in the HUD. After a win, Next Round keeps that
 avatar and increases difficulty; starting from home opens teammate selection. The ten
 portraits fit a responsive grid; arrow keys follow the visible rows and columns.
+All ten selection portraits preload when the app opens; the selected reaction
+portrait preloads while choosing an avatar.
 
 A short, skippable opening shows the selected avatar's shocked expression and
 spills paper labels from their portrait onto the depot floor. Every avatar has a

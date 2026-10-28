@@ -473,6 +473,11 @@
 </script>
 
 <SiteMeta />
+<svelte:head>
+  {#each team as member}
+    <link rel="preload" as="image" href={member.portrait} fetchpriority="low" />
+  {/each}
+</svelte:head>
 <svelte:window onkeydown={handleKeydown} />
 
 <main class="cabinet" class:cabinet-mode={cabinetMode}>
