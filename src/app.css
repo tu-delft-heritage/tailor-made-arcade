@@ -6,10 +6,12 @@
 }
 
 :root {
+  --cabinet-background: #0a111e; /* Keep in sync with app.html's theme-color. */
+  color-scheme: dark;
   font-family: 'Press Start 2P', monospace;
   font-synthesis: none;
   color: #fff7db;
-  background: #101a2a;
+  background: var(--cabinet-background);
   --paper: #eee0b8;
   --ink: #293039;
   --gold: #edc35b;
@@ -18,12 +20,12 @@
 * { box-sizing: border-box; }
 html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; overscroll-behavior: none; }
 body, button, input, select, textarea { font-family: 'Press Start 2P', monospace; }
-body { color: #fff7db; }
+body { color: #fff7db; background: var(--cabinet-background); }
 h1, h2, p, figure { margin: 0; }
 button { cursor: pointer; }
 button:disabled { cursor: default; }
 h1:focus, [role='listbox']:focus { outline: none; }
-.cabinet { width: 100vw; height: 100dvh; padding: 6px; background: #0a111e; }
+.cabinet { width: 100vw; height: 100dvh; padding: 6px; background: var(--cabinet-background); }
 .cabinet-mode, .cabinet-mode * { cursor: none !important; }
 .screen { position: relative; isolation: isolate; container-type: size; width: 100%; height: 100%; overflow: hidden; background: #142b3d; }
 .screen::after { content: ''; position: absolute; z-index: 20; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, transparent 0 3px, #0c132312 3px 4px); box-shadow: inset 0 0 0 2px #d9e0c81c; }
