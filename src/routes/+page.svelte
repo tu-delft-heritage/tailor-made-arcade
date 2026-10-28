@@ -22,6 +22,7 @@
   import { createInactivityTimer, IDLE_MILLISECONDS, IDLE_WARNING_MILLISECONDS } from '$lib/game/inactivity'
   import { SCOREBOARD_KEY, MAX_SCORE, isNewHighScore, parseScoreboard, readScoreboard, recordHighScore } from '$lib/game/scoreboard'
   import { GAME_SECONDS, QUESTION_SECONDS, roundRules } from '$lib/game/scoring'
+  import { endingQuote } from '$lib/game/endings'
   import { formatDate } from '$lib/game/dates'
   import { createQuestionBank, createSession, questionObjects, replacementQuestion } from '$lib/game/questions'
   import type { CharacterId, GameData, GameObject, Language, Question } from '$lib/game/types'
@@ -48,6 +49,7 @@
   const character = $derived(team.find(member => member.id === $snapshot.context.characterId) ?? team[0])
   let language = $state<Language>('nl')
   const text = $derived(copy[language])
+  const endingLine = $derived(endingQuote({ ...$snapshot.context, questionCount: questions.length }, language))
   const pages = $derived(descriptionPages(question?.explanation ?? '', question?.answerObjectId ? 100 : 140))
   let best = $state(0)
   let scores = $state(parseScoreboard(null))
@@ -593,7 +595,7 @@
       <section inert={idleWarningSeconds !== null} class="ending-screen victory-screen">
         <h1 class="screen-title ending-title" bind:this={screenHeading} tabindex="-1">{text.missionComplete}</h1>
         <div class="ending-panel">
-          <p class="ending-quote">“{text.victoryQuote}”</p>
+          <p class="ending-quote">“{endingLine}”</p>
           <p class="final-score">{scoreText(score)}</p>
           {#if newHighScore}<p class="record-banner" role="status">{text.newHighScore}</p>{/if}
           <button type="button" class="nes-btn cabinet-prompt" onclick={showScoreboard}>
@@ -606,7 +608,7 @@
       <section inert={idleWarningSeconds !== null} class="ending-screen game-over-screen">
         <h1 class="screen-title ending-title" bind:this={screenHeading} tabindex="-1">{text.gameOver}</h1>
         <div class="ending-panel">
-          <p class="ending-quote">“{text.bossQuote}”</p>
+          <p class="ending-quote">“{endingLine}”</p>
           <p class="final-score">{scoreText(score)}</p>
           <button type="button" class="nes-btn cabinet-prompt" onclick={selectTeam}>
             <span class="physical-button green"></span>{text.retry}

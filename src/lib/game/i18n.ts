@@ -4,7 +4,6 @@ export const copy = {
   nl: {
     mission: 'DE VERDWENEN LABELS', selectTeam: 'KIES JE AVATAR', back: 'TERUG',
     introTitle: 'OEPS!', introHint: '{name} liet de labels vallen. Zet ze weer op hun plek!', go: 'AAN DE SLAG',
-    bossQuote: 'Ik kan je wel achter het behang plakken!', victoryQuote: 'Excellent work mate!',
     wake: 'DRUK OP START', idleAlt: 'Het team rond een tafel met historische instrumenten in het depot.',
     missionComplete: 'KLAAR!', recovered: 'LABELS TERUG',
     start: 'START', language: 'TAAL', question: 'WELK LABEL HOORT HIER?',
@@ -22,7 +21,6 @@ export const copy = {
   en: {
     mission: 'THE LOST LABELS', selectTeam: 'CHOOSE YOUR AVATAR', back: 'BACK',
     introTitle: 'OOPS!', introHint: '{name} dropped the labels. Put them back!', go: 'LET’S GO',
-    bossQuote: 'You’re driving me up the wall!', victoryQuote: 'Excellent work mate!',
     wake: 'PRESS START', idleAlt: 'The team gathered around a table of historic instruments in the depot.',
     missionComplete: 'ALL DONE!', recovered: 'LABELS BACK',
     start: 'START', language: 'LANGUAGE', question: 'WHICH LABEL BELONGS HERE?',

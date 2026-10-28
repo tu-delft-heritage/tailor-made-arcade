@@ -33,13 +33,15 @@ character context and avatar prompts belong in the Git-ignored `.local-context/`
 directory, outside application imports and build assets.
 
 Finishing all ten questions within the time and mistake limits brings up Cormac on a gently
-rumbling motorcycle: “Excellent work mate!” After eight seconds the win screen
+rumbling motorcycle. His English encouragement varies for fast or flawless wins,
+strong accuracy, close calls and harder rounds. After eight seconds the win screen
 automatically opens the scoreboard; the green button opens it immediately.
 The motorcycle meets the bottom edge; on narrow screens the win panel sits above it.
 Next Round is available on the win screen and the following scoreboard.
 Avatar selection always starts at Charlotte for a fresh game.
 Timeouts, too many wrong answers and unavailable-image endings
-show Liselotte in the instrument room, with a playful scolding.
+show Liselotte in the instrument room. Her Dutch/English lines respond to the
+reason for stopping and progress made; image failures get their own line.
 Game over clears the current score to zero and never saves that failed round as a
 high score. Previously saved high scores remain intact.
 Correct answers earn 100 base points plus up to 100 speed-bonus points, based
