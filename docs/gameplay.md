@@ -92,6 +92,8 @@ in the home headline. A new avatar record is announced only on the winning
 screen, then highlights that avatar's scoreboard row. Gameplay, game-over screens
 and scoreboards opened after game over do not announce records. Ties are not new records.
 Corrupt or unavailable storage does not prevent play.
+Language and older unattributed records use the `tailor-made-arcade:` storage
+prefix. A compatibility migration preserves values saved under the former name.
 
 ## Answer feedback
 

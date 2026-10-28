@@ -21,6 +21,7 @@
   import { gameMachine } from '$lib/game/machine'
   import { createInactivityTimer, IDLE_MILLISECONDS, IDLE_WARNING_MILLISECONDS } from '$lib/game/inactivity'
   import { SCOREBOARD_KEY, MAX_SCORE, isNewHighScore, parseScoreboard, readScoreboard, recordHighScore } from '$lib/game/scoreboard'
+  import { LANGUAGE_KEY, bestScoreKey, migrateStoredPreferences } from '$lib/game/storage'
   import { GAME_SECONDS, QUESTION_SECONDS, roundRules } from '$lib/game/scoring'
   import { endingQuote } from '$lib/game/endings'
   import { formatDate } from '$lib/game/dates'
@@ -107,11 +108,10 @@
     return `${base}/${directory}/${object.id}.jpg`.replace(/\/+/g, '/')
   }
 
-  function storageKey() { return `daphnes-arcade:best:v3:${language}` }
   function scoreStorage() { try { return window.localStorage } catch { return undefined } }
   function loadBest() {
     try {
-      const stored = Number(localStorage.getItem(storageKey()))
+      const stored = Number(localStorage.getItem(bestScoreKey(language)))
       best = Number.isInteger(stored) && stored >= 0 && stored <= MAX_SCORE ? stored : 0
     } catch { best = 0 }
   }
@@ -119,7 +119,7 @@
     recordActivity()
     if (!$snapshot.matches('title')) return
     language = next
-    try { localStorage.setItem('daphnes-arcade:language:v1', next) } catch { /* Preference is optional. */ }
+    try { localStorage.setItem(LANGUAGE_KEY, next) } catch { /* Preference is optional. */ }
     if (storageReady) loadBest()
   }
   function showScoreboard() {
@@ -146,8 +146,9 @@
   }
 
   onMount(() => {
+    migrateStoredPreferences(scoreStorage())
     try {
-      const storedLanguage = localStorage.getItem('daphnes-arcade:language:v1')
+      const storedLanguage = localStorage.getItem(LANGUAGE_KEY)
       if (storedLanguage === 'nl' || storedLanguage === 'en') language = storedLanguage
     } catch { /* Play still works without browser storage. */ }
     storageReady = true
@@ -238,7 +239,7 @@
     }
     if ($snapshot.matches('results') && storageReady && score > best) {
       best = score
-      try { localStorage.setItem(storageKey(), String(best)) } catch { /* Optional local record. */ }
+      try { localStorage.setItem(bestScoreKey(language), String(best)) } catch { /* Optional local record. */ }
     }
   })
   $effect(() => {

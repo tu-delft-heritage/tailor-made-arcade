@@ -75,7 +75,7 @@ async function download(entry: VocabularyUrl, fetcher: typeof fetch): Promise<Re
       const response = await fetcher(entry.requestUrl!, {
         headers: {
           Accept: entry.provider === 'geonames' ? 'application/rdf+xml' : 'application/ld+json, application/json',
-          'User-Agent': "DaphnesArcade/0.1 (TU Delft heritage vocabulary cache)"
+          'User-Agent': 'TailorMadeArcade/0.1 (TU Delft heritage vocabulary cache)'
         },
         signal: AbortSignal.timeout(30_000)
       })
