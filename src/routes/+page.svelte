@@ -477,7 +477,7 @@
 <main class="cabinet" class:cabinet-mode={cabinetMode}>
   <div class="screen" data-scene={sceneIndex} data-state={$snapshot.value} class:menu-scene={$snapshot.matches('title') || $snapshot.matches('choosing') || $snapshot.matches('scoreboard')}>
     <DepotScene variant={sceneIndex} />
-    {#if storyScene}<StoryArtwork scene={storyScene} idleAlt={text.idleAlt} />{/if}
+    {#if storyScene === 'idle'}<StoryArtwork scene="idle" idleAlt={text.idleAlt} />{/if}
     {#if questions.length && !storyScene && !$snapshot.matches('title') && !$snapshot.matches('choosing') && !$snapshot.matches('scoreboard') && (!$snapshot.matches('intro') || introReady)}
       {#key spillKey}<LabelSpill />{/key}
     {/if}
@@ -593,6 +593,7 @@
       </section>
     {:else if $snapshot.matches('results')}
       <section inert={idleWarningSeconds !== null} class="ending-screen victory-screen">
+        <div class="ending-backdrop"><DepotScene variant={sceneIndex} /><StoryArtwork scene="results" /></div>
         <h1 class="screen-title ending-title" bind:this={screenHeading} tabindex="-1">{text.missionComplete}</h1>
         <div class="ending-panel">
           <p class="ending-quote">“{endingLine}”</p>
@@ -606,6 +607,7 @@
       </section>
     {:else if $snapshot.matches('gameOver')}
       <section inert={idleWarningSeconds !== null} class="ending-screen game-over-screen">
+        <div class="ending-backdrop"><StoryArtwork scene="gameOver" /></div>
         <h1 class="screen-title ending-title" bind:this={screenHeading} tabindex="-1">{text.gameOver}</h1>
         <div class="ending-panel">
           <p class="ending-quote">“{endingLine}”</p>

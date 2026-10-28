@@ -143,7 +143,11 @@ h1:focus, [role='listbox']:focus { outline: none; }
 .page-controls button:disabled { opacity: .25; }
 .page-controls button:focus-visible { outline: 2px solid #35475c; }
 .screen .continue-button { position: absolute; bottom: 10cqh; right: 4cqw; rotate: 4deg; font-size: min(1cqw, 1.6cqh); }
-.screen .ending-screen { padding: 5cqh 4cqw; text-align: center; }
+.screen .ending-screen { isolation: isolate; padding: 5cqh 4cqw; text-align: center; animation: ending-from-left .65s steps(16, end) both; }
+.screen .game-over-screen { animation-name: ending-from-bottom; }
+.ending-backdrop { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+@keyframes ending-from-left { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes ending-from-bottom { from { transform: translateY(100%); } to { transform: translateY(0); } }
 .ending-title { width: fit-content; margin: 0 auto; padding: 1cqh 2cqw; background: #101c30dc; color: var(--gold); }
 .ending-panel { position: absolute; right: 5cqw; top: 23cqh; width: 35cqw; display: flex; flex-direction: column; align-items: center; gap: 3cqh; padding: 3cqh 2cqw; background: #101c30ed; border: 3px solid #bfa76d; box-shadow: 6px 7px #0a142ac4; }
 .record-banner { padding: 1cqh 1cqw; color: #192d36; background: #f4cf6a; box-shadow: 3px 4px #8f6b35; font-size: min(1.35cqw, 1.9cqh); line-height: 1.8; text-align: center; animation: record-pop .6s steps(4, end) both; }

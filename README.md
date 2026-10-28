@@ -42,6 +42,7 @@ Avatar selection always starts at Charlotte for a fresh game.
 Timeouts, too many wrong answers and unavailable-image endings
 show Liselotte in the instrument room. Her Dutch/English lines respond to the
 reason for stopping and progress made; image failures get their own line.
+The whole win scene slides in from the left; game over slides up from below.
 Game over clears the current score to zero and never saves that failed round as a
 high score. Previously saved high scores remain intact.
 Correct answers earn 100 base points plus up to 100 speed-bonus points, based
