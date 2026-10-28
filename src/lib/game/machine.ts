@@ -12,6 +12,7 @@ type GameContext = {
   questionIndex: number
   selected: string | null
   score: number
+  roundStartScore: number
   level: number
   lastPoints: number
   activeChoice: number
@@ -33,8 +34,9 @@ export const gameMachine = setup({
     start: assign(({ context, event }) => {
       if (event.type !== 'START' && event.type !== 'NEXT_GAME') return {}
       const level = event.type === 'NEXT_GAME' ? context.level + 1 : 1
+      const score = event.type === 'NEXT_GAME' ? context.score : 0
       return { questions: event.questions.map(question => questionForLevel(question, level)), level,
-        questionIndex: 0, selected: null, score: 0, lastPoints: 0, activeChoice: 0, results: [], gameOverReason: null }
+        questionIndex: 0, selected: null, score, roundStartScore: score, lastPoints: 0, activeChoice: 0, results: [], gameOverReason: null }
     }),
     move: assign(({ context, event }) => event.type === 'MOVE'
       ? { activeChoice: moveSelection(context.activeChoice, event.direction) } : {}),
@@ -63,8 +65,8 @@ export const gameMachine = setup({
     } : {}),
     imageError: assign({ gameOverReason: 'image' as const }),
     mistakeLimit: assign({ gameOverReason: 'mistakes' as const }),
-    loseScore: assign({ score: 0, lastPoints: 0 }),
-    home: assign({ questions: [], questionIndex: 0, selected: null, score: 0, level: 1, lastPoints: 0, activeChoice: 0,
+    loseScore: assign({ score: 0, roundStartScore: 0, lastPoints: 0 }),
+    home: assign({ questions: [], questionIndex: 0, selected: null, score: 0, roundStartScore: 0, level: 1, lastPoints: 0, activeChoice: 0,
       results: [], gameOverReason: null })
   },
   guards: {
@@ -78,7 +80,7 @@ export const gameMachine = setup({
 }).createMachine({
   id: 'arcade',
   initial: 'title',
-  context: { characterId: 'charlotte', questions: [], questionIndex: 0, selected: null, score: 0, level: 1, lastPoints: 0, activeChoice: 0,
+  context: { characterId: 'charlotte', questions: [], questionIndex: 0, selected: null, score: 0, roundStartScore: 0, level: 1, lastPoints: 0, activeChoice: 0,
     results: [], gameOverReason: null },
   on: {
     HOME: { target: '.title', actions: 'home' },

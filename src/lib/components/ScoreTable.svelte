@@ -15,7 +15,7 @@
 <div class="score-table-wrap">
   <table class="score-table">
     <caption class="sr-only">{text.scoreboard}</caption>
-    <thead><tr><th class="rank-header" scope="col"><span class="sr-only">{text.place}</span></th><th class="avatar-header" scope="col">{text.avatar}</th><th scope="col"><span class="sr-only">{text.highScore}</span></th><th scope="col">{text.score}</th></tr></thead>
+    <thead><tr><th class="rank-header" scope="col"><span class="sr-only">{text.place}</span></th><th class="avatar-header" scope="col">{text.avatar}</th><th scope="col"><span class="sr-only">{text.bestScore}</span></th><th scope="col">{text.bestScore}</th></tr></thead>
     {#each [rows.slice(0, 3), rows.slice(3)] as group, groupIndex}
       <tbody class:other-scores={groupIndex === 1}>
         {#each group as member, index (member.id)}

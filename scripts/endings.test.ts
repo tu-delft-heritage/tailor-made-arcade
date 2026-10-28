@@ -5,7 +5,7 @@ import type { GameOverReason, RoundResult } from '../src/lib/game/types.ts'
 
 const results = (correct: number, wrong = 0): RoundResult[] => [...Array<RoundResult>(correct).fill('correct'), ...Array<RoundResult>(wrong).fill('wrong')]
 const performance = (correct: number, wrong = 0, level = 1, score = correct * 100, gameOverReason: GameOverReason | null = null) => ({
-  results: results(correct, wrong), score, level, gameOverReason, questionCount: 10
+  results: results(correct, wrong), score, roundStartScore: 0, level, gameOverReason, questionCount: 10
 })
 
 test('victory lines distinguish speed, accuracy, narrow wins and harder rounds', () => {
@@ -20,6 +20,10 @@ test('victory lines distinguish speed, accuracy, narrow wins and harder rounds',
   assert.match(close, /close/i)
   assert.equal(endingQuote(performance(10, 0, 2, 2250), 'en'), fast, 'speed is normalized for the round multiplier')
   assert.equal(endingQuote(performance(10, 0, 2, 1800), 'en'), perfect, 'higher round points alone do not imply a fast finish')
+  assert.equal(endingQuote({ ...performance(10, 0, 2, 3800), roundStartScore: 2000 }, 'en'), perfect,
+    'carried points do not turn a slow round into a fast finish')
+  assert.equal(endingQuote({ ...performance(10, 0, 2, 4250), roundStartScore: 2000 }, 'en'), fast,
+    'a genuinely fast round still earns the speed quote with carried points')
   assert.equal(endingQuote(performance(10), 'nl'), perfect, 'Cormac keeps his English voice')
 })
 

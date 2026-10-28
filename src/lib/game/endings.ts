@@ -4,6 +4,7 @@ import type { GameOverReason, Language, RoundResult } from './types.ts'
 type Performance = {
   results: RoundResult[]
   score: number
+  roundStartScore: number
   level: number
   questionCount: number
   gameOverReason: GameOverReason | null
@@ -55,7 +56,7 @@ const setbacks = {
 
 /** Deterministic selection keeps a line stable while an ending is on screen. */
 export function endingQuote(performance: Performance, language: Language): string {
-  const { results, score, level, questionCount, gameOverReason } = performance
+  const { results, score, roundStartScore, level, questionCount, gameOverReason } = performance
   const correct = results.filter(result => result === 'correct').length
   const wrong = results.filter(result => result === 'wrong').length
   const accuracy = results.length ? correct / results.length : 0
@@ -74,7 +75,8 @@ export function endingQuote(performance: Performance, language: Language): strin
 
   // Cormac's spoken lines stay in English in both interface languages.
   if (questionCount > 0 && correct === questionCount) {
-    return score >= correct * 175 * rules.multiplier ? victories.fast : victories.perfect
+    const roundScore = score - roundStartScore
+    return roundScore >= correct * 175 * rules.multiplier ? victories.fast : victories.perfect
   }
   if (wrong > 0 && wrong === rules.maxMistakes) return victories.close
   if (accuracy >= 0.8) return victories.strong

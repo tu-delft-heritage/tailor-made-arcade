@@ -4,6 +4,7 @@ import { test } from 'node:test'
 import { createActor, SimulatedClock } from 'xstate'
 import { gameMachine, RESULTS_MILLISECONDS } from '../src/lib/game/machine.ts'
 import { createQuestionBank, createSession } from '../src/lib/game/questions/index.ts'
+import { readScoreboard, recordHighScore, type ScoreStorage } from '../src/lib/game/scoreboard.ts'
 import { characterIds, type CharacterId, type GameData, type Language } from '../src/lib/game/types.ts'
 
 const data: GameData = JSON.parse(await readFile(new URL('../src/lib/data/game-data.json', import.meta.url), 'utf8'))
@@ -289,7 +290,7 @@ test('an abandoned mission clears its score and ignores late image, timeout, and
   actor.stop()
 })
 
-test('a successful player can continue with the same avatar, harder clocks and higher rewards', () => {
+test('a successful player carries points forward with the same avatar, harder clocks and higher rewards', () => {
   const questions = questionsFor(42, 'en').slice(0, 1)
   for (const viaScoreboard of [false, true]) {
     const clock = new SimulatedClock()
@@ -314,7 +315,8 @@ test('a successful player can continue with the same avatar, harder clocks and h
     assert.equal(actor.getSnapshot().value, 'intro')
     assert.equal(context.characterId, 'elin')
     assert.equal(context.level, 2)
-    assert.equal(context.score, 0)
+    assert.equal(context.score, 150)
+    assert.equal(context.roundStartScore, 150)
     assert.equal(context.lastPoints, 0)
     assert.deepEqual(context.results, [])
     assert.equal(context.questions[0].seconds, Math.round(questions[0].seconds * 0.85))
@@ -325,12 +327,16 @@ test('a successful player can continue with the same avatar, harder clocks and h
     assert.equal(actor.getSnapshot().context.questions[0].seconds, context.questions[0].seconds, 'replacements retain difficulty')
     actor.send({ type: 'IMAGE_READY' })
     actor.send({ type: 'ANSWER', answer: questions[0].answer, remainingMilliseconds: context.questions[0].seconds * 1000 })
-    assert.equal(actor.getSnapshot().context.score, 250)
+    assert.equal(actor.getSnapshot().context.lastPoints, 250)
+    assert.equal(actor.getSnapshot().context.score, 400)
     actor.send({ type: 'FINISH' })
     actor.send({ type: 'NEXT_GAME', questions })
     assert.equal(actor.getSnapshot().context.level, 3)
+    assert.equal(actor.getSnapshot().context.score, 400)
+    assert.equal(actor.getSnapshot().context.roundStartScore, 400)
     actor.send({ type: 'INTRO_DONE' })
     actor.send({ type: 'TIMEOUT', reason: 'game-time' })
+    assert.equal(actor.getSnapshot().context.score, 0, 'game over forfeits the whole run total')
     actor.send({ type: 'SHOW_SCORES' })
     actor.send({ type: 'NEXT_GAME', questions })
     assert.equal(actor.getSnapshot().value, 'scoreboard', 'game over cannot advance difficulty')
@@ -340,7 +346,46 @@ test('a successful player can continue with the same avatar, harder clocks and h
     actor.send({ type: 'START', questions })
     context = actor.getSnapshot().context
     assert.equal(context.level, 1)
+    assert.equal(context.score, 0)
+    assert.equal(context.roundStartScore, 0)
     assert.equal(context.questions[0].seconds, questions[0].seconds)
     actor.stop()
   }
+})
+
+test('completed rounds save the run total as a high score; a later loss cannot replace it', () => {
+  const questions = questionsFor(42, 'en').slice(0, 2)
+  const values = new Map<string, string>()
+  const storage: ScoreStorage = { getItem: key => values.get(key) ?? null, setItem: (key, value) => { values.set(key, value) } }
+  let scores = readScoreboard(storage)
+  const actor = createActor(gameMachine, { clock: new SimulatedClock() }).start()
+  actor.subscribe(snapshot => {
+    if (snapshot.matches('results')) scores = recordHighScore(scores, snapshot.context.characterId, snapshot.context.score, storage)
+  })
+  actor.send({ type: 'SELECT_TEAM' })
+  actor.send({ type: 'CHOOSE_CHARACTER', characterId: 'elin' })
+  actor.send({ type: 'START', questions: questions.slice(0, 1) })
+  for (const expectedTotal of [200, 450]) {
+    actor.send({ type: 'INTRO_DONE' })
+    actor.send({ type: 'IMAGE_READY' })
+    const question = actor.getSnapshot().context.questions[0]
+    actor.send({ type: 'ANSWER', answer: question.answer, remainingMilliseconds: question.seconds * 1000 })
+    assert.equal(actor.getSnapshot().context.score, expectedTotal)
+    actor.send({ type: 'FINISH' })
+    assert.equal(readScoreboard(storage).elin, expectedTotal, 'store the total, never add it to the saved record')
+    actor.send({ type: 'NEXT_GAME', questions: expectedTotal === 450 ? questions : questions.slice(0, 1) })
+  }
+  actor.send({ type: 'INTRO_DONE' })
+  actor.send({ type: 'IMAGE_READY' })
+  const question = actor.getSnapshot().context.questions[0]
+  const answerIndex = question.choices.indexOf(question.answer)
+  if (answerIndex >= 2) actor.send({ type: 'MOVE', direction: 'down' })
+  if (answerIndex % 2 === 1) actor.send({ type: 'MOVE', direction: 'right' })
+  actor.send({ type: 'CONFIRM', remainingMilliseconds: question.seconds * 1000 })
+  assert.equal(actor.getSnapshot().context.score, 750, 'keyboard answers also add to carried points')
+  assert.equal(readScoreboard(storage).elin, 450, 'unfinished rounds never save a new record')
+  actor.send({ type: 'TIMEOUT', reason: 'question-time' })
+  assert.equal(actor.getSnapshot().context.score, 0)
+  assert.equal(readScoreboard(storage).elin, 450, 'the last completed total survives game over')
+  actor.stop()
 })
