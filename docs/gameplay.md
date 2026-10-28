@@ -142,6 +142,10 @@ physical buttons, using the key mapping from Allmaps Arcade's
 | Yellow button | C or + | Zoom photograph in |
 | White button | Z | Toggle sound |
 
+The home screen has a sound switch beside the language selector. It uses the
+same sound setting as the Z shortcut and is hidden in cabinet mode, where the
+physical white button remains available.
+
 Answers only unlock once the photograph has loaded. Holding the green button
 does not skip screens. Selection is shown with an arrow and a yellow highlight.
 Mouse controls use the NES.css pointer and every visible answer and action button

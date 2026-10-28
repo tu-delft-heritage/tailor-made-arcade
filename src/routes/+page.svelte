@@ -320,6 +320,14 @@
       oscillator.stop(audioContext.currentTime + 0.23)
     } catch { /* Audio is optional. */ }
   }
+  function toggleSound() {
+    recordActivity()
+    sound = !sound
+    clearTimeout(noticeTimer)
+    soundNotice = $snapshot.matches('title') && !cabinetMode ? '' : sound ? text.soundOn : text.soundOff
+    if (soundNotice) noticeTimer = setTimeout(() => { soundNotice = '' }, 1200)
+    if (sound) beep()
+  }
   function enterFullscreen() {
     if (cabinetMode && !document.fullscreenElement && document.fullscreenEnabled) {
       void document.documentElement.requestFullscreen().catch(() => {})
@@ -444,11 +452,7 @@
       return
     }
     if (buttonCode === cabinetKeys.toggle) {
-      sound = !sound
-      soundNotice = sound ? text.soundOn : text.soundOff
-      clearTimeout(noticeTimer)
-      noticeTimer = setTimeout(() => { soundNotice = '' }, 1200)
-      if (sound) beep()
+      toggleSound()
       return
     }
     if (buttonCode === cabinetKeys.zoomIn || buttonCode === cabinetKeys.zoomOut) {
@@ -507,9 +511,24 @@
           </button>
           <button type="button" class="nes-btn scoreboard-link" class:menu-selected={homeChoice === 1} onclick={showScoreboard}>{text.scoreboard}</button>
         </div>
-        <div class="language-switch" aria-label={text.language}>
-          <button type="button" class="nes-btn" class:is-primary={language === 'nl'} aria-pressed={language === 'nl'} onclick={() => chooseLanguage('nl')}>NL</button>
-          <button type="button" class="nes-btn" class:is-primary={language === 'en'} aria-pressed={language === 'en'} onclick={() => chooseLanguage('en')}>EN</button>
+        <div class="home-settings">
+          <div class="language-switch" aria-label={text.language}>
+            <button type="button" class="nes-btn" class:is-primary={language === 'nl'} aria-pressed={language === 'nl'} onclick={() => chooseLanguage('nl')}>NL</button>
+            <button type="button" class="nes-btn" class:is-primary={language === 'en'} aria-pressed={language === 'en'} onclick={() => chooseLanguage('en')}>EN</button>
+          </div>
+          {#if !cabinetMode}
+            <button type="button" class="nes-btn sound-toggle" class:is-primary={sound} role="switch" aria-checked={sound} aria-label={text.sound} onclick={toggleSound}>
+              <svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges">
+                <path fill="currentColor" d="M1 6h3V4h2V2h2v12H6v-2H4v-2H1z" />
+                {#if sound}
+                  <path fill="currentColor" d="M10 5h2v6h-2zM13 3h2v10h-2z" />
+                {:else}
+                  <path fill="currentColor" d="M10 5h2v2h2V5h2v2h-2v2h2v2h-2V9h-2v2h-2V9h2V7h-2z" />
+                {/if}
+              </svg>
+              {sound ? text.soundOn : text.soundOff}
+            </button>
+          {/if}
         </div>
       </section>
     {:else if $snapshot.matches('scoreboard')}

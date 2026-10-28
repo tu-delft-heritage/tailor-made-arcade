@@ -14,7 +14,7 @@ export const copy = {
     highScore: 'HI', newHighScore: 'NIEUW RECORD!', playAgain: 'NOG EEN KEER',
     nextRound: 'VOLGENDE RONDE', level: 'RONDE', points: 'PUNTEN', stillPlaying: 'SPEEL JE NOG?', keepPlaying: 'DOORSPELEN', idleReturn: 'Terug naar start over {seconds}s',
     total: 'Totale tijd', round: 'Vraag', progress: 'Voortgang', mistakeLimit: 'MAX. {count} FOUTEN',
-    answerLabel: 'Kies een label met de joystick of muis', soundOn: 'GELUID AAN', soundOff: 'GELUID UIT',
+    answerLabel: 'Kies een label met de joystick of muis', sound: 'GELUID', soundOn: 'GELUID AAN', soundOff: 'GELUID UIT',
     gameOver: 'GAME OVER', questionTime: 'TE LAAT', gameTime: 'TIJD OP', imageError: 'FOTO NIET BESCHIKBAAR',
     retry: 'OPNIEUW', previousPage: 'Vorige pagina', nextPage: 'Volgende pagina'
   },
@@ -31,7 +31,7 @@ export const copy = {
     highScore: 'HI', newHighScore: 'NEW HIGH SCORE!', playAgain: 'PLAY AGAIN',
     nextRound: 'NEXT ROUND', level: 'ROUND', points: 'POINTS', stillPlaying: 'ARE YOU STILL PLAYING?', keepPlaying: 'CONTINUE PLAYING', idleReturn: 'Back to start in {seconds}s',
     total: 'Total time', round: 'Question', progress: 'Progress', mistakeLimit: 'MAX. {count} MISTAKES',
-    answerLabel: 'Choose a label with the joystick or mouse', soundOn: 'SOUND ON', soundOff: 'SOUND OFF',
+    answerLabel: 'Choose a label with the joystick or mouse', sound: 'SOUND', soundOn: 'SOUND ON', soundOff: 'SOUND OFF',
     gameOver: 'GAME OVER', questionTime: 'TOO LATE', gameTime: 'TIME UP', imageError: 'PHOTO NOT AVAILABLE',
     retry: 'TRY AGAIN', previousPage: 'Previous page', nextPage: 'Next page'
   }

@@ -60,9 +60,13 @@ h1:focus, [role='listbox']:focus { outline: none; }
 .screen .scoreboard-link { background: #193448; color: #f3dfaa; box-shadow: inset 0 -3px #091625; font-size: min(1.1cqw, 1.6cqh); }
 .screen .scoreboard-link:hover, .screen .scoreboard-link:focus-visible, .screen .scoreboard-link.menu-selected { color: #26323d; background: #f3ce6c; }
 .screen .scoreboard-screen { display: grid; grid-template-rows: auto minmax(0, auto) auto; align-content: center; justify-items: center; gap: 3cqh; padding: 4cqh 3cqw; }
+.home-settings { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 2cqh 2cqw; }
 .language-switch { display: flex; gap: 1cqw; }
-.screen .language-switch .nes-btn { min-height: 30px; padding: .8cqh 1.5cqw; font-size: min(1cqw, 1.5cqh); background: #192d40; color: #a5b6bb; box-shadow: inset 0 -3px #091623; clip-path: none; }
-.screen .language-switch .is-primary { background: var(--paper); color: var(--ink); box-shadow: inset 0 -3px #b4a479; }
+.screen .home-settings .nes-btn { min-height: 44px; padding: .8cqh 1.5cqw; font-size: min(1cqw, 1.5cqh); background: #192d40; color: #a5b6bb; box-shadow: inset 0 -3px #091623; clip-path: none; }
+.screen .home-settings .is-primary { background: var(--paper); color: var(--ink); box-shadow: inset 0 -3px #b4a479; }
+.screen .home-settings .nes-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.screen .sound-toggle { gap: .8em; white-space: nowrap; }
+.sound-toggle svg { width: 1.5em; height: 1.5em; flex-shrink: 0; }
 
 .screen .team-screen { display: grid; grid-template-rows: auto minmax(0, 48cqh) auto auto; gap: 4cqh; align-content: center; }
 .team-roster { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 3.5cqh 1.8cqw; min-height: 0; width: min(82cqw, 130cqh); justify-self: center; }
@@ -169,7 +173,7 @@ h1:focus, [role='listbox']:focus { outline: none; }
   .arcade-title { font-size: 8cqw; }
   .mission-tag { font-size: 2.5cqw; }
   .screen .scoreboard-link { font-size: 2.3cqw; }
-  .screen .language-switch .nes-btn { font-size: 2.7cqw; padding: 1cqh 3cqw; }
+  .screen .home-settings .nes-btn { font-size: 2.7cqw; padding: 1cqh 3cqw; }
   .screen-title { font-size: 3.4cqw; }
   .screen .team-screen { grid-template-rows: auto minmax(0, 48cqh) auto auto; gap: 4cqh; padding: 4cqh 5cqw; }
   .team-roster { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); width: 100%; gap: 3cqh 2cqw; }
