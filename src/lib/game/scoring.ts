@@ -7,7 +7,8 @@ export const FIRST_ROUND_MAX_SCORE = 2000
 export function roundRules(level: number) {
   const roundsWon = Math.max(0, Math.floor(level) - 1)
   const timeFactor = Math.max(0.4, 0.85 ** roundsWon)
-  return { timeFactor, totalSeconds: Math.round(GAME_SECONDS * timeFactor), multiplier: 1 + roundsWon * 0.25 }
+  return { timeFactor, totalSeconds: Math.round(GAME_SECONDS * timeFactor), multiplier: 1 + roundsWon * 0.25,
+    maxMistakes: Math.max(0, 5 - roundsWon) }
 }
 
 export function questionForLevel(question: Question, level: number): Question {

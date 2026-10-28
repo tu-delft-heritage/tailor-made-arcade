@@ -2,7 +2,7 @@ import { assign, setup } from 'xstate'
 import { characterIds, type CharacterId, type GameOverReason, type Question, type RoundResult } from './types.ts'
 import { moveSelection } from './cabinet.ts'
 import type { Direction } from './cabinet.ts'
-import { answerPoints, questionForLevel } from './scoring.ts'
+import { answerPoints, questionForLevel, roundRules } from './scoring.ts'
 
 export const RESULTS_MILLISECONDS = 8000
 
@@ -62,10 +62,13 @@ export const gameMachine = setup({
       selected: null, activeChoice: 0
     } : {}),
     imageError: assign({ gameOverReason: 'image' as const }),
+    mistakeLimit: assign({ gameOverReason: 'mistakes' as const }),
+    loseScore: assign({ score: 0, lastPoints: 0 }),
     home: assign({ questions: [], questionIndex: 0, selected: null, score: 0, level: 1, lastPoints: 0, activeChoice: 0,
       results: [], gameOverReason: null })
   },
   guards: {
+    tooManyMistakes: ({ context }) => context.results.filter(result => result === 'wrong').length > roundRules(context.level).maxMistakes,
     completedGame: ({ context }) => context.questions.length > 0 && context.results.length === context.questions.length && context.gameOverReason === null,
     validCharacter: ({ event }) => event.type === 'CHOOSE_CHARACTER' && characterIds.includes(event.characterId),
     validAnswer: ({ context, event }) => event.type === 'ANSWER' &&
@@ -103,14 +106,14 @@ export const gameMachine = setup({
       IMAGE_ERROR: { target: 'gameOver', actions: 'imageError' },
       TIMEOUT: { target: 'gameOver', actions: 'timeout' }
     } },
-    reveal: { on: {
+    reveal: { always: { guard: 'tooManyMistakes', target: 'gameOver', actions: 'mistakeLimit' }, on: {
       FINISH: [
         { guard: 'lastQuestion', target: 'results' },
         { target: 'loading', actions: 'next' }
       ],
       TIMEOUT: { target: 'gameOver', actions: 'timeout' }
     } },
-    gameOver: { on: { SELECT_TEAM: 'choosing', SHOW_SCORES: 'scoreboard' } },
+    gameOver: { entry: 'loseScore', on: { SELECT_TEAM: 'choosing', SHOW_SCORES: 'scoreboard' } },
     results: { after: { [RESULTS_MILLISECONDS]: 'scoreboard' }, on: {
       NEXT_GAME: { guard: 'completedGame', target: 'intro', actions: 'start' },
       SELECT_TEAM: 'choosing', SHOW_SCORES: 'scoreboard'

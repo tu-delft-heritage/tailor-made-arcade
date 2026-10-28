@@ -10,6 +10,95 @@ const data: GameData = JSON.parse(await readFile(new URL('../src/lib/data/game-d
 const banks = { nl: createQuestionBank(data, 'nl'), en: createQuestionBank(data, 'en') }
 const questionsFor = (seed: number, language: Language) => createSession(banks[language], seed)
 
+test('each round ends immediately on the first mistake beyond its allowance', () => {
+  const questions = questionsFor(42, 'en')
+  for (const [level, allowance] of [[1, 5], [2, 4], [3, 3], [4, 2], [5, 1], [6, 0], [7, 0]]) {
+    const actor = createActor(gameMachine, { clock: new SimulatedClock() }).start()
+    actor.send({ type: 'SELECT_TEAM' })
+    actor.send({ type: 'START', questions: level === 1 ? questions : questions.slice(0, 1) })
+    for (let previous = 1; previous < level; previous++) {
+      actor.send({ type: 'INTRO_DONE' })
+      actor.send({ type: 'IMAGE_READY' })
+      actor.send({ type: 'ANSWER', answer: questions[0].answer })
+      actor.send({ type: 'FINISH' })
+      actor.send({ type: 'NEXT_GAME', questions: previous === level - 1 ? questions : questions.slice(0, 1) })
+    }
+    assert.equal(actor.getSnapshot().context.level, level)
+    actor.send({ type: 'INTRO_DONE' })
+    for (let index = 0; index <= allowance; index++) {
+      actor.send({ type: 'IMAGE_READY' })
+      actor.send({ type: 'ANSWER', answer: 'not a choice' })
+      assert.equal(actor.getSnapshot().context.results.length, index, 'invalid input cannot consume an attempt')
+      const answer = questions[index].choices.find(choice => choice !== questions[index].answer)!
+      actor.send({ type: 'ANSWER', answer })
+      if (index < allowance) {
+        assert.equal(actor.getSnapshot().value, 'reveal', `round ${level}: allowed mistake ${index + 1}`)
+        actor.send({ type: 'FINISH' })
+      } else {
+        assert.equal(actor.getSnapshot().value, 'gameOver', `round ${level}: no reveal or continue click after the limit`)
+      }
+    }
+    assert.equal(actor.getSnapshot().context.gameOverReason, 'mistakes')
+    assert.equal(actor.getSnapshot().context.results.length, allowance + 1)
+    actor.send({ type: 'FINISH' })
+    actor.send({ type: 'ANSWER', answer: questions[allowance].answer })
+    assert.equal(actor.getSnapshot().context.score, 0)
+    actor.send({ type: 'SHOW_SCORES' })
+    actor.send({ type: 'NEXT_GAME', questions })
+    assert.equal(actor.getSnapshot().value, 'scoreboard', 'a failed round cannot unlock the next')
+    actor.send({ type: 'HOME' })
+    actor.send({ type: 'SELECT_TEAM' })
+    actor.send({ type: 'START', questions })
+    assert.equal(actor.getSnapshot().context.level, 1)
+    assert.deepEqual(actor.getSnapshot().context.results, [])
+    actor.stop()
+  }
+})
+
+test('exactly five mistakes can still win; the next round starts with a fresh allowance of four', () => {
+  const questions = questionsFor(42, 'en')
+  const actor = createActor(gameMachine, { clock: new SimulatedClock() }).start()
+  actor.send({ type: 'SELECT_TEAM' })
+  actor.send({ type: 'START', questions })
+  for (const allowance of [5, 4]) {
+    assert.deepEqual(actor.getSnapshot().context.results, [])
+    actor.send({ type: 'INTRO_DONE' })
+    questions.forEach((question, index) => {
+      actor.send({ type: 'IMAGE_READY' })
+      actor.send({ type: 'ANSWER', answer: index < allowance ? question.choices.find(choice => choice !== question.answer)! : question.answer })
+      actor.send({ type: 'FINISH' })
+    })
+    assert.equal(actor.getSnapshot().value, 'results')
+    assert.equal(actor.getSnapshot().context.gameOverReason, null)
+    actor.send({ type: 'NEXT_GAME', questions })
+  }
+  actor.stop()
+})
+
+test('a sixth wrong keyboard answer on the final question is a loss, never a win', () => {
+  const questions = questionsFor(42, 'en')
+  const actor = createActor(gameMachine, { clock: new SimulatedClock() }).start()
+  actor.send({ type: 'SELECT_TEAM' })
+  actor.send({ type: 'START', questions })
+  actor.send({ type: 'INTRO_DONE' })
+  questions.forEach((question, index) => {
+    actor.send({ type: 'IMAGE_READY' })
+    if (index === questions.length - 1) {
+      while (question.choices[actor.getSnapshot().context.activeChoice] === question.answer) actor.send({ type: 'MOVE', direction: 'right' })
+      actor.send({ type: 'CONFIRM' })
+      assert.equal(actor.getSnapshot().value, 'gameOver')
+    } else {
+      actor.send({ type: 'ANSWER', answer: index < 5 ? question.choices.find(choice => choice !== question.answer)! : question.answer })
+    }
+    actor.send({ type: 'FINISH' })
+  })
+  assert.equal(actor.getSnapshot().value, 'gameOver')
+  assert.equal(actor.getSnapshot().context.gameOverReason, 'mistakes')
+  assert.equal(actor.getSnapshot().context.score, 0, 'losing forfeits points earned earlier in the round')
+  assert.equal(actor.getSnapshot().context.results.length, 10)
+  actor.stop()
+})
+
 test('scoreboard opens from home and endings without interrupting active play', () => {
   const actor = createActor(gameMachine).start()
   actor.send({ type: 'SHOW_SCORES' })
@@ -103,6 +192,38 @@ test('question and overall timeouts end the game and lock further scoring', () =
   actor.stop()
 })
 
+
+test('every game-over route clears earned points while preserving performance for the ending quote', () => {
+  const questions = questionsFor(7, 'en')
+  for (const state of ['loading', 'playing', 'reveal'] as const) {
+    const failures = [
+      { type: 'TIMEOUT', reason: 'question-time' },
+      { type: 'TIMEOUT', reason: 'game-time' },
+      ...(state === 'reveal' ? [] : [{ type: 'IMAGE_ERROR' } as const])
+    ] as const
+    for (const failure of failures) {
+      const actor = createActor(gameMachine).start()
+      actor.send({ type: 'SELECT_TEAM' })
+      actor.send({ type: 'START', questions })
+      actor.send({ type: 'INTRO_DONE' })
+      actor.send({ type: 'IMAGE_READY' })
+      actor.send({ type: 'ANSWER', answer: questions[0].answer, remainingMilliseconds: questions[0].seconds * 1000 })
+      assert.equal(actor.getSnapshot().context.score, 200)
+      if (state !== 'reveal') actor.send({ type: 'FINISH' })
+      if (state === 'playing') actor.send({ type: 'IMAGE_READY' })
+      assert.equal(actor.getSnapshot().value, state)
+      actor.send(failure)
+      assert.equal(actor.getSnapshot().value, 'gameOver')
+      assert.equal(actor.getSnapshot().context.score, 0)
+      assert.equal(actor.getSnapshot().context.lastPoints, 0)
+      assert.equal(actor.getSnapshot().context.results[0], 'correct')
+      actor.send({ type: 'ANSWER', answer: questions[1].answer })
+      actor.send({ type: 'SHOW_SCORES' })
+      assert.equal(actor.getSnapshot().context.score, 0)
+      actor.stop()
+    }
+  }
+})
 
 test('all ten teammates can be selected; the opening cannot score or time out', () => {
   assert.equal(characterIds.length, 10)

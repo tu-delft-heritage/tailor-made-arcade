@@ -231,10 +231,10 @@
     if (idleWarningSeconds !== null) idleContinue?.focus({ preventScroll: true })
   })
   $effect(() => {
-    if (($snapshot.matches('results') || $snapshot.matches('gameOver')) && storageReady && score > scores[character.id]) {
+    if ($snapshot.matches('results') && storageReady && score > scores[character.id]) {
       scores = recordHighScore(scores, character.id, score, scoreStorage())
     }
-    if (($snapshot.matches('results') || $snapshot.matches('gameOver')) && storageReady && score > best) {
+    if ($snapshot.matches('results') && storageReady && score > best) {
       best = score
       try { localStorage.setItem(storageKey(), String(best)) } catch { /* Optional local record. */ }
     }
@@ -537,7 +537,7 @@
         <h1 class="screen-title" bind:this={screenHeading} tabindex="-1">{text.introTitle}</h1>
         <div class="intro-character" class:ready={introReady}><TeamAvatar {character} shocked onready={() => introReady = true} /></div>
         <p class="intro-hint">{text.introHint.replace('{name}', character.name)}</p>
-        <p class="round-rules">{text.level} {level} · {rules.multiplier}× {text.points} · {totalRemaining}s</p>
+        <p class="round-rules">{text.level} {level} · {rules.multiplier}× {text.points} · {totalRemaining}s<br />{text.mistakeLimit.replace('{count}', String(rules.maxMistakes))}</p>
         <button class="nes-btn cabinet-prompt" type="button" onclick={finishIntro}><span class="physical-button green"></span>{text.go}</button>
       </section>
     {:else if question && ($snapshot.matches('loading') || playing)}

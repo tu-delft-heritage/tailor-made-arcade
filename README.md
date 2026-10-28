@@ -32,14 +32,17 @@ when the first object photo is ready. Public art notes and depot prompts are in
 character context and avatar prompts belong in the Git-ignored `.local-context/`
 directory, outside application imports and build assets.
 
-Finishing all ten questions before time runs out brings up Cormac on a gently
+Finishing all ten questions within the time and mistake limits brings up Cormac on a gently
 rumbling motorcycle: “Excellent work mate!” After eight seconds the win screen
 automatically opens the scoreboard; the green button opens it immediately.
 The motorcycle meets the bottom edge; on narrow screens the win panel sits above it.
 Next Round is available on the win screen and the following scoreboard.
 Avatar selection always starts at Charlotte for a fresh game.
-Timeouts and unavailable-image endings
-show Liselotte in the instrument room, with a playful scolding. Correct answers earn 100 base points plus up to 100 speed-bonus points, based
+Timeouts, too many wrong answers and unavailable-image endings
+show Liselotte in the instrument room, with a playful scolding.
+Game over clears the current score to zero and never saves that failed round as a
+high score. Previously saved high scores remain intact.
+Correct answers earn 100 base points plus up to 100 speed-bonus points, based
 on the fraction of question time remaining. Wrong answers score zero. After 60 seconds without keyboard,
 pointer, or touch activity, a sparkling team scene in the depot becomes the screensaver.
 On answer reveals, a warning appears after 45 seconds: “Are you still playing?”
@@ -61,6 +64,11 @@ limits by 15% (rounded to whole seconds) and adds 0.25 to the score multiplier.
 Round two has 204 seconds overall, 17/26 seconds per question and 1.25× points.
 Round three has 173 seconds overall, 14/22 seconds per question and 1.5× points;
 further rounds continue the same progression.
+Round one permits five wrong answers: the sixth ends the game immediately.
+The allowance drops to four in round two, then three, two, one and zero in round
+six and beyond. Exactly the allowed number can still win; exceeding it on the
+last question still loses. The intro shows the current allowance, and
+each new round resets the mistake count. Timeouts still end the game immediately.
 Time limits stop shrinking at 40% of the originals: 96 seconds overall and
 8/12 seconds per question. Points continue increasing. Each round starts its own
 score at zero; home, idle and game over end the continuation. Photo replacements

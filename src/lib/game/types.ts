@@ -48,4 +48,4 @@ export type Question = {
   seconds: number
 }
 export type RoundResult = 'correct' | 'wrong' | 'timeout'
-export type GameOverReason = 'question-time' | 'game-time' | 'image'
+export type GameOverReason = 'question-time' | 'game-time' | 'image' | 'mistakes'
