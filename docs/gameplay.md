@@ -171,6 +171,11 @@ Every screen fills the viewport without scrolling. Fullscreen and pointer hiding
 are disabled by default. Set `PUBLIC_CABINET=true` to request fullscreen when a
 game starts and hide the pointer for the physical cabinet. Longer descriptions
 are split into pages controlled with the joystick.
+When `PUBLIC_SITE_URL` is configured, the cabinet home screen also shows a pixel-style
+QR code to play on the live website. Its caption follows the language selection.
+Without a URL, no code or placeholder is shown; the regular browser home screen
+never shows this code. See [deployment.md](deployment.md#other-hosts-and-cabinet-configuration)
+for the `.env` settings.
 
 Difficulty balancing from player feedback remains planned. Existing avatar
 records are retained; higher speed/multiplier scores use the same local score key.

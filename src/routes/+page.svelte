@@ -13,6 +13,7 @@
   import StoryArtwork from '$lib/components/StoryArtwork.svelte'
   import ScoreTable from '$lib/components/ScoreTable.svelte'
   import ObjectQr from '$lib/components/ObjectQr.svelte'
+  import WebsiteQr from '$lib/components/WebsiteQr.svelte'
   import SiteMeta from '$lib/components/SiteMeta.svelte'
   import { team } from '$lib/game/team'
   import { cabinetKeys, joystickDirection, descriptionPages, moveTeammate } from '$lib/game/cabinet'
@@ -30,6 +31,7 @@
   import { bossArt } from '$lib/game/boss-art'
   import { formatDate } from '$lib/game/dates'
   import { metadataReportMailto } from '$lib/game/metadata-report'
+  import { siteHomeUrl } from '$lib/game/site-url'
   import { createQuestionBank, createSession, questionObjects, replacementQuestion } from '$lib/game/questions'
   import type { CharacterId, GameData, GameObject, Language, Question } from '$lib/game/types'
   import { registerArcadeTools } from '$lib/game/webmcp'
@@ -39,6 +41,7 @@
   let failedObjects = new Set<string>()
   let imageRetries = 0
   const cabinetMode = ['1', 'true', 'yes'].includes(String(env.PUBLIC_CABINET ?? '').toLowerCase())
+  const liveSiteUrl = siteHomeUrl(env.PUBLIC_SITE_URL)
   const configuredImageBase = String(env.PUBLIC_OBJECT_IMAGE_BASE ?? '').trim().replace(/\/$/, '')
   const { snapshot, send, actorRef } = useMachine(gameMachine)
   const questions = $derived($snapshot.context.questions)
@@ -553,6 +556,7 @@
             </button>
           {/if}
         </div>
+        {#if cabinetMode && liveSiteUrl}<WebsiteQr url={liveSiteUrl} {language} />{/if}
       </section>
     {:else if $snapshot.matches('scoreboard')}
       <section inert={idleWarningSeconds !== null} class="scoreboard-screen">

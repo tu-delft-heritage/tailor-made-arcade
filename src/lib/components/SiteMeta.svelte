@@ -1,20 +1,11 @@
 <script lang="ts">
   import { env } from '$env/dynamic/public'
+  import { siteHomeUrl } from '$lib/game/site-url'
   import preview from '$lib/assets/story/idle-team.png'
 
   const title = 'Tailor-Made Arcade | Erfgoedgame TU Delft'
   const description = 'Speel Tailor-Made Arcade: kies je teamlid, herstel de verloren labels en ontdek de erfgoedcollectie van TU Delft in een retro arcadegame.'
   const imageAlt = 'Het Tailor-Made team van TU Delft Library in pixelstijl, achter een tafel met historische instrumenten en onderwijsmodellen in het erfgoeddepot.'
-
-  function siteHomeUrl(value: string | undefined) {
-    if (!value?.trim()) return undefined
-    const url = new URL(value.trim())
-    if (!['https:', 'http:'].includes(url.protocol)) throw new Error('PUBLIC_SITE_URL must be an absolute HTTP(S) URL')
-    url.search = ''
-    url.hash = ''
-    url.pathname = `${url.pathname.replace(/\/+$/, '')}/`
-    return url.href
-  }
 
   // Pages supplies the public homepage URL, including any repository base path.
   // Leave canonical URLs unset locally instead of publishing a guessed domain.

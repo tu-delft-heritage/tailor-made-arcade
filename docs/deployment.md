@@ -48,3 +48,17 @@ for the physical cabinet. The default browser experience keeps the pointer and
 does not request fullscreen. See [gameplay.md](gameplay.md#controls) for controls
 and [`.env.example`](../.env.example) for configuration examples. For offline
 photographs, see [the optional local image cache](data.md#local-image-cache).
+
+To show a “Play online” QR code on the cabinet's home screen, set both values in
+`.env` before starting the dev server or building the cabinet site:
+
+```dotenv
+PUBLIC_CABINET=true
+PUBLIC_SITE_URL=https://example.com/tailor-made-arcade/
+```
+
+Replace the example URL with the live website, including its path if needed.
+The code is generated locally and shares the public homepage URL used by SEO
+metadata. An unset, empty or whitespace-only `PUBLIC_SITE_URL` hides it entirely;
+it also stays hidden when cabinet mode is off. Restart the dev server after changing
+`.env`, or rebuild for a static deployment. Its caption follows the selected language.
