@@ -29,6 +29,7 @@
   import { createBossDeck, type BossScene } from '$lib/game/boss-scenes'
   import { bossArt } from '$lib/game/boss-art'
   import { formatDate } from '$lib/game/dates'
+  import { metadataReportMailto } from '$lib/game/metadata-report'
   import { createQuestionBank, createSession, questionObjects, replacementQuestion } from '$lib/game/questions'
   import type { CharacterId, GameData, GameObject, Language, Question } from '$lib/game/types'
   import { registerArcadeTools } from '$lib/game/webmcp'
@@ -637,6 +638,11 @@
         <button type="button" class="nes-btn cabinet-prompt continue-button" onclick={continueGame}>
           <span class="physical-button green"></span>{questionIndex === questions.length - 1 ? text.results : text.next}
         </button>
+        {#if !cabinetMode}
+          <a class="metadata-report" href={metadataReportMailto(question, selected, data.objects)}>
+            <span>{text.metadataMistake}</span><span class="metadata-report-action">{text.emailCurator}</span>
+          </a>
+        {/if}
       </section>
     {:else if $snapshot.matches('results')}
       <section inert={idleWarningSeconds !== null} class="ending-screen victory-screen">

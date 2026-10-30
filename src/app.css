@@ -150,6 +150,11 @@ h1:focus, [role='listbox']:focus { outline: none; }
 .page-controls button:disabled { opacity: .25; }
 .page-controls button:focus-visible { outline: 2px solid #35475c; }
 .screen .continue-button { position: absolute; bottom: 10cqh; right: 4cqw; rotate: 4deg; font-size: min(1cqw, 1.6cqh); }
+.metadata-report { position: absolute; right: 4cqw; bottom: 1cqh; display: flex; align-items: center; gap: 1em; min-height: 44px; padding: .6em .8em; background: #0a111ee6; color: var(--paper); font-size: clamp(8px, 1.15cqh, 13px); line-height: 1.8; text-decoration: none; }
+.metadata-report-action { color: var(--gold); text-decoration: underline; text-underline-offset: .3em; }
+.metadata-report:hover, .metadata-report:focus-visible { color: #fff7db; background: #192d40; text-decoration: none; }
+.metadata-report:hover .metadata-report-action, .metadata-report:focus-visible .metadata-report-action { color: #ffe791; }
+.metadata-report:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 .screen .ending-screen { isolation: isolate; padding: 5cqh 4cqw; text-align: center; animation: ending-from-left .65s steps(16, end) both; }
 .screen .game-over-screen { animation-name: ending-from-bottom; }
 .ending-backdrop { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
@@ -206,6 +211,8 @@ h1:focus, [role='listbox']:focus { outline: none; }
   .page-controls { font-size: 2cqw; }
   .page-controls button { min-width: 32px; min-height: 24px; }
   .screen .continue-button { right: 6cqw; bottom: 3cqh; font-size: 2.3cqw; padding: 1.5cqh 4cqw; }
+  .cabinet:not(.cabinet-mode) .continue-button { left: 6cqw; right: auto; }
+  .metadata-report { right: 5cqw; bottom: 1cqh; max-width: 50cqw; flex-direction: column; align-items: flex-end; justify-content: center; gap: .35em; font-size: 2cqw; text-align: right; }
   .ending-panel { top: auto; bottom: 4cqh; right: 6cqw; width: 88cqw; gap: 2cqh; padding: 2.5cqh 4cqw; }
   .victory-screen .ending-panel { top: 16cqh; bottom: auto; }
   .ending-quote { font-size: 3cqw; line-height: 1.9; }

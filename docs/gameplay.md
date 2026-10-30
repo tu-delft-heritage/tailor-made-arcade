@@ -137,6 +137,13 @@ zone. The QR follows the label's tilt, without a caption, and can also be opened
 in a separate tab. Other metadata answers do not
 show a code.
 
+Outside cabinet mode, each answer screen also offers an “Email the curator” link
+to `library@tudelft.nl` for possible metadata mistakes. It opens an editable email
+draft in the selected language, with the question, clue, answer options, chosen
+answer, collection answer and explanation. Object permalinks include every pictured
+record, any linked answer object and records used as supporting evidence, without
+duplicates. Players can add their correction before sending it in their email app.
+
 ## Controls
 
 The game supports the mouse and the cabinet's external joystick and four
