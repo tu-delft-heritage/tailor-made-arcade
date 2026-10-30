@@ -17,6 +17,7 @@
     "dev": "pnpm build:data && vite dev",
     "build": "pnpm build:data && vite build",
     "preview": "vite preview",
+    "start": "caddy file-server --root ./build --listen 127.0.0.1:4173",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {

@@ -62,3 +62,53 @@ The code is generated locally and shares the public homepage URL used by SEO
 metadata. An unset, empty or whitespace-only `PUBLIC_SITE_URL` hides it entirely;
 it also stays hidden when cabinet mode is off. Restart the dev server after changing
 `.env`, or rebuild for a static deployment. Its caption follows the selected language.
+
+## Running on macOS
+
+Use [Homebrew's Caddy package](https://formulae.brew.sh/formula/caddy) as an optional
+system dependency. Development and GitHub Pages builds do not need Caddy.
+Install [Homebrew](https://brew.sh/) first if it is not already available, then run
+these commands from the repository after installing its dependencies with `pnpm install`:
+
+```sh
+brew install caddy
+pnpm build
+pnpm start
+```
+
+Configure `.env` before building as described above. Leave `BASE_PATH` unset for
+this local root URL. Leave `PUBLIC_OBJECT_IMAGE_BASE` empty and `GAME_IMAGE_DIR`
+unset unless you have prepared the optional local image cache; remote thumbnails
+need an internet connection.
+
+`pnpm start` runs `caddy file-server --root ./build --listen 127.0.0.1:4173`.
+It serves the existing production build on this computer only, without rebuilding
+or watching source files. Open [http://127.0.0.1:4173](http://127.0.0.1:4173) in the
+cabinet browser. Keep the terminal open; Ctrl+C stops it. After updates or `.env`
+changes, run `pnpm build` again and reload the browser. Keep the same browser
+profile, hostname and port to retain the local high scores.
+
+### Start automatically at login
+
+For an unattended cabinet, edit Homebrew's Caddy configuration at
+`$(brew --prefix)/etc/Caddyfile` and add the following site block. Replace the
+example directory with the absolute path to this repository's `build` folder:
+
+```caddyfile
+http://127.0.0.1:4173 {
+    bind 127.0.0.1
+    root * "/absolute/path/to/tailor-made-arcade/build"
+    file_server
+}
+```
+
+Stop any foreground `pnpm start` server first so the port is available, then run:
+
+```sh
+brew services start caddy
+```
+
+This starts Caddy now and at login. Configure the cabinet browser to open the local
+URL at login as well. Use `brew services restart caddy` after editing the Caddyfile
+and `brew services stop caddy` to stop and disable the background service. The
+service serves the same built files; it does not run `pnpm build` for you.

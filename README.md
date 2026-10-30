@@ -22,6 +22,22 @@ pnpm build       # Generate runtime metadata and export to build/
 pnpm preview     # Preview the static site
 ```
 
+## Run the arcade on macOS
+
+Caddy is an optional system dependency, installed through [Homebrew](https://caddyserver.com/docs/install#homebrew-mac).
+Set `PUBLIC_CABINET=true` in `.env` before building; optionally set
+`PUBLIC_SITE_URL` to the live website for the home-screen QR code.
+
+```sh
+brew install caddy       # Once, on the arcade Mac
+pnpm build
+pnpm start
+```
+
+Open [http://127.0.0.1:4173](http://127.0.0.1:4173). Keep the terminal open;
+Ctrl+C stops the server. Rebuild after code or configuration changes.
+See [deployment](docs/deployment.md#running-on-macos) for starting automatically at login.
+
 ## Collection data
 
 Normalized metadata is committed in `data/`. Development and production builds
