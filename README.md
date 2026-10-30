@@ -49,3 +49,9 @@ pnpm test
 
 Private reference photos, character notes and prompts stay in the Git-ignored
 `.local-context/` directory and are not bundled with the site.
+
+## Disclaimer
+
+The characters, dialogue and events in this game are fictionalized for entertainment.
+Any resemblance to the personalities, behaviour or actions of real persons, living
+or dead, is purely coincidental.
