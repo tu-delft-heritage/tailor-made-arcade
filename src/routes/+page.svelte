@@ -26,6 +26,8 @@
   import { endingQuote } from '$lib/game/endings'
   import { createVictoryDeck, type VictoryScene } from '$lib/game/victory-scenes'
   import { victoryArt } from '$lib/game/victory-art'
+  import { createBossDeck, type BossScene } from '$lib/game/boss-scenes'
+  import { bossArt } from '$lib/game/boss-art'
   import { formatDate } from '$lib/game/dates'
   import { createQuestionBank, createSession, questionObjects, replacementQuestion } from '$lib/game/questions'
   import type { CharacterId, GameData, GameObject, Language, Question } from '$lib/game/types'
@@ -76,6 +78,8 @@
   let spillKey = $state(0)
   let victoryScene = $state<VictoryScene>('motorcycle')
   let victoryDeck: VictoryScene[] = []
+  let bossScene = $state<BossScene>('instruments')
+  let bossDeck: BossScene[] = []
   const sceneIndex = $derived($snapshot.matches('choosing') ? 1 : $snapshot.matches('results') ? 2 : questionIndex % 3)
   const storyScene = $derived($snapshot.matches('idle') ? 'idle' : $snapshot.matches('gameOver') ? 'gameOver' : $snapshot.matches('results') ? 'results' : null)
   let totalDeadline = $state(0)
@@ -241,6 +245,9 @@
     if ($snapshot.matches('results') && victoryDeck[0] === victoryScene) victoryDeck.shift()
   })
   $effect(() => {
+    if ($snapshot.matches('gameOver') && bossDeck[0] === bossScene) bossDeck.shift()
+  })
+  $effect(() => {
     if ($snapshot.matches('results') && storageReady && score > scores[character.id]) {
       scores = recordHighScore(scores, character.id, score, scoreStorage())
     }
@@ -356,6 +363,10 @@
     victoryScene = victoryDeck[0]
     const victoryImage = new Image()
     victoryImage.src = victoryArt[victoryScene]
+    if (!bossDeck.length) bossDeck = createBossDeck(seed, bossScene)
+    bossScene = bossDeck[0]
+    const bossImage = new Image()
+    bossImage.src = bossArt[bossScene]
     questionBank = createQuestionBank(data as GameData, language)
     failedObjects = new Set()
     imageRetries = 0
@@ -643,7 +654,7 @@
       </section>
     {:else if $snapshot.matches('gameOver')}
       <section inert={idleWarningSeconds !== null} class="ending-screen game-over-screen">
-        <div class="ending-backdrop"><StoryArtwork scene="gameOver" /></div>
+        <div class="ending-backdrop"><StoryArtwork scene="gameOver" boss={bossScene} /></div>
         <h1 class="screen-title ending-title" bind:this={screenHeading} tabindex="-1">{text.gameOver}</h1>
         <div class="ending-panel">
           <p class="ending-quote">“{endingLine}”</p>

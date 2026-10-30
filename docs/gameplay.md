@@ -33,7 +33,7 @@ Finishing all ten questions within the time and mistake limits brings up one of 
 Cormac scenes: a rumbling motorcycle, an ejecting heritage seat, a bouncing Mars
 rover, or a wobbling weathered aircraft. A shuffled deck shows all four before
 repeating, without consecutive repeats; failed rounds do not consume a scene.
-Only the upcoming victory sprite preloads when a round starts. Animation waits
+The upcoming victory sprite and game-over artwork preload when a round starts. Animation waits
 for the image to load, and reduced motion keeps each vehicle still.
 His English encouragement varies for fast or flawless wins,
 strong accuracy, close calls and harder rounds. After eight seconds the win screen
@@ -42,7 +42,11 @@ The vehicles sit near the bottom edge; on narrow screens the win panel sits abov
 Next Round is available on the win screen and the following scoreboard.
 Avatar selection always starts at Charlotte for a fresh game.
 Timeouts, too many wrong answers and unavailable-image endings
-show Liselotte in the instrument room. Her Dutch/English lines respond to the
+show Liselotte in one of five settings: the instrument room, telephone exchange,
+archive, aircraft display, or physics lab. Her artworks have their own shuffled
+deck: every scene appears before repeating, without consecutive repeats. Only a
+game over consumes the upcoming boss artwork; successful rounds keep it reserved.
+Her Dutch/English lines respond to the
 reason for stopping and progress made; image failures get their own line.
 The whole win scene slides in from the left; game over slides up from below.
 Game over clears the current score to zero and never saves that failed round as a

@@ -11,8 +11,14 @@ Each avatar also has a shocked expression in `src/lib/assets/reactions/` for the
 opening label spill. Portraits appear in avatar selection, the opening and the HUD;
 the title screen has no team lineup.
 
-`src/lib/assets/story/` contains the illustrated Liselotte game-over scene, four
+`src/lib/assets/story/` contains five illustrated Liselotte game-over scenes, four
 transparent Cormac victory sprites, and the team screensaver in the depot.
+Liselotte appears in the original instrument room (`liselotte-game-over.png`),
+telephone exchange (`liselotte-switchboard.png`), archive (`liselotte-archive.png`),
+aircraft display (`liselotte-aviation.png`), and physics lab (`liselotte-laboratory.png`).
+The four additional scenes use her original avatar and user-supplied portraits for
+likeness, with depot photos guiding foreground objects and background depth.
+Her face and gestures sit on the left, leaving room for the score panel on the right.
 The victory sprites show the motorcycle (`cormac-victory.png`), heritage ejection
 seat (`cormac-ejection-seat.png`), Mission MARIJN rover (`cormac-mars-rover.png`),
 and weathered aircraft (`cormac-aircraft.png`). They use the original Cormac avatar
