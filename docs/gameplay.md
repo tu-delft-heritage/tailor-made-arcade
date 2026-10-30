@@ -29,11 +29,16 @@ directory, outside application imports and build assets.
 
 ## Endings and inactivity
 
-Finishing all ten questions within the time and mistake limits brings up Cormac on a gently
-rumbling motorcycle. His English encouragement varies for fast or flawless wins,
+Finishing all ten questions within the time and mistake limits brings up one of four
+Cormac scenes: a rumbling motorcycle, an ejecting heritage seat, a bouncing Mars
+rover, or a wobbling weathered aircraft. A shuffled deck shows all four before
+repeating, without consecutive repeats; failed rounds do not consume a scene.
+Only the upcoming victory sprite preloads when a round starts. Animation waits
+for the image to load, and reduced motion keeps each vehicle still.
+His English encouragement varies for fast or flawless wins,
 strong accuracy, close calls and harder rounds. After eight seconds the win screen
 automatically opens the scoreboard; the green button opens it immediately.
-The motorcycle meets the bottom edge; on narrow screens the win panel sits above it.
+The vehicles sit near the bottom edge; on narrow screens the win panel sits above them.
 Next Round is available on the win screen and the following scoreboard.
 Avatar selection always starts at Charlotte for a fresh game.
 Timeouts, too many wrong answers and unavailable-image endings

@@ -24,6 +24,8 @@
   import { LANGUAGE_KEY, bestScoreKey, migrateStoredPreferences } from '$lib/game/storage'
   import { GAME_SECONDS, QUESTION_SECONDS, roundRules } from '$lib/game/scoring'
   import { endingQuote } from '$lib/game/endings'
+  import { createVictoryDeck, type VictoryScene } from '$lib/game/victory-scenes'
+  import { victoryArt } from '$lib/game/victory-art'
   import { formatDate } from '$lib/game/dates'
   import { createQuestionBank, createSession, questionObjects, replacementQuestion } from '$lib/game/questions'
   import type { CharacterId, GameData, GameObject, Language, Question } from '$lib/game/types'
@@ -72,6 +74,8 @@
   let idleContinue = $state<HTMLButtonElement>()
   let introReady = $state(false)
   let spillKey = $state(0)
+  let victoryScene = $state<VictoryScene>('motorcycle')
+  let victoryDeck: VictoryScene[] = []
   const sceneIndex = $derived($snapshot.matches('choosing') ? 1 : $snapshot.matches('results') ? 2 : questionIndex % 3)
   const storyScene = $derived($snapshot.matches('idle') ? 'idle' : $snapshot.matches('gameOver') ? 'gameOver' : $snapshot.matches('results') ? 'results' : null)
   let totalDeadline = $state(0)
@@ -234,6 +238,9 @@
     if (idleWarningSeconds !== null) idleContinue?.focus({ preventScroll: true })
   })
   $effect(() => {
+    if ($snapshot.matches('results') && victoryDeck[0] === victoryScene) victoryDeck.shift()
+  })
+  $effect(() => {
     if ($snapshot.matches('results') && storageReady && score > scores[character.id]) {
       scores = recordHighScore(scores, character.id, score, scoreStorage())
     }
@@ -345,6 +352,10 @@
     descriptionPage = 0
     recordToBeat = Math.max(scores[character.id], readScoreboard(scoreStorage())[character.id])
     const seed = crypto.getRandomValues(new Uint32Array(1))[0]
+    if (!victoryDeck.length) victoryDeck = createVictoryDeck(seed, victoryScene)
+    victoryScene = victoryDeck[0]
+    const victoryImage = new Image()
+    victoryImage.src = victoryArt[victoryScene]
     questionBank = createQuestionBank(data as GameData, language)
     failedObjects = new Set()
     imageRetries = 0
@@ -618,7 +629,7 @@
       </section>
     {:else if $snapshot.matches('results')}
       <section inert={idleWarningSeconds !== null} class="ending-screen victory-screen">
-        <div class="ending-backdrop"><DepotScene variant={sceneIndex} /><StoryArtwork scene="results" /></div>
+        <div class="ending-backdrop"><DepotScene variant={sceneIndex} /><StoryArtwork scene="results" victory={victoryScene} /></div>
         <h1 class="screen-title ending-title" bind:this={screenHeading} tabindex="-1">{text.missionComplete}</h1>
         <div class="ending-panel">
           <p class="ending-quote">“{endingLine}”</p>

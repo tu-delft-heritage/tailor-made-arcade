@@ -11,10 +11,15 @@ Each avatar also has a shocked expression in `src/lib/assets/reactions/` for the
 opening label spill. Portraits appear in avatar selection, the opening and the HUD;
 the title screen has no team lineup.
 
-`src/lib/assets/story/` contains the illustrated Liselotte game-over scene, the
-transparent Cormac motorcycle sprite for victory, and the team screensaver in the depot.
-Quotes are rendered as text rather than embedded in the artwork. The motorcycle,
-falling labels and brass sparkles animate in CSS and respect reduced motion.
+`src/lib/assets/story/` contains the illustrated Liselotte game-over scene, four
+transparent Cormac victory sprites, and the team screensaver in the depot.
+The victory sprites show the motorcycle (`cormac-victory.png`), heritage ejection
+seat (`cormac-ejection-seat.png`), Mission MARIJN rover (`cormac-mars-rover.png`),
+and weathered aircraft (`cormac-aircraft.png`). They use the original Cormac avatar
+for likeness and user-supplied photographs for the objects.
+Quotes are rendered as text rather than embedded in the artwork. Each vehicle has
+its own CSS animation: motorcycle rumble, seat ejection, rover suspension bounce,
+or aircraft wobble. All animations, falling labels and sparkles respect reduced motion.
 
 ## Visual style
 
