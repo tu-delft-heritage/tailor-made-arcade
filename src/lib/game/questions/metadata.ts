@@ -30,7 +30,7 @@ export const fieldLabels: Record<FactField, Record<Language, string>> = {
 }
 export const sourceFields: Record<FactField, string> = { type: 'exampleOfWork', material: 'material', maker: 'creator:maker',
   designer: 'creator:ontwerper', manufacturer: 'creator:producent', place: 'locationCreated', depicted: 'about',
-  professor: 'creator + reviewed professor evidence', date: 'temporalCoverage', height: 'height', width: 'width', depth: 'depth',
+  professor: 'creator + source professorship evidence', date: 'temporalCoverage', height: 'height', width: 'width', depth: 'depth',
   owner: 'contributor:had in bezit', related: 'isRelatedTo' }
 export const normalize = (text: string) => text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '')
 const stem = (text: string) => normalize(text.replace(/\([^)]*\)/g, '')).replace(/(en|es|s)$/, '')
@@ -102,7 +102,7 @@ export function metadataQuestions(data: GameData, language: Language): QuestionB
       explanation: `${object.title}\n${language === 'nl' ? 'Collectierecord' : 'Collection record'} ${object.identifier}\n${detail}`,
       evidence: [{ objectId: object.id, field: sourceFields[field], values: ids, source: object.source },
         ...(field === 'professor' && answerEntity.professorEvidence ? [{ objectId: answerEntity.professorEvidence.objectId,
-          field: 'description:professorship', values: [answerEntity.professorEvidence.quote], source: data.objects.find(o => o.id === answerEntity.professorEvidence!.objectId)!.source }] : [])],
+          field: answerEntity.professorEvidence.field, values: [answerEntity.professorEvidence.value], source: answerEntity.professorEvidence.source ?? data.objects.find(o => o.id === answerEntity.professorEvidence!.objectId)!.source }] : [])],
       ...(dimensionAxes.includes(field as DimensionAxis) ? { dimensions: objectDimensions(object, data.entities, language) } : {}),
       seconds: 20 })
   }

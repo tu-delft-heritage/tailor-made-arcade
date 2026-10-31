@@ -139,3 +139,50 @@ test('reports unsupported URLs and absent offline records, while indexing collec
   assert.equal(result.failures.length, 2)
   assert.equal(result.cachedTerms, 0)
 })
+
+const itemSnak = (id: string) => ({ snaktype: 'value', datavalue: { value: { 'entity-type': 'item', id } } })
+const statement = (id: string, rank = 'normal') => ({ rank, mainsnak: itemSnak(id) })
+
+test('keeps explicit Wikidata occupation and position statements, excluding deprecated and unknown values', () => {
+  const term = parseWikidata({ entities: { Q1: { id: 'Q1', claims: {
+    P106: [statement('Q2'), statement('Q3', 'deprecated'), { mainsnak: { snaktype: 'novalue' } }],
+    P39: [statement('Q4', 'preferred')],
+    P108: [{ ...statement('Q5'), qualifiers: { P39: [itemSnak('Q6')] } },
+      { ...statement('Q5', 'deprecated'), qualifiers: { P39: [itemSnak('Q7')] } }],
+    P279: [statement('Q8')]
+  } } } }, 'http://www.wikidata.org/entity/Q1')
+  assert.deepEqual(term.claims, {
+    P106: ['http://www.wikidata.org/entity/Q2'], P39: ['http://www.wikidata.org/entity/Q4'],
+    'P108/P39': ['http://www.wikidata.org/entity/Q6'], P279: ['http://www.wikidata.org/entity/Q8']
+  })
+})
+
+test('follows linked role subclasses, reuses existing terms and rebuilds the same claims offline', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'role-vocabulary-test-'))
+  t.after(() => rm(root, { recursive: true, force: true }))
+  const schemas = join(root, 'schemas'), cache = join(root, 'cache'), output = join(root, 'data')
+  await mkdir(schemas)
+  await writeFile(join(schemas, 'schema.json'), JSON.stringify({ sameAs: [
+    'http://www.wikidata.org/entity/Q1', 'http://www.wikidata.org/entity/Q2'
+  ] }))
+  const claims: Record<string, unknown> = {
+    Q1: { P108: [{ ...statement('Q9'), qualifiers: { P39: [itemSnak('Q2')] } }] },
+    Q2: { P279: [statement('Q3')] },
+    Q3: { P279: [statement('Q121594'), statement('Q2')] }
+  }
+  const requested: string[] = []
+  const fetcher: typeof fetch = async input => {
+    const id = String(input).match(/(Q\d+)\.json$/)![1]!
+    requested.push(id)
+    assert.ok(claims[id], 'Only explicit linked roles should be fetched')
+    return new Response(JSON.stringify({ entities: { [id]: { id, claims: claims[id] } } }))
+  }
+  const options = { schemas, cache, output, fetcher }
+  const result = await fetchVocabularies(options)
+  assert.deepEqual(requested.sort(), ['Q1', 'Q2', 'Q3'])
+  assert.equal(result.linkedRoleUrls, 1)
+  assert.equal(result.failures.length, 0)
+  const original = await readFile(join(output, 'vocabularies.json'), 'utf8')
+  await fetchVocabularies({ ...options, offline: true, fetcher: async () => { throw new Error('Offline must not fetch') } })
+  assert.equal(await readFile(join(output, 'vocabularies.json'), 'utf8'), original)
+})

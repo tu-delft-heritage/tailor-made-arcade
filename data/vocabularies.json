@@ -4182,6 +4182,130 @@
       }
     },
     {
+      "url": "http://www.wikidata.org/entity/Q108284914",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "Onderwijsgevenden"
+        ],
+        "en": [
+          "teaching professionals"
+        ]
+      },
+      "aliases": {
+        "en": [
+          "teaching staff"
+        ]
+      },
+      "descriptions": {},
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q110281945"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q108284914.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q108284914.json",
+        "fetchedAt": "2026-10-31T10:51:21.234Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q108289028",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "Wetenschappers en ingenieurs"
+        ],
+        "en": [
+          "science and engineering professionals"
+        ]
+      },
+      "aliases": {},
+      "descriptions": {},
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q110281945"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q108289028.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q108289028.json",
+        "fetchedAt": "2026-10-31T10:51:21.547Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q108289029",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "Specialisten op het gebied van informatie- en communicatietechnologie"
+        ],
+        "en": [
+          "information and communications technology professionals"
+        ]
+      },
+      "aliases": {},
+      "descriptions": {},
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q110281945"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q108289029.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q108289029.json",
+        "fetchedAt": "2026-10-31T10:51:21.549Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q108289376",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "Natuur- en aardwetenschappers"
+        ],
+        "en": [
+          "physical and earth science professionals"
+        ]
+      },
+      "aliases": {},
+      "descriptions": {},
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q108289028"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q108289376.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q108289376.json",
+        "fetchedAt": "2026-10-31T10:51:18.929Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q108289400",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "Software- en applicatieontwikkelaars en -analisten"
+        ],
+        "en": [
+          "software and applications developers and analysts"
+        ]
+      },
+      "aliases": {},
+      "descriptions": {},
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q108289029"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q108289400.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q108289400.json",
+        "fetchedAt": "2026-10-31T10:51:18.932Z"
+      }
+    },
+    {
       "url": "http://www.wikidata.org/entity/Q110785226",
       "provider": "wikidata",
       "labels": {
@@ -4207,6 +4331,77 @@
       }
     },
     {
+      "url": "http://www.wikidata.org/entity/Q11448772",
+      "provider": "wikidata",
+      "labels": {
+        "en": [
+          "school staff"
+        ]
+      },
+      "aliases": {
+        "en": [
+          "school personnel",
+          "school employee"
+        ]
+      },
+      "descriptions": {
+        "en": [
+          "workers at a school"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q703534",
+          "http://www.wikidata.org/entity/Q93918935",
+          "http://www.wikidata.org/entity/Q4359236"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q11448772.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q11448772.json",
+        "fetchedAt": "2026-10-31T10:51:18.931Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q11827483",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "gewoon hoogleraar"
+        ],
+        "en": [
+          "ordinary professor"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "Ordinarius"
+        ],
+        "en": [
+          "Ordinarius"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "type hoogleraarschap"
+        ],
+        "en": [
+          "highest professor"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q1622272",
+          "http://www.wikidata.org/entity/Q25339110"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q11827483.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q11827483.json",
+        "fetchedAt": "2026-10-31T10:51:16.376Z"
+      }
+    },
+    {
       "url": "http://www.wikidata.org/entity/Q11942175",
       "provider": "wikidata",
       "labels": {
@@ -4229,10 +4424,130 @@
           "optical filter device"
         ]
       },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q1134091",
+          "http://www.wikidata.org/entity/Q193760"
+        ]
+      },
       "source": {
         "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q11942175.json",
         "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q11942175.json",
         "fetchedAt": "2026-09-15T10:29:58.122Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q124637774",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "natuurwetenschapper"
+        ],
+        "en": [
+          "physical scientist"
+        ]
+      },
+      "aliases": {},
+      "descriptions": {
+        "en": [
+          "occupation"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q18805",
+          "http://www.wikidata.org/entity/Q108289376"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q124637774.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q124637774.json",
+        "fetchedAt": "2026-10-31T10:51:16.304Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q129586023",
+      "provider": "wikidata",
+      "labels": {
+        "en": [
+          "person with an activity"
+        ]
+      },
+      "aliases": {},
+      "descriptions": {},
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q215627"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q129586023.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q129586023.json",
+        "fetchedAt": "2026-10-31T10:51:19.129Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q134480019",
+      "provider": "wikidata",
+      "labels": {
+        "en": [
+          "proto-agent"
+        ]
+      },
+      "aliases": {
+        "en": [
+          "prototypical agent",
+          "agent",
+          "general agent role",
+          "arg0 role",
+          "proto-agent role"
+        ]
+      },
+      "descriptions": {
+        "en": [
+          "semantic label for the most agent-like argument - something that acts or is treated like it performs actions, even if it can't consciously or intentionally do so"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q613930",
+          "http://www.wikidata.org/entity/Q141744927"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q134480019.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q134480019.json",
+        "fetchedAt": "2026-10-31T10:51:19.148Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q137528059",
+      "provider": "wikidata",
+      "labels": {
+        "en": [
+          "computer expert"
+        ]
+      },
+      "aliases": {
+        "en": [
+          "computer specialist"
+        ]
+      },
+      "descriptions": {
+        "en": [
+          "profession"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q702269",
+          "http://www.wikidata.org/entity/Q381160"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q137528059.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q137528059.json",
+        "fetchedAt": "2026-10-31T10:51:16.585Z"
       }
     },
     {
@@ -4259,6 +4574,31 @@
       }
     },
     {
+      "url": "http://www.wikidata.org/entity/Q141744927",
+      "provider": "wikidata",
+      "labels": {
+        "en": [
+          "agent-driven role"
+        ]
+      },
+      "aliases": {
+        "en": [
+          "agentive role"
+        ]
+      },
+      "descriptions": {},
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q141214312"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q141744927.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q141744927.json",
+        "fetchedAt": "2026-10-31T10:51:21.550Z"
+      }
+    },
+    {
       "url": "http://www.wikidata.org/entity/Q14672",
       "provider": "wikidata",
       "labels": {
@@ -4275,10 +4615,57 @@
           "compact composite lens"
         ]
       },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q19832917"
+        ]
+      },
       "source": {
         "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q14672.json",
         "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q14672.json",
         "fetchedAt": "2026-09-15T10:29:57.874Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q1553123",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "lector"
+        ],
+        "en": [
+          "lector"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "Lec.",
+          "Lec",
+          "lectrice"
+        ],
+        "en": [
+          "lecturer",
+          "reader"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "academische functie"
+        ],
+        "en": [
+          "teaching position in higher education"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q462390",
+          "http://www.wikidata.org/entity/Q1622272"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q1553123.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q1553123.json",
+        "fetchedAt": "2026-10-31T10:51:14.981Z"
       }
     },
     {
@@ -4299,10 +4686,150 @@
           "tiny hole functioning as a camera lens or optical component"
         ]
       },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q65037298",
+          "http://www.wikidata.org/entity/Q6434802"
+        ]
+      },
       "source": {
         "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q15832623.json",
         "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q15832623.json",
         "fetchedAt": "2026-09-15T10:29:58.107Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q1622272",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "academisch docent"
+        ],
+        "en": [
+          "university teacher"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "universiteitsdocent",
+          "docent aan universiteit"
+        ],
+        "en": [
+          "college lecturer",
+          "university lecturer",
+          "university tutor",
+          "college teacher",
+          "teaching-focused lecturer",
+          "university professor",
+          "college professor",
+          "professor"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "docent aan een universiteit of hogeschool"
+        ],
+        "en": [
+          "person teaching at a university or college"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q5428874",
+          "http://www.wikidata.org/entity/Q37226"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q1622272.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q1622272.json",
+        "fetchedAt": "2026-10-31T10:51:15.085Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q16334295",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "groep mensen"
+        ],
+        "en": [
+          "group of humans"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "groep van mensen",
+          "groep personen",
+          "groep van personen",
+          "mensengroep",
+          "gezelschap"
+        ],
+        "en": [
+          "multiple humans",
+          "human group",
+          "group of people",
+          "group of persons",
+          "multiple people",
+          "multiple persons",
+          "humans"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "gezelschap van personen, in welke hoedanigheid dan ook"
+        ],
+        "en": [
+          "any group or collective of human beings"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q134601727",
+          "http://www.wikidata.org/entity/Q134261520"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q16334295.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q16334295.json",
+        "fetchedAt": "2026-10-31T10:51:21.772Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q1650915",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "onderzoeker"
+        ],
+        "en": [
+          "researcher"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "Vorser",
+          "wetenschappelijk onderzoeker",
+          "onderzoekster"
+        ],
+        "en": [
+          "researchers",
+          "research personnel",
+          "research person",
+          "research persons"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "persoon die zich bezighoudt met onderzoek, al dan niet professioneel"
+        ],
+        "en": [
+          "person who engages in research, professionally or otherwise. If a more specific occupation is known, use that instead"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q1650915.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q1650915.json",
+        "fetchedAt": "2026-10-31T10:51:19.509Z"
       }
     },
     {
@@ -4329,10 +4856,212 @@
           "transparent optical element with flat, polished surfaces that refract light"
         ]
       },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q65037298"
+        ]
+      },
       "source": {
         "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q165896.json",
         "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q165896.json",
         "fetchedAt": "2026-09-15T10:29:58.240Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q169470",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "natuurkundige"
+        ],
+        "en": [
+          "physicist"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "fysicus"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "wetenschappelijk onderzoeker die de natuurkunde beoefent"
+        ],
+        "en": [
+          "scientist who does research in physics"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q124637774",
+          "http://www.wikidata.org/entity/Q901"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q169470.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q169470.json",
+        "fetchedAt": "2026-10-31T10:51:15.267Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q18805",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "natuuronderzoeker"
+        ],
+        "en": [
+          "naturalist"
+        ]
+      },
+      "aliases": {
+        "en": [
+          "natural historian",
+          "natural scientist"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "persoon die planten, dieren en natuurlijke historie bestudeert"
+        ],
+        "en": [
+          "person who studies and knows a lot about plants, animals and natural history (esp in the field)"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q901"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q18805.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q18805.json",
+        "fetchedAt": "2026-10-31T10:51:19.475Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q189533",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "academische graad"
+        ],
+        "en": [
+          "academic degree"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "doctorale graad"
+        ],
+        "en": [
+          "degree"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "graad die een universiteit aan haar afgestudeerden verleent"
+        ],
+        "en": [
+          "status awarded for completion of a academic program of study and having an exam at the end"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q4218455",
+          "http://www.wikidata.org/entity/Q618779",
+          "http://www.wikidata.org/entity/Q427581",
+          "http://www.wikidata.org/entity/Q16861606",
+          "http://www.wikidata.org/entity/Q1622058"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q189533.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q189533.json",
+        "fetchedAt": "2026-10-31T10:51:22.217Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q20826540",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "geleerde"
+        ],
+        "en": [
+          "scholar"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "scholar",
+          "geleerd",
+          "belezen"
+        ],
+        "en": [
+          "scholarly person",
+          "learned person",
+          "erudite person"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "iemand met veel kennis"
+        ],
+        "en": [
+          "someone who has great knowledge"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q215627"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q20826540.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q20826540.json",
+        "fetchedAt": "2026-10-31T10:51:19.822Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q215627",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "persoon"
+        ],
+        "en": [
+          "person"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "persoonlijkheid",
+          "individu (persoon)"
+        ],
+        "en": [
+          "persons"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "individu met bepaalde capaciteiten of eigenschappen (vermijd gebruik met P31; gebruik Q5 voor mensen)"
+        ],
+        "en": [
+          "being that has certain capacities or attributes constituting personhood (for humans, use Q5 [human] with P31 [instance of])"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q795052",
+          "http://www.wikidata.org/entity/Q106559804",
+          "http://www.wikidata.org/entity/Q141148364"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q215627.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q215627.json",
+        "fetchedAt": "2026-10-31T10:51:22.210Z"
       }
     },
     {
@@ -4365,10 +5094,101 @@
           "Ph.D. Universiteit Leiden 1925 (1899-1966)"
         ]
       },
+      "claims": {
+        "P106": [
+          "http://www.wikidata.org/entity/Q1622272",
+          "http://www.wikidata.org/entity/Q169470"
+        ],
+        "P108/P39": [
+          "http://www.wikidata.org/entity/Q65561108",
+          "http://www.wikidata.org/entity/Q1553123"
+        ]
+      },
       "source": {
         "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q2317386.json",
         "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q2317386.json",
         "fetchedAt": "2026-09-15T10:29:58.272Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q25339110",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "hoogleraar"
+        ],
+        "en": [
+          "full professor"
+        ]
+      },
+      "aliases": {
+        "en": [
+          "university professor",
+          "professor",
+          "college professor"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "hoogleraar aan een universiteit"
+        ],
+        "en": [
+          "highest administrative rank in the teaching career, assimilated to the highest academic rank, this being that of doctor"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q3400985",
+          "http://www.wikidata.org/entity/Q1622272",
+          "http://www.wikidata.org/entity/Q189533",
+          "http://www.wikidata.org/entity/Q121594"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q25339110.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q25339110.json",
+        "fetchedAt": "2026-10-31T10:51:19.976Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q28640",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "beroep"
+        ],
+        "en": [
+          "profession"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "beroepspraktijk",
+          "stiel",
+          "baan",
+          "professie"
+        ],
+        "en": [
+          "craft"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "het geheel van arbeidstaken, die voor de uitvoering een bepaalde vakkennis en scholing vereisen"
+        ],
+        "en": [
+          "occupation requiring specialized training"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q12737077"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q28640.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q28640.json",
+        "fetchedAt": "2026-10-31T10:51:22.420Z"
       }
     },
     {
@@ -4402,10 +5222,355 @@
           "Dutch computer scientist (1926–2024)"
         ]
       },
+      "claims": {
+        "P106": [
+          "http://www.wikidata.org/entity/Q82594",
+          "http://www.wikidata.org/entity/Q1622272",
+          "http://www.wikidata.org/entity/Q169470",
+          "http://www.wikidata.org/entity/Q81096"
+        ],
+        "P108/P39": [
+          "http://www.wikidata.org/entity/Q65561108"
+        ]
+      },
       "source": {
         "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q3189981.json",
         "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q3189981.json",
         "fetchedAt": "2026-09-15T10:29:58.538Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q327055",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "medewerker"
+        ],
+        "en": [
+          "worker"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "arbeider",
+          "medewerkster"
+        ],
+        "en": [
+          "laborer",
+          "wage worker"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "iemand die samen met anderen in een bedrijf of organisatie werkt om een gezamenlijk doel te bereiken"
+        ],
+        "en": [
+          "person who works"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q129586023",
+          "http://www.wikidata.org/entity/Q134480019"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q327055.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q327055.json",
+        "fetchedAt": "2026-10-31T10:51:16.663Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q3400985",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "academicus"
+        ],
+        "en": [
+          "academic"
+        ]
+      },
+      "aliases": {
+        "en": [
+          "academics",
+          "don"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "persoon die onderzoek doet of lesgeeft binnen het hoger onderwijs"
+        ],
+        "en": [
+          "person who works as a teacher or researcher at a university or other higher education institution"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q20826540",
+          "http://www.wikidata.org/entity/Q901"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q3400985.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q3400985.json",
+        "fetchedAt": "2026-10-31T10:51:20.315Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q37226",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "onderwijzer"
+        ],
+        "en": [
+          "teacher"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "leerkracht",
+          "docent",
+          "hoofdonderwijzer",
+          "leraar",
+          "lerares",
+          "lesgever"
+        ],
+        "en": [
+          "schoolmaster",
+          "schoolmistress",
+          "educator",
+          "professor"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "persoon die anderen helpt om kennis, competenties of waarden te verwerven"
+        ],
+        "en": [
+          "person who helps others to acquire knowledge, competences or values"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q974144",
+          "http://www.wikidata.org/entity/Q11448772",
+          "http://www.wikidata.org/entity/Q3400985"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q37226.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q37226.json",
+        "fetchedAt": "2026-10-31T10:51:17.030Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q381160",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "expert"
+        ],
+        "en": [
+          "expert"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "expertise",
+          "experts",
+          "deskundige"
+        ],
+        "en": [
+          "experts"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "persoon met veel kennis en ervaring op een bepaald gebied"
+        ],
+        "en": [
+          "person with broad and profound competence in a particular field"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q215627"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q381160.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q381160.json",
+        "fetchedAt": "2026-10-31T10:51:20.021Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q4359236",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "kader"
+        ],
+        "en": [
+          "cadre"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "cadre"
+        ],
+        "en": [
+          "business executive",
+          "business cadre"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "hoger geplaatste medewerker van een bedrijf"
+        ],
+        "en": [
+          "higher-level employee of a company"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q16334295",
+          "http://www.wikidata.org/entity/Q28640"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q4359236.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q4359236.json",
+        "fetchedAt": "2026-10-31T10:51:20.199Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q462390",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "docent"
+        ],
+        "en": [
+          "docent"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "universitair docent"
+        ],
+        "en": [
+          "lecturer",
+          "associate professor",
+          "assistant professor"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "iemand die kennis overdraagt"
+        ],
+        "en": [
+          "person who teaches at universities and educational institutions"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q974144"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q462390.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q462390.json",
+        "fetchedAt": "2026-10-31T10:51:17.192Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q5157565",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "ICT'er"
+        ],
+        "en": [
+          "technology specialist"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "IT-er",
+          "Ict-er",
+          "It-er",
+          "ICT-er",
+          "IT'er",
+          "ICT-medewerker"
+        ],
+        "en": [
+          "technology professional",
+          "IT profession",
+          "IT specialist",
+          "computer professional",
+          "IT professional",
+          "computer-related occupation"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "beroep"
+        ],
+        "en": [
+          "computer-related occupation"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q702269"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q5157565.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q5157565.json",
+        "fetchedAt": "2026-10-31T10:51:17.398Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q5428874",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "academische staf"
+        ],
+        "en": [
+          "academic staff"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "academisch personeel",
+          "faculteitslid"
+        ],
+        "en": [
+          "faculty",
+          "academic personnel",
+          "member of the faculty",
+          "academic",
+          "faculty staff"
+        ]
+      },
+      "descriptions": {
+        "en": [
+          "educational occupation"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q4359236"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q5428874.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q5428874.json",
+        "fetchedAt": "2026-10-31T10:51:17.700Z"
       }
     },
     {
@@ -4425,10 +5590,85 @@
           "type of lens made up of two simple lenses paired together"
         ]
       },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q768575"
+        ]
+      },
       "source": {
         "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q598671.json",
         "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q598671.json",
         "fetchedAt": "2026-09-15T10:29:58.481Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q613930",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "thematische relatie"
+        ],
+        "en": [
+          "thematic relation"
+        ]
+      },
+      "aliases": {
+        "en": [
+          "thematic role",
+          "semantic role"
+        ]
+      },
+      "descriptions": {
+        "en": [
+          "role that an entity plays with respect to a specific action or state"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q117747915",
+          "http://www.wikidata.org/entity/Q56512863"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q613930.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q613930.json",
+        "fetchedAt": "2026-10-31T10:51:22.662Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q65561108",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "Nederlands gewoon hoogleraar"
+        ],
+        "en": [
+          "Dutch ordinary professor"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "gewoon hoogleraar"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "type hoogleraarschap in Nederland"
+        ],
+        "en": [
+          "type of professor, specific to the Netherlands"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q11827483",
+          "http://www.wikidata.org/entity/Q73536659"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q65561108.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q65561108.json",
+        "fetchedAt": "2026-10-31T10:51:15.529Z"
       }
     },
     {
@@ -4457,6 +5697,11 @@
           "arrangement of mirrors that forms a standing wave cavity resonator for light waves"
         ]
       },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q28860471"
+        ]
+      },
       "source": {
         "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q6856168.json",
         "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q6856168.json",
@@ -4480,10 +5725,129 @@
           "instrument for measuring polarization"
         ]
       },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q2041172",
+          "http://www.wikidata.org/entity/Q1751850"
+        ]
+      },
       "source": {
         "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q693545.json",
         "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q693545.json",
         "fetchedAt": "2026-09-15T10:29:58.727Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q702269",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "professional"
+        ],
+        "en": [
+          "professional"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "vrije beroepen",
+          "vrij beroep"
+        ],
+        "en": [
+          "specialist",
+          "professional worker"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "betaald persoon voor de uitvoering van gespecialiseerde taken"
+        ],
+        "en": [
+          "person who is paid to undertake a specialized set of tasks and to complete them for a fee"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q327055"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q702269.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q702269.json",
+        "fetchedAt": "2026-10-31T10:51:20.680Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q703534",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "werknemer"
+        ],
+        "en": [
+          "employee"
+        ]
+      },
+      "aliases": {
+        "en": [
+          "emp",
+          "staff member",
+          "personnel"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "persoon die in een arbeidsovereenkomst afspraken met een economische eenheid maakt om arbeid te verrichten in ruil voor een financiële beloning"
+        ],
+        "en": [
+          "person who works for an employer"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q327055",
+          "http://www.wikidata.org/entity/Q852998"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q703534.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q703534.json",
+        "fetchedAt": "2026-10-31T10:51:22.595Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q73536659",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "Nederlands hoogleraar"
+        ],
+        "en": [
+          "hoogleraar"
+        ]
+      },
+      "aliases": {
+        "en": [
+          "professor"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "hoogleraar aan een universiteit in Nederland"
+        ],
+        "en": [
+          "full professor of a university in the Netherlands"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q25339110"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q73536659.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q73536659.json",
+        "fetchedAt": "2026-10-31T10:51:17.874Z"
       }
     },
     {
@@ -4507,6 +5871,80 @@
         "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q740662.json",
         "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q740662.json",
         "fetchedAt": "2026-09-15T10:29:58.674Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q81096",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "ingenieur"
+        ],
+        "en": [
+          "engineer"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "engineer",
+          "ir."
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "hooggeschoold technicus"
+        ],
+        "en": [
+          "professional practitioner of engineering"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q327055"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q81096.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q81096.json",
+        "fetchedAt": "2026-10-31T10:51:15.874Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q82594",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "informaticus"
+        ],
+        "en": [
+          "computer scientist"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "computerwetenschapper"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "wetenschapper die zich bezicht met de informatica"
+        ],
+        "en": [
+          "one who studies or practices computer science"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q5157565",
+          "http://www.wikidata.org/entity/Q942569",
+          "http://www.wikidata.org/entity/Q901",
+          "http://www.wikidata.org/entity/Q137528059"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q82594.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q82594.json",
+        "fetchedAt": "2026-10-31T10:51:15.676Z"
       }
     },
     {
@@ -4541,10 +5979,56 @@
           "thin piece of glass (or transparent material) used to hold objects for examination under a microscope"
         ]
       },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q657709"
+        ]
+      },
       "source": {
         "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q900183.json",
         "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q900183.json",
         "fetchedAt": "2026-09-15T10:29:58.884Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q901",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "wetenschapper"
+        ],
+        "en": [
+          "scientist"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "wetenschapster",
+          "savant",
+          "geleerde"
+        ],
+        "en": [
+          "natural philosopher"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "beroep"
+        ],
+        "en": [
+          "person who systematically observes and analyzes phenomena and tests hypotheses using scientific methods"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q1650915",
+          "http://www.wikidata.org/entity/Q20826540"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q901.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q901.json",
+        "fetchedAt": "2026-10-31T10:51:18.063Z"
       }
     },
     {
@@ -4569,10 +6053,124 @@
           "instrument or apparatus for photographing or otherwise recording spectra"
         ]
       },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q188463"
+        ]
+      },
       "source": {
         "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q911551.json",
         "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q911551.json",
         "fetchedAt": "2026-09-15T10:29:59.043Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q93918935",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "onderwijzend personeel"
+        ],
+        "en": [
+          "educational personnel"
+        ]
+      },
+      "aliases": {
+        "en": [
+          "education workers",
+          "workers in an educational organisation"
+        ]
+      },
+      "descriptions": {
+        "en": [
+          "people who work for schools, including administrators, janitors, consultants, and teachers"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q327055"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q93918935.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q93918935.json",
+        "fetchedAt": "2026-10-31T10:51:23.121Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q942569",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "informatieanalist"
+        ],
+        "en": [
+          "systems analyst"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "systeemanalist"
+        ],
+        "en": [
+          "computer systems analyst",
+          "systems analysts"
+        ]
+      },
+      "descriptions": {
+        "en": [
+          "IT professional who specializes in analyzing, designing and implementing information systems"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q108289400"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q942569.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q942569.json",
+        "fetchedAt": "2026-10-31T10:51:18.399Z"
+      }
+    },
+    {
+      "url": "http://www.wikidata.org/entity/Q974144",
+      "provider": "wikidata",
+      "labels": {
+        "nl": [
+          "leerkracht"
+        ],
+        "en": [
+          "educator"
+        ]
+      },
+      "aliases": {
+        "nl": [
+          "educator",
+          "docent"
+        ],
+        "en": [
+          "teacher"
+        ]
+      },
+      "descriptions": {
+        "nl": [
+          "algemeen type beroep waarbij iemand anderen kennis, vaardigheden of geboontes bijbrengt"
+        ],
+        "en": [
+          "occupation which teaches others knowledge, skills, and habits"
+        ]
+      },
+      "claims": {
+        "P279": [
+          "http://www.wikidata.org/entity/Q108284914",
+          "http://www.wikidata.org/entity/Q93918935"
+        ]
+      },
+      "source": {
+        "requestUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q974144.json",
+        "responseUrl": "https://www.wikidata.org/wiki/Special:EntityData/Q974144.json",
+        "fetchedAt": "2026-10-31T10:51:20.860Z"
       }
     },
     {

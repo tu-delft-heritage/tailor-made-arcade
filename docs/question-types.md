@@ -17,7 +17,7 @@ for each module with photographs, four choices, answer and source evidence.
 | Manufacturer / creator:producent | 330 | 330 | Separate from designer |
 | Production place / locationCreated | 250 | 250 | Source city name; never inferred from maker address |
 | Depicted person / about | 36 | 36 | Visual portraits, photographs, busts, medals, plaques |
-| Professor / creator + reviewed annotation | 32 | 32 | Actual creator role plus evidence in data/professors.json |
+| Professor / creator + automatic evidence | 31 | 31 | Actual creator role plus linked statements or an explicit source title |
 | Date / temporalCoverage | 703 | 703 | Complete source year/range; distractors cannot overlap it |
 | Height / height | 680 | 680 | Positive known measurements converted to mm |
 | Width / width | 679 | 679 | Same |
@@ -41,11 +41,13 @@ with matching surnames are excluded conservatively. Numeric distractors come
 from the same measurement field, differ by at least 20%, and stay within a factor
 of five. Missing values and unknown units never yield questions.
 
-Professor annotations were reviewed against the local catalogue descriptions.
-They establish that a person was a professor at some point; the prompt explicitly
-allows a *later* professor. Only objects recording that person in a creator role
-qualify. A professor mentioned as a sitter, owner or laboratory founder does not
-qualify on that basis. English uses the same proper names, not invented biographies.
+Professor evidence is derived automatically from linked Wikidata occupation and
+position statements, then explicit creator titles or unambiguous name-attached
+source assertions. No manually curated person list is required. The prompt allows
+a *later* professor. Only objects recording that person in a creator role qualify.
+A professor mentioned as a sitter, owner or laboratory founder does not qualify
+on that basis. Uncertain cases are skipped. See [data.md](data.md#automatic-professor-evidence)
+for the rules and generated report. English uses the same proper names.
 
 Object titles and original descriptive alt text can leak maker/type/subject
 answers. Playing images therefore use neutral bilingual alternative text. This
@@ -83,7 +85,7 @@ retries are bounded at twelve per mission to avoid an endless offline loop.
 Exhausting retries shows the existing image-unavailable retry screen. Local
 image caching covers all 720 records.
 
-The compiled metadata is about 261 KiB gzip, compared with the plan's approximate
+The compiled metadata is about 259 KiB gzip, compared with the plan's approximate
 250 KB starting budget. It retains descriptions and traceable evidence; assets
 and JavaScript are measured separately by the production build.
 

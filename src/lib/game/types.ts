@@ -6,13 +6,14 @@ export type CharacterId = typeof characterIds[number]
 export type LocalizedText = Partial<Record<Language, string>>
 export const factFields = ['type', 'material', 'maker', 'designer', 'manufacturer', 'place', 'depicted', 'professor', 'date', 'height', 'width', 'depth', 'owner', 'related'] as const
 export type FactField = typeof factFields[number]
+export type ProfessorEvidence = { objectId: string; field: 'creator:name' | 'description:professorship' | 'wikidata:P106' | 'wikidata:P39' | 'wikidata:P108/P39'; value: string; source?: string }
 export type Entity = {
   id: string
   labels: LocalizedText
   aliases: string[]
   source?: string
   definition?: LocalizedText
-  professorEvidence?: { objectId: string; quote: string }
+  professorEvidence?: ProfessorEvidence
 }
 export type GameObject = {
   id: string

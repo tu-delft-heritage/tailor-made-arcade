@@ -22,6 +22,8 @@ Answer pages warn before the 60-second idle reset and preserve inventory-number
 line breaks. Complete date periods use readable century/decade labels.
 
 `.cache/reports/question-coverage.json` contains generated coverage, exclusions, previews and evidence.
+Professor evidence is generated from linked occupation/position statements and
+explicit source titles, with no manually curated person list or AI requirement.
 `docs/question-types.md` documents field rules and remaining review limits.
 Automated checks cover all generated answers, 100 seeds per language, source
 facts, role separation, aliases, date overlap, readiness, replacement, scoring

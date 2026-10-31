@@ -9,14 +9,14 @@ import { definitionClue, mentionsEntity } from '../src/lib/game/questions/defini
 import { gameMachine } from '../src/lib/game/machine.ts'
 import type { FactField, GameData, Language } from '../src/lib/game/types.ts'
 const data: GameData = JSON.parse(await readFile(new URL('../src/lib/data/game-data.json', import.meta.url), 'utf8'))
-const sourceObjects: { id: string; related: { id: string }[] }[] = JSON.parse(await readFile(new URL('../data/objects.json', import.meta.url), 'utf8'))
+const sourceObjects: { id: string; description: string; creators: { label: string }[]; related: { id: string }[] }[] = JSON.parse(await readFile(new URL('../data/objects.json', import.meta.url), 'utf8'))
 const sourceRelations = new Map(sourceObjects.map(object => [object.id, object.related.map(related => related.id)]))
 const banks = { nl: createQuestionBank(data, 'nl'), en: createQuestionBank(data, 'en') }
 
-test('all 720 records can appear in both languages; every supported field has questions', () => {
-  assert.equal(data.objects.length, 720)
+test('all source records can appear in both languages; every supported field has questions', () => {
+  assert.equal(data.objects.length, sourceObjects.length)
   for (const language of ['nl', 'en'] as Language[]) {
-    assert.equal(new Set(banks[language].map(q => q.object.id)).size, 720)
+    assert.equal(new Set(banks[language].map(q => q.object.id)).size, sourceObjects.length)
     for (const kind of questionKinds.filter(k => language === 'nl' || k !== 'related')) assert.ok(banks[language].some(q => q.kind === kind), kind)
     assert.ok(banks[language].length > 5000)
   }
@@ -71,6 +71,12 @@ for (const language of ['nl', 'en'] as Language[]) {
         if (q.kind === 'professor') {
           const person = correct.find(e => e.labels[language] === q.answer)!
           assert.ok(person.professorEvidence)
+          const proof = person.professorEvidence
+          const source = sourceObjects.find(object => object.id === proof.objectId)!
+          if (proof.field === 'description:professorship') assert.ok(source.description.includes(proof.value))
+          else if (proof.field === 'creator:name') assert.ok(source.creators.some(creator => creator.label === proof.value))
+          else assert.ok(proof.source?.includes('wikidata.org/entity/'))
+          assert.ok(q.evidence.some(item => item.field === proof.field && item.values.includes(proof.value)))
           assert.ok(['maker', 'designer', 'manufacturer'].some(field => q.object.facts[field as FactField]?.includes(person.id)))
         }
       }

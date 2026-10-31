@@ -4,12 +4,13 @@ import { join } from 'node:path'
 import { gzipSync } from 'node:zlib'
 import type { Entity, FactField, GameData, GameObject, Language, LocalizedText } from '../src/lib/game/types.ts'
 import { createQuestionBank, createSession, questionKinds } from '../src/lib/game/questions/index.ts'
+import { deriveProfessorEvidence, professorIdentity } from './professor-evidence.ts'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const read = async (file: string) => JSON.parse(await readFile(join(root, file), 'utf8'))
 const records = await read('data/objects.json')
 const { terms } = await read('data/vocabularies.json')
-const professors: { name: string; objectId: string; quote: string }[] = await read('data/professors.json')
+const professors = deriveProfessorEvidence(records, terms)
 const clean = (text: string) => text.trim().replace(/\s+/g, ' ')
 const key = (text: string) => clean(text).normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '')
 const canonical = (url: string) => url.replace(/^http:/, 'https:').replace(/\/$/, '')
@@ -57,13 +58,11 @@ const objects: GameObject[] = records.map((record: any) => {
   }
   // Preserve every relation in the snapshot; only concise, resolvable labels enter the game.
   add('related', record.related.filter((r: any) => r.id && r.id !== record.id && records.some((o: any) => o.id === r.id) && r.label?.length <= 80).map((r: any) => entity('related', r.label, `https://heritage.tudelft.nl/iiif/manifests/${r.id}/schema.json`)))
-  const professorIds = record.creators.filter((p: any) => p.kind === 'Person').flatMap((p: any) => {
-    const annotation = professors.find(item => key(item.name) === key(p.label))
+  const professorIds = record.creators.filter((p: any) => p.kind === 'Person' && ['maker', 'ontwerper', 'producent'].includes(p.role)).flatMap((p: any) => {
+    const annotation = professors.get(professorIdentity(p))
     if (!annotation) return []
-    const source = records.find((r: any) => r.id === annotation.objectId)
-    if (!source?.description.includes(annotation.quote) || !/hoogleraar|prof\./i.test(annotation.quote)) throw new Error(`Invalid professor evidence: ${annotation.name}`)
     const id = entity('person', p.label, p.url, true)
-    entities[id].professorEvidence = { objectId: annotation.objectId, quote: annotation.quote }
+    entities[id].professorEvidence = annotation
     return [id]
   })
   add('professor', professorIds)
@@ -92,18 +91,23 @@ for (const language of ['nl', 'en'] as Language[]) {
 await mkdir(join(root, 'src/lib/data'), { recursive: true })
 await writeFile(join(root, 'src/lib/data/game-data.json'), json)
 await mkdir(join(root, '.cache/reports'), { recursive: true })
+await writeFile(join(root, '.cache/reports/professors.json'), JSON.stringify({
+  method: 'Linked Wikidata occupation/position and subclass statements, then explicit professor titles on creator names or adjacent source-description assertions.',
+  detected: [...professors].map(([person, evidence]) => ({ person, ...evidence }))
+}, null, 2) + '\n')
 await writeFile(join(root, '.cache/reports/question-coverage.json'), JSON.stringify({ version: 3, objects: objects.length,
   runtimeBytes: Buffer.byteLength(json), gzipBytes: gzipSync(json).length, coverage,
   fieldPolicy: { identifier: 'Record identity and reveal evidence, not a trivia question.', citations: 'Preserved for provenance, not a trivia question.',
-    image: 'Question photographs; duplicate image URLs excluded within sessions.', description: 'Reveal context and reviewed professor evidence.',
+    image: 'Question photographs; duplicate image URLs excluded within sessions.', description: 'Reveal context and automatically extracted professor evidence.',
     about: 'Person questions restricted to visual portraits, busts, medals and plaques.',
     temporalCoverage: 'Catalogue dating; ranges kept intact, overlapping date distractors rejected.',
     dimensions: 'Positive known units converted to mm; invalid or missing measurements excluded.',
     isRelatedTo: 'Recorded links only; unknown, self and overlong labels excluded. English excluded without translated titles.',
-    professor: 'Requires both an explicit creator role and reviewed evidence of a (possibly later) professorship.',
+    professor: 'Requires an explicit creator role plus linked occupation/position statements, a source title or an unambiguous name-attached professor assertion. Uncertain matches are skipped.',
     oddOneOut: 'Four explicitly dated objects; three within one 100-year period, one wholly outside it.',
     definitions: 'Linked vocabulary wording only; short excerpts with answer/alias leakage excluded.' }
 }, null, 2) + '\n')
 console.log(`Built ${objects.length} objects, ${Object.keys(entities).length} entities; ${Math.ceil(gzipSync(json).length / 1024)} KiB gzip.`)
 for (const [lang, stats] of Object.entries(coverage)) console.log(lang, JSON.stringify({ ...(stats as any), preview: undefined, exclusions: undefined, excludedObjects: undefined }))
 console.log('Question coverage: .cache/reports/question-coverage.json')
+console.log(`Detected ${professors.size} professor creators; evidence: .cache/reports/professors.json`)

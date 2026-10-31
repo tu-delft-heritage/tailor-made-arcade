@@ -3,10 +3,12 @@ import { XMLParser, XMLValidator } from 'fast-xml-parser'
 type JsonObject = Record<string, unknown>
 export type Provider = 'getty' | 'cultureelerfgoed' | 'wikidata' | 'geonames' | 'collection-object' | 'unsupported'
 export type Languages = Partial<Record<'nl' | 'en' | 'und', string[]>>
+export type WikidataClaims = Partial<Record<'P106' | 'P39' | 'P108/P39' | 'P279', string[]>>
 export type Vocabulary = {
   labels: Languages
   aliases: Languages
   descriptions: Languages
+  claims?: WikidataClaims
 }
 export type Reference = { file: string; property: string }
 export type VocabularyUrl = {
@@ -143,6 +145,22 @@ export function parseWikidata(document: unknown, url: string): Vocabulary {
     add(result.descriptions, lang, object(object(entity.descriptions)[lang]).value)
     for (const alias of array(object(entity.aliases)[lang])) add(result.aliases, lang, object(alias).value)
   }
+  const claims = object(entity.claims)
+  const statements = (property: string) => array(claims[property]).map(object).filter(statement => statement.rank !== 'deprecated')
+  const itemIds = (snaks: unknown[]) => [...new Set(snaks.flatMap(value => {
+    const snak = object(value)
+    const item = object(object(snak.datavalue).value)
+    return snak.snaktype === 'value' && item['entity-type'] === 'item' && typeof item.id === 'string' && /^Q\d+$/.test(item.id)
+      ? [`http://www.wikidata.org/entity/${item.id}`] : []
+  }))]
+  const facts: WikidataClaims = {}
+  for (const property of ['P106', 'P39', 'P279'] as const) {
+    const ids = itemIds(statements(property).map(statement => statement.mainsnak))
+    if (ids.length) facts[property] = ids
+  }
+  const positions = itemIds(statements('P108').flatMap(statement => array(object(statement.qualifiers).P39)))
+  if (positions.length) facts['P108/P39'] = positions
+  if (Object.keys(facts).length) result.claims = facts
   return result
 }
 
@@ -175,7 +193,7 @@ export function parseGeonames(body: string, url: string): Vocabulary {
 export function parseVocabulary(provider: Provider, body: string, url: string): Vocabulary {
   const result = provider === 'geonames' ? parseGeonames(body, url)
     : provider === 'wikidata' ? parseWikidata(JSON.parse(body), url) : parseSkos(JSON.parse(body), url)
-  if (![result.labels, result.aliases, result.descriptions].some(values => Object.keys(values).length)) {
+  if (![result.labels, result.aliases, result.descriptions].some(values => Object.keys(values).length) && !Object.keys(result.claims ?? {}).length) {
     throw new Error(`No Dutch, English, or untagged vocabulary text found for ${url}`)
   }
   return result

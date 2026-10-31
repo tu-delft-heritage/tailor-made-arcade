@@ -5,7 +5,7 @@ import { setTimeout as sleep } from 'node:timers/promises'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 import { listFiles } from './fetch-iiif.ts'
-import { collectSameAs, parseVocabulary } from './vocabularies.ts'
+import { collectSameAs, identifyUrl, parseVocabulary } from './vocabularies.ts'
 import type { Vocabulary, VocabularyUrl } from './vocabularies.ts'
 
 const project = fileURLToPath(new URL('../', import.meta.url))
@@ -176,16 +176,37 @@ export async function fetchVocabularies(options: Options = {}) {
       }
     }
     // Settle all workers before releasing locks if a programming/filesystem error occurs.
-    const workers = await Promise.allSettled(Array.from({ length: concurrency }, worker))
-    const rejected = workers.find(result => result.status === 'rejected')
-    if (rejected?.status === 'rejected') throw rejected.reason
+    async function processQueue() {
+      const workers = await Promise.allSettled(Array.from({ length: concurrency }, worker))
+      const rejected = workers.find(result => result.status === 'rejected')
+      if (rejected?.status === 'rejected') throw rejected.reason
+    }
+    await processQueue()
+    // Follow explicit roles and their subclass links, never search for people by name.
+    const seen = new Set(entries.map(entry => entry.url))
+    const expanded = new Set<string>()
+    const roleUrls = new Set<string>()
+    let next = terms.flatMap(term => ['P106', 'P39', 'P108/P39'].flatMap(property => term.claims?.[property as 'P106' | 'P39' | 'P108/P39'] ?? []))
+    for (let depth = 0; depth < 4 && next.length && roleUrls.size < 64; depth++) {
+      const frontier = [...new Set(next)].filter(url => !expanded.has(url) && url !== 'http://www.wikidata.org/entity/Q121594').sort()
+      if (!frontier.length) break
+      frontier.forEach(url => expanded.add(url))
+      const batch = frontier.filter(url => !seen.has(url)).slice(0, 64 - roleUrls.size)
+      for (const url of batch) {
+        seen.add(url); roleUrls.add(url)
+        remote.push({ ...identifyUrl(url), sourceUrls: [url], references: [] })
+      }
+      await processQueue()
+      next = terms.filter(term => frontier.includes(term.url)).flatMap(term => term.claims?.P279 ?? [])
+    }
     terms.sort((a, b) => a.url.localeCompare(b.url))
     failures.sort((a, b) => a.url.localeCompare(b.url))
     const missingDescriptions = terms.filter(term => !term.descriptions.nl?.length || !term.descriptions.en?.length)
       .map(term => ({ url: term.url, missingLanguages: ['nl', 'en'].filter(lang => !term.descriptions[lang as 'nl' | 'en']?.length) }))
     const report = {
-      checkedAt: new Date().toISOString(), uniqueUrls: entries.length, externalUrls: remote.length,
-      collectionObjectUrls: entries.length - remote.length, fetched, reused, cachedTerms: terms.length,
+      checkedAt: new Date().toISOString(), uniqueUrls: entries.length + roleUrls.size, externalUrls: remote.length,
+      collectionObjectUrls: entries.filter(entry => entry.provider === 'collection-object').length,
+      linkedRoleUrls: roleUrls.size, roleTraversalLimits: { depth: 4, terms: 64 }, fetched, reused, cachedTerms: terms.length,
       descriptions: { nl: terms.filter(term => term.descriptions.nl?.length).length, en: terms.filter(term => term.descriptions.en?.length).length },
       failures, missingDescriptions
     }
