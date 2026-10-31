@@ -112,6 +112,18 @@ Corrupt or unavailable storage does not prevent play.
 Language and older unattributed records use the `tailor-made-arcade:` storage
 prefix. A compatibility migration preserves values saved under the former name.
 
+Outside cabinet mode, Share on the scoreboard opens a PNG preview. It can export
+the complete table or any avatar's saved high score. Share Score on either ending
+exports that run's score, including zero after game over; after a win it remains
+available as Your Score in the scoreboard's export selector. Every 1080 × 1350
+image includes the game title, avatar portraits and scores in the NES typeface.
+The full table retains all ten avatars, ranking, bars and the top-three cups.
+Images are generated in the browser from bundled artwork, with no upload or remote
+image service. Save PNG always remains available; compatible devices also offer
+their native share menu. Text follows the game's language setting. The preview
+pauses inactivity, and opening it from a win moves to the scoreboard so the ending
+timer cannot interrupt sharing. Closing the preview restores ordinary controls.
+
 ## Answer feedback
 
 Correct and incorrect answers have distinct animated stamps and border colors.

@@ -12,6 +12,7 @@
   import LabelSpill from '$lib/components/LabelSpill.svelte'
   import StoryArtwork from '$lib/components/StoryArtwork.svelte'
   import ScoreTable from '$lib/components/ScoreTable.svelte'
+  import ScoreExportDialog from '$lib/components/ScoreExportDialog.svelte'
   import ObjectQr from '$lib/components/ObjectQr.svelte'
   import WebsiteQr from '$lib/components/WebsiteQr.svelte'
   import SiteMeta from '$lib/components/SiteMeta.svelte'
@@ -32,6 +33,7 @@
   import { formatDate } from '$lib/game/dates'
   import { metadataReportMailto } from '$lib/game/metadata-report'
   import { siteHomeUrl } from '$lib/game/site-url'
+  import type { ScoreExportSnapshot, ScoreExportTarget } from '$lib/game/score-export-data'
   import { createQuestionBank, createSession, questionObjects, replacementQuestion } from '$lib/game/questions'
   import type { CharacterId, GameData, GameObject, Language, Question } from '$lib/game/types'
   import { registerArcadeTools } from '$lib/game/webmcp'
@@ -98,11 +100,14 @@
   let zoom = $state(1)
   let descriptionPage = $state(0)
   let soundNotice = $state('')
+  let scoreExport = $state<{ snapshot: ScoreExportSnapshot; initialTarget: ScoreExportTarget } | null>(null)
+  let exportTrigger: HTMLElement | null = null
   let lastJoystickMove = 0
   let audioContext: AudioContext | undefined
   const scoreText = (number: number) => String(number).padStart(4, '0')
 
   function recordActivity() {
+    if (scoreExport) { inactivity?.stop(); return false }
     const asleep = actorRef.getSnapshot().matches('idle')
     const warned = idleWarningSeconds !== null
     idleWarningSeconds = null
@@ -137,6 +142,23 @@
   function showScoreboard() {
     recordActivity()
     send({ type: 'SHOW_SCORES' })
+  }
+  function openScoreExport(initialTarget: 'run' | 'scoreboard') {
+    if (cabinetMode) return
+    recordActivity()
+    exportTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    const run = $snapshot.matches('results') || $snapshot.matches('gameOver') || canContinueRound
+      ? { characterId: character.id, score } : undefined
+    // Leaving results cancels its automatic transition before the modal takes focus.
+    if ($snapshot.matches('results')) send({ type: 'SHOW_SCORES' })
+    scoreExport = { initialTarget, snapshot: { scores: { ...scores }, run, language, siteUrl: liveSiteUrl } }
+    inactivity?.stop()
+  }
+  function closeScoreExport() {
+    scoreExport = null
+    recordActivity()
+    const trigger = exportTrigger
+    void tick().then(() => { (trigger?.isConnected ? trigger : screenHeading)?.focus({ preventScroll: true }) })
   }
   function goHome() { recordActivity(); homeChoice = 0; send({ type: 'HOME' }) }
   function selectTeam() {
@@ -262,7 +284,7 @@
   })
   $effect(() => {
     const state = $snapshot.value
-    if (state !== 'loading') screenHeading?.focus({ preventScroll: true })
+    if (!scoreExport && state !== 'loading') screenHeading?.focus({ preventScroll: true })
   })
   $effect(() => {
     if ($snapshot.matches('loading')) {
@@ -442,6 +464,7 @@
   }
 
   function handleKeydown(event: KeyboardEvent) {
+    if (scoreExport) return
     if (event.altKey || event.ctrlKey || event.metaKey) return
     if (recordActivity()) { event.preventDefault(); return }
     if (event.key === 'Enter' && event.target instanceof HTMLAnchorElement) return
@@ -564,6 +587,7 @@
         <ScoreTable {scores} {language} recordCharacter={newHighScore ? character.id : null} />
         <div class="scoreboard-actions">
           <button type="button" class="nes-btn back-button" onclick={goHome}>← {text.back}</button>
+          {#if !cabinetMode}<button type="button" class="nes-btn scoreboard-link" onclick={() => openScoreExport('scoreboard')}>{text.share}</button>{/if}
           {#if canContinueRound}<button type="button" class="nes-btn cabinet-prompt" onclick={nextRound}><span class="physical-button green"></span>{text.nextRound} {level + 1}</button>{/if}
         </div>
       </section>
@@ -660,6 +684,7 @@
             <span class="physical-button green"></span>{text.scoreboard}
           </button>
           <button type="button" class="nes-btn scoreboard-link" onclick={nextRound}>{text.nextRound} {level + 1}</button>
+          {#if !cabinetMode}<button type="button" class="nes-btn share-score-button" onclick={() => openScoreExport('run')}>{text.shareScore}</button>{/if}
         </div>
       </section>
     {:else if $snapshot.matches('gameOver')}
@@ -673,8 +698,12 @@
             <span class="physical-button green"></span>{text.retry}
           </button>
           <button type="button" class="nes-btn scoreboard-link" onclick={showScoreboard}>{text.scoreboard}</button>
+          {#if !cabinetMode}<button type="button" class="nes-btn share-score-button" onclick={() => openScoreExport('run')}>{text.shareScore}</button>{/if}
         </div>
       </section>
+    {/if}
+    {#if scoreExport}
+      <ScoreExportDialog {...scoreExport} onclose={closeScoreExport} />
     {/if}
     {#if idleWarningSeconds !== null}
       <div class="idle-warning-backdrop">
