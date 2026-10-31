@@ -41,7 +41,7 @@
     if (!file || sharing) return
     sharing = true
     shareMessage = ''
-    const outcome = await shareFile(file, navigator)
+    const outcome = await shareFile(file, navigator, snapshot)
     sharing = false
     if (outcome === 'unavailable') shareMessage = text.shareUnavailable
   }

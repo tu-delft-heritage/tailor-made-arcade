@@ -120,7 +120,10 @@ image includes the game title, avatar portraits and scores in the NES typeface.
 The full table retains all ten avatars, ranking, bars and the top-three cups.
 Images are generated in the browser from bundled artwork, with no upload or remote
 image service. Save PNG always remains available; compatible devices also offer
-their native share menu. Text follows the game's language setting. The preview
+their native share menu. Sharing includes a short Dutch or English invitation and
+the game link in the image's accompanying message. The link uses `PUBLIC_SITE_URL`
+when configured, otherwise the deployed TU Delft Heritage GitHub Pages website.
+Text follows the game's language setting. The preview
 pauses inactivity, and opening it from a win moves to the scoreboard so the ending
 timer cannot interrupt sharing. Closing the preview restores ordinary controls.
 

@@ -48,17 +48,30 @@ test('native sharing is invoked immediately with the ready PNG file', async () =
       called = true
       assert.deepEqual(data.files, [file])
       assert.equal(data.title, 'Tailor-Made Arcade')
+      assert.equal(data.text, 'Play Tailor-Made Arcade and put your heritage knowledge to the test!\n\nhttps://tu-delft-heritage.github.io/tailor-made-arcade/')
     }
-  })
+  }, snapshot)
   assert.equal(called, true, 'Do not wait for rendering after the share gesture')
   assert.equal(await result, 'shared')
+})
+
+test('sharing uses the selected language and configured public game URL', async () => {
+  const file = new File(['png'], 'score.png', { type: 'image/png' })
+  const result = await shareFile(file, {
+    canShare: () => true,
+    share: async data => {
+      assert.deepEqual(data.files, [file])
+      assert.equal(data.text, 'Speel Tailor-Made Arcade en test je erfgoedkennis!\n\nhttps://example.com/arcade/')
+    }
+  }, { language: 'nl', siteUrl: 'https://example.com/arcade/?preview=1#scores' })
+  assert.equal(result, 'shared')
 })
 
 test('unsupported or blocked sharing falls back; cancellation is not an error', async () => {
   const file = new File(['png'], 'score.png', { type: 'image/png' })
   assert.equal(canShareFile(file, {}), false)
   assert.equal(canShareFile(file, { share: async () => {}, canShare: () => { throw new Error('Blocked') } }), false)
-  assert.equal(await shareFile(file, { canShare: () => false, share: async () => assert.fail('Must not open sharing') }), 'unavailable')
-  assert.equal(await shareFile(file, { canShare: () => true, share: async () => { throw new Error('Denied') } }), 'unavailable')
-  assert.equal(await shareFile(file, { canShare: () => true, share: async () => { throw Object.assign(new Error('Cancelled'), { name: 'AbortError' }) } }), 'cancelled')
+  assert.equal(await shareFile(file, { canShare: () => false, share: async () => assert.fail('Must not open sharing') }, snapshot), 'unavailable')
+  assert.equal(await shareFile(file, { canShare: () => true, share: async () => { throw new Error('Denied') } }, snapshot), 'unavailable')
+  assert.equal(await shareFile(file, { canShare: () => true, share: async () => { throw Object.assign(new Error('Cancelled'), { name: 'AbortError' }) } }, snapshot), 'cancelled')
 })
