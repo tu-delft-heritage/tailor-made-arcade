@@ -131,7 +131,7 @@ export async function fetchVocabularies(options: Options = {}) {
       }
       locks.push(lock)
     }
-    await writeJson(join(output, 'vocabulary-urls.json'), { version: 1, urls: entries })
+    await writeJson(join(cache, 'vocabulary-urls.json'), { version: 1, urls: entries })
     const remote = entries.filter(entry => entry.provider !== 'collection-object')
     console.log(`Found ${entries.length} unique sameAs targets: ${remote.length} external, ${entries.length - remote.length} collection-object links.`)
     const terms: Term[] = []

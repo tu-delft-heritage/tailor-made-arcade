@@ -21,7 +21,7 @@ fast play; successful continuations retain the avatar and shorten both clocks.
 Answer pages warn before the 60-second idle reset and preserve inventory-number
 line breaks. Complete date periods use readable century/decade labels.
 
-`data/question-coverage.json` contains coverage, exclusions, previews and evidence.
+`.cache/reports/question-coverage.json` contains generated coverage, exclusions, previews and evidence.
 `docs/question-types.md` documents field rules and remaining review limits.
 Automated checks cover all generated answers, 100 seeds per language, source
 facts, role separation, aliases, date overlap, readiness, replacement, scoring

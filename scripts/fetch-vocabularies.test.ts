@@ -94,6 +94,11 @@ test('caches once, rebuilds offline, and retains valid data on a failed refresh'
   assert.equal(calls, 1)
   assert.equal(first.cachedTerms, 1)
   assert.deepEqual(first.descriptions, { nl: 1, en: 1 })
+  const inventory = JSON.parse(await readFile(join(cache, 'vocabulary-urls.json'), 'utf8'))
+  assert.equal(inventory.urls.length, 1)
+  assert.equal(inventory.urls[0].url, url)
+  assert.equal(inventory.urls[0].references.length, 2)
+  await assert.rejects(stat(join(output, 'vocabulary-urls.json')), { code: 'ENOENT' })
   const target = join(output, 'vocabularies.json')
   const original = await readFile(target, 'utf8')
   const modified = (await stat(target)).mtimeMs

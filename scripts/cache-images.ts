@@ -9,22 +9,20 @@ const option = (name: string) => {
 }
 const outputDir = resolve(root, option('--output-dir') ?? process.env.GAME_IMAGE_DIR ?? '.cache/game-assets')
 const refresh = process.argv.includes('--refresh')
+if (process.argv.includes('--prototype')) throw new Error('The prototype selection has been removed. Omit --prototype to cache the full collection.')
 const records = JSON.parse(await readFile(join(root, 'data/objects.json'), 'utf8'))
-const selection: { id: string }[] = process.argv.includes('--prototype')
-  ? JSON.parse(await readFile(join(root, 'data/game-selection.json'), 'utf8')) : records
 const objectsDir = join(outputDir, 'objects')
 await mkdir(objectsDir, { recursive: true })
 
 const cached = []
-for (const item of selection) {
-  const record = records.find((candidate: any) => candidate.id === item.id)
+for (const record of records) {
   const url = record?.images[0]?.thumbnail
-  if (!url) throw new Error(`No thumbnail URL for ${item.id}`)
-  const destination = join(objectsDir, `${item.id}.jpg`)
+  if (!url) throw new Error(`No thumbnail URL for ${record.id}`)
+  const destination = join(objectsDir, `${record.id}.jpg`)
   if (!refresh) {
     try {
       const file = await stat(destination)
-      cached.push({ id: item.id, url, bytes: file.size, reused: true })
+      cached.push({ id: record.id, url, bytes: file.size, reused: true })
       continue
     } catch { /* Fetch a missing file. */ }
   }
@@ -36,8 +34,8 @@ for (const item of selection) {
   const temporary = `${destination}.download`
   await writeFile(temporary, bytes)
   await rename(temporary, destination)
-  cached.push({ id: item.id, url, bytes: bytes.length, reused: false })
-  console.log(`Cached ${item.id} (${Math.ceil(bytes.length / 1024)} KB)`)
+  cached.push({ id: record.id, url, bytes: bytes.length, reused: false })
+  console.log(`Cached ${record.id} (${Math.ceil(bytes.length / 1024)} KB)`)
 }
 
 await writeFile(join(outputDir, 'index.json'), JSON.stringify({

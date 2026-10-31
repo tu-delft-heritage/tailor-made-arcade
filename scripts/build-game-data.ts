@@ -91,7 +91,8 @@ for (const language of ['nl', 'en'] as Language[]) {
 }
 await mkdir(join(root, 'src/lib/data'), { recursive: true })
 await writeFile(join(root, 'src/lib/data/game-data.json'), json)
-await writeFile(join(root, 'data/question-coverage.json'), JSON.stringify({ version: 3, objects: objects.length,
+await mkdir(join(root, '.cache/reports'), { recursive: true })
+await writeFile(join(root, '.cache/reports/question-coverage.json'), JSON.stringify({ version: 3, objects: objects.length,
   runtimeBytes: Buffer.byteLength(json), gzipBytes: gzipSync(json).length, coverage,
   fieldPolicy: { identifier: 'Record identity and reveal evidence, not a trivia question.', citations: 'Preserved for provenance, not a trivia question.',
     image: 'Question photographs; duplicate image URLs excluded within sessions.', description: 'Reveal context and reviewed professor evidence.',
@@ -105,3 +106,4 @@ await writeFile(join(root, 'data/question-coverage.json'), JSON.stringify({ vers
 }, null, 2) + '\n')
 console.log(`Built ${objects.length} objects, ${Object.keys(entities).length} entities; ${Math.ceil(gzipSync(json).length / 1024)} KiB gzip.`)
 for (const [lang, stats] of Object.entries(coverage)) console.log(lang, JSON.stringify({ ...(stats as any), preview: undefined, exclusions: undefined, excludedObjects: undefined }))
+console.log('Question coverage: .cache/reports/question-coverage.json')

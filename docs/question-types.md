@@ -5,7 +5,7 @@ selection. Normalization preserves singleton/array fields, creator roles, source
 IDs, locations, subjects, units, relations and citations. Builds are offline.
 
 Run `pnpm data:prepare` after updating raw caches, then `pnpm build:data`.
-The latter writes `data/question-coverage.json`: counts, exclusions and a preview
+The latter writes `.cache/reports/question-coverage.json`: counts, exclusions and a preview
 for each module with photographs, four choices, answer and source evidence.
 
 | Module / source | Dutch | English | Eligibility and wording |
@@ -81,7 +81,7 @@ Each question waits for all its photos. The next round is preloaded. A failed
 photo replaces the current question, retaining score, progress and game time;
 retries are bounded at twelve per mission to avoid an endless offline loop.
 Exhausting retries shows the existing image-unavailable retry screen. Local
-image caching now defaults to all 720 records (`--prototype` selects the old ten).
+image caching covers all 720 records.
 
 The compiled metadata is about 261 KiB gzip, compared with the plan's approximate
 250 KB starting budget. It retains descriptions and traceable evidence; assets

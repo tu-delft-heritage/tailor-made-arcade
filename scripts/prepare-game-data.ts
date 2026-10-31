@@ -5,11 +5,10 @@ import { listFiles } from './fetch-iiif.ts'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const source = join(root, '.cache/iiif/schemas')
-const selection: { id: string }[] = JSON.parse(await readFile(join(root, 'data/game-selection.json'), 'utf8'))
-const selected = new Set(selection.map(item => item.id))
 const values = (value: any) => value == null ? [] : Array.isArray(value) ? value : [value]
 const records = []
 const files = (await listFiles(source)).filter(file => file.endsWith('/schema.json'))
+if (!files.length) throw new Error('No cached schema.json files found; run pnpm fetch:iiif before pnpm data:prepare.')
 
 for (const file of files) {
   const schema = JSON.parse(await readFile(join(source, file), 'utf8'))
@@ -36,10 +35,6 @@ for (const file of files) {
   })
 }
 records.sort((a, b) => a.id.localeCompare(b.id))
-for (const id of selected) {
-  const record = records.find(record => record.id === id)
-  if (!record?.images[0]?.thumbnail) throw new Error(`Selected object has no image reference: ${id}`)
-}
 const { terms } = JSON.parse(await readFile(join(root, 'data/vocabularies.json'), 'utf8'))
 const upstream = JSON.parse(await readFile(join(root, '.cache/iiif/index.json'), 'utf8'))
 await writeFile(join(root, 'data/objects.json'), JSON.stringify(records, null, 2) + '\n')
@@ -51,11 +46,7 @@ await writeFile(join(root, 'data/data-quality.json'), JSON.stringify({
   uniqueTypeLabels: new Set(records.map(item => item.type.label)).size,
   vocabularyDefinitions: { nl: terms.filter((term: any) => term.descriptions.nl?.length).length,
     en: terms.filter((term: any) => term.descriptions.en?.length).length },
-  prototypeObjects: selection.length,
-  selectedImageReferences: records.filter(record => selected.has(record.id)).map(record => ({
-    id: record.id, url: record.images[0].thumbnail
-  })),
   exclusions: [{ url: 'http://www.wikidata.org/entity/Q138148494', reason: 'Upstream 404; skipped until the source is corrected.' }],
   note: 'Images are referenced only. Use pnpm cache:images to create an ignored local cache.'
 }, null, 2) + '\n')
-console.log(`Prepared ${records.length} object records and ${selection.length} selected image references.`)
+console.log(`Prepared ${records.length} object records.`)
